@@ -1,0 +1,26 @@
+.accordion {
+    max-width: 400px;
+}
+
+.accordion__entry {
+
+    margin-bottom: 10px;
+    border-top: 1px solid #999;
+}
+
+.accordion__entry-title {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.accordion__entry-content-holder {
+
+    overflow: hidden;
+
+    transition: all 500ms;
+
+}
+
+.accordion__entry-content {
+    padding-left: 10px;
+}
