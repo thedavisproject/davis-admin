@@ -71,7 +71,7 @@ export const Accordion = React.createClass({
 
 
     // extract <Title> and <Content>, ignore any other childrend
-    const {title, content} = React.Children.toArray(children)
+    const { title, content } = React.Children.toArray(children)
       .reduce((obj, child) => {
 
         // react components are functions

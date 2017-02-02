@@ -3,7 +3,9 @@ import { connect } from "react-redux";
 import App from "../components/App.jsx";
 
 function mapStateToProps(state, ownProps) {
-  return {};
+  return {
+    route: state.route
+  };
 }
 
 function mapStateToDispatch(dispatch) {

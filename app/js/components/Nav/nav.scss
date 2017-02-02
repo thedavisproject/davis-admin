@@ -1,0 +1,22 @@
+.nav {
+    display: flex;
+    margin: 10px 0;
+}
+
+.nav__item {
+    padding: 4px 6px;
+
+    font-weight: bold;
+
+    border: 1px solid #eee;
+    cursor: pointer;
+
+
+    &:hover {
+        background-color: #eee;
+    }
+
+    &.is-selected {
+        border-color: #7ea7fa;
+    }
+}

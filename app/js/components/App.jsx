@@ -1,11 +1,72 @@
 import React from "react";
 
-const App = () => {
+import { routePropType } from "./routing.js";
+
+import Dataset from "./Dataset/Dataset.jsx";
+import Variable from "./Variable/Variable.jsx";
+
+import DatasetListContainer  from "../containers/DatasetListContainer.js";
+import VariableListContainer from "../containers/VariableListContainer.js";
+import NavContainer          from "../containers/NavContainer.js";
+
+
+const App = ({route = {}}) => {
+
+  const getCurrentPageComponent = (route) => {
+
+    if (route.page === "") {
+      return "Home!";
+    }
+
+    if (route.page === "dataset" && route.id === "all"){
+      return (
+        <DatasetListContainer {...route.params} />
+      );
+    }
+
+    if (route.page === "dataset" && route.id !== "all"){
+      return (
+        <Dataset id={route.id} {...route.params} />
+      );
+    }
+
+    if (route.page === "variable" && route.id === "all"){
+      return (
+        <VariableListContainer {...route.params}/>
+      );
+    }
+
+    if (route.page === "variable" && route.id !== "all"){
+      return (
+        <Variable id={route.id} {...route.params}/>
+      );
+    }
+
+    if (route.page === "attribute"){
+      return (
+        "Attribtes!"
+      );
+    }
+
+  };
+
+
   return (
     <div>
       Hello, Admin!
+
+      <NavContainer />
+
+      {getCurrentPageComponent(route)}
+
     </div>
   );
+};
+
+
+
+App.propTypes = {
+  route: routePropType
 };
 
 export default App;
