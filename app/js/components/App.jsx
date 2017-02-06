@@ -18,29 +18,25 @@ const App = ({route = {}}) => {
       return "Home!";
     }
 
-    if (route.page === "dataset" && route.id === "all"){
-      return (
-        <DatasetListContainer {...route.params} />
-      );
+    if (route.page === "dataset"){
+      if (route.id === "all"){
+        return ( <DatasetListContainer {...route.params} /> );
+      }
+      else {
+        return ( <Dataset id={route.id} {...route.params} /> );
+      }
     }
 
-    if (route.page === "dataset" && route.id !== "all"){
-      return (
-        <Dataset id={route.id} {...route.params} />
-      );
+
+    if (route.page === "variable"){
+      if (route.id === "all"){
+        return ( <VariableListContainer {...route.params}/> );
+      }
+      else {
+        return ( <Variable id={route.id} {...route.params}/> );
+      }
     }
 
-    if (route.page === "variable" && route.id === "all"){
-      return (
-        <VariableListContainer {...route.params}/>
-      );
-    }
-
-    if (route.page === "variable" && route.id !== "all"){
-      return (
-        <Variable id={route.id} {...route.params}/>
-      );
-    }
 
     if (route.page === "attribute"){
       return (

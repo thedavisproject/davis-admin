@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-import { pages, routePropType } from "../routing.js";
+import { navigationLinks, routePropType } from "../routing.js";
 
 
 
@@ -11,7 +11,7 @@ const Nav = ({
   return (
     <nav className="nav">
 
-      {pages.map(item => {
+      {navigationLinks.map(item => {
 
         const itemClasses = classNames("nav__item", {
           "is-selected": item.page === route.page
