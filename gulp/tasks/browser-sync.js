@@ -35,8 +35,18 @@ module.exports = function(config) {
     settings.proxy = config.local.hostname;
   }
   else {
+    const historyApiFallback = require("connect-history-api-fallback");
+
     // http://www.browsersync.io/docs/options/#option-server
-    settings.server = serverRoot;
+    settings.server = {
+      baseDir: serverRoot,
+      middleware: [
+        // https://github.com/BrowserSync/browser-sync/issues/204
+        historyApiFallback({
+          // verbose: true
+        })
+      ]
+    };
   }
 
 

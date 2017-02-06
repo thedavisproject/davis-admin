@@ -7,7 +7,7 @@ export function mapStateToPath(state) {
 
   const { page, id, params } = state.route;
 
-  const pageUrl = `/?/${page}`;
+  const pageUrl = `/${page}`;
   const idUrl = (typeof(id) === "string" && id !== "") ? `/${id}` : "";
 
   // smash the params into a string separated by /
@@ -18,7 +18,7 @@ export function mapStateToPath(state) {
     R.mapObjIndexed((value, key) => `/${key}/${value}`)
   )(params);
 
-
+  // add "/?" + here if you want
   return pageUrl + idUrl + paramsUrl;
 }
 
@@ -27,12 +27,15 @@ export function mapStateToPath(state) {
 export function handleUrlChange(location, store) {
 
   // get the page and id out of the url (first 2 tokens)
-  // eg /?/dataset/1 > ["dataset", "1"]
+  // eg /dataset/1 > ["dataset", "1"]
+
+  // eg. /dataset/1/filter/22/sort/asc
+  const path = location.href.replace(location.origin, "");
 
   const [page = "", id = "", ...paramsArray] = R.compose(
     R.split("/"),
     R.replace(/^(\/)?(\?)?(\/)?/, "") // first, remove /?/ if there
-  )(location.search); // location.search: eg /?/dataset/1/filter/22/sort/asc
+  )(path);
 
 
   // pull out the params string key/values into an object
