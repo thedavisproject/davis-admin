@@ -1,57 +1,80 @@
 import { navigateTo } from "./routing-actions.js";
 import R from "ramda";
 
+const escapeForwardSlash = (v) =>
+  (typeof v === "string") ? v.replace("/", "&#47;") : v;
+
+const unescapeForwardSlash = (v) =>
+  (typeof v === "string") ? v.replace("&#47;", "/") : v;
+
+// String -> Boolean
+const isBadToken = R.anyPass([
+  R.equals("?"),
+  R.equals("#"),
+  R.equals(""),
+  R.isNil
+]);
+
 // state > url path
 // fired when a user navigates
 export function mapStateToPath(state) {
 
+  // use "/" or "/#/" or "/?/" here if you want
+  const base = "/";
+
+  if (!state || !state.route) { return base; }
+
   const { page, id, params } = state.route;
 
-  const pageUrl = `/${page}`;
-  const idUrl = (typeof(id) === "string" && id !== "") ? `/${id}` : "";
+  const paramsArray = R.compose(
+    R.flatten,     // ->  ["sort", "asc", "filter", 22]
+    R.toPairs      // ->  [["sort", "asc"], ["filter", 22]]
+  )(params);       // eg. { sort: "asc", filter: 22 }
 
-  // smash the params into a string separated by /
-  // eg { filter: 22, sort: "asc"} -> /filter/22/sort/asc
-  const paramsUrl = R.compose(
-    R.join(""),
-    R.values,
-    R.mapObjIndexed((value, key) => `/${key}/${value}`)
-  )(params);
+  const urlParts = R.compose(
+    R.map(escapeForwardSlash),
+    R.reject(isBadToken),
+    R.concat(R.__, paramsArray), // << put at end
+    R.append(id),
+    R.append(page)
+  )([]);
 
-  // add "/?" + here if you want
-  return pageUrl + idUrl + paramsUrl;
+  return base + urlParts.join("/");
 }
+
 
 // url path > state
 // fired when the url changes by browser back/forward buttons
 export function handleUrlChange(location, store) {
 
-  // get the page and id out of the url (first 2 tokens)
-  // eg /dataset/1 > ["dataset", "1"]
-
   // eg. /dataset/1/filter/22/sort/asc
   const path = location.href.replace(location.origin, "");
 
+  // get the page and id out of the url (first 2 tokens)
+  // eg /dataset/1 > ["dataset", "1"]
   const [page = "", id = "", ...paramsArray] = R.compose(
-    R.split("/"),
-    R.replace(/^(\/)?(\?)?(\/)?/, "") // first, remove /?/ if there
+    R.map(unescapeForwardSlash),
+    R.reject(isBadToken),
+    R.split("/")
   )(path);
 
+  // if a number can be parsed, return that number instead of the string
+  // eg, "filter" -> "filter", "22" -> 22
+  const maybeParseInt = v => parseInt(v) || v;
+
+  // use "" as default if this pair doesn't have a buddy
+  // eg. ["sort"] -> ["sort", ""], ["sort", "asc"] is untouched
+  const fillInPair = pair => (pair.length === 1) ? pair.concat("") : pair;
 
   // pull out the params string key/values into an object
   // eg /filter/22/sort/asc -> { filter: 22, sort: "asc"}
   const params = R.compose(
-    // if the value is a number, use that number instead of the string
-    // eg, /filter/22 -> { filter: 22 } instead of { filter: "22" }
-    R.map(v => parseInt(v) || v),
+    R.map(maybeParseInt),
     R.fromPairs,
-    // use "" as default if this pair doesn't have a value,
-    // eg. /filter/22/sort << sort should have a value!
-    R.map(pair => pair.length === 1 ? pair.concat("") : pair),
+    R.map(fillInPair),
     R.splitEvery(2)
   )(paramsArray);
 
 
   store.dispatch(navigateTo(page, id, params));
-
 }
