@@ -1,4 +1,4 @@
-import { navigateTo } from "./routing-actions.js";
+import { navigateTo, redirectTo } from "./routing-actions.js";
 import R from "ramda";
 import { pages } from "../../components/routes.js";
 
@@ -53,11 +53,16 @@ export function handleUrlChange(location, store, event) {
 
   // get the page out of the url (first token)
   // eg /dataset/1/filter/22 > page = "dataset", tokens = ["1", "filter", "22"]
-  const [page, ...tokens] = R.compose(
+  const [page = "", ...tokens] = R.compose(
     R.map(unescapeForwardSlash),
     R.reject(isBadToken),
     R.split("/")
   )(path);
+
+  // if this page was not found, redirect to the homepage using replaceState
+  if (!pages[page]) {
+    return redirectTo("");
+  }
 
 
   // some craziness to figure out where the "pairs" start

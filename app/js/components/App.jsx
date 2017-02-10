@@ -7,7 +7,7 @@ import NavContainer from "../containers/NavContainer.js";
 const App = ({route = {}}) => {
 
   return (
-    <div>
+    <div className="container">
       Hello, Admin!
 
       <NavContainer />

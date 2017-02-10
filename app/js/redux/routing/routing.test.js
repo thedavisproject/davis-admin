@@ -1,7 +1,7 @@
 /* global describe, it */
 import { expect } from "chai";
 import { mapStateToPath, handleUrlChange } from "./routing.js";
-import { navigateTo } from "./routing-actions.js";
+import { navigateTo, redirectTo } from "./routing-actions.js";
 import url from "url";
 
 
@@ -47,7 +47,12 @@ describe("home route", function(){
     const location = parseUrl("http://mikebook.velir.com:3000/");
     const action = handleUrlChange(location);
     expect(action).to.deep.equal(navigateTo());
+  });
 
+  it("should correctly redirect bad path to the homepage", () => {
+    const location = parseUrl("http://mikebook.velir.com:3000/not-found");
+    const action = handleUrlChange(location);
+    expect(action).to.deep.equal(redirectTo());
   });
 
 });

@@ -34,7 +34,7 @@ module.exports = function jsTestTask(config, env) {
       .pipe(quench.drano())
 
       .pipe(debug({title: "test:"}))
-      .pipe(transpile({}, []))
+      .pipe(transpile())
 
       // write the files to disk, because mocha only take files paths, not file streams
       .pipe(rename({ extname: ".es6.js" }))
@@ -50,7 +50,7 @@ module.exports = function jsTestTask(config, env) {
 
 
 // Create a bundle of the files in the stream using browserify
-function transpile(browserifyOptions, externalPackages){
+function transpile(browserifyOptions){
 
   return through2.obj(function (file, enc, callback){
 
@@ -58,16 +58,6 @@ function transpile(browserifyOptions, externalPackages){
     const b = browserify(browserifyOptions || {}) // pass options
       .add(file.path) // this file
       .transform(babelify, { presets: ["es2015", "react"] }); // run it through babel, for es6 transpiling
-
-    // externalize common packages
-    try {
-      externalPackages.forEach(function(p){
-        b.external(p);
-      });
-
-      // quench.logYellow("common npm packages", externalPackages);
-    }
-    catch(e) { console.log("ERRR", e); /* do nothing */ }
 
     b.bundle(function(err, res){
       if (err){

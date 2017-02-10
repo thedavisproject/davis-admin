@@ -31,26 +31,6 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
   // "next" is the next dispatch function
   return store => next => {
 
-    // function to run the user-provided handleUrlChange
-    const executeUrlChange = (event) => {
-
-      // call user function to handle the url change.  This function will return a redux action
-      const action = handleUrlChange(window.location, store, event);
-
-      store.dispatch(action);
-    };
-
-
-    // execute handleUrlChange on load if specified
-    if (handleLoad) { executeUrlChange(); }
-
-    // when the url changes...
-    window.addEventListener("popstate", (event) => {
-      event.preventDefault();
-      executeUrlChange(event);
-    });
-
-
     // our augmented dispatch function
     const dispatch = action => {
 
@@ -65,16 +45,43 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       const {  pathname, search, hash } = window.location;
       const currentPath = pathname + search + hash;
 
-      // TODO:  this only compares the part after the origin, what if mapStateToPath returns a full url?
+      // TODO:  this only compares the part after the origin, what if mapStateToPath returns a full url
       // then it will pushState even if the urls are the same
 
-      // if the url is different, pushState/replaceState the new url
-      if (url !== currentPath) {
+      // see routing-actions.js meta is a special key for things related to middleware
+      // http://redux.js.org/docs/advanced/Middleware.html#seven-examples
+      if (action.meta.replaceState){
+        history.replaceState(null, null, url);
+      }
+      // if the url is different, pushState the new url
+      else if (url !== currentPath) {
         history.pushState(null, null, url);
       }
 
       return result;
     };
+
+
+    // function to run the user-provided handleUrlChange
+    const executeUrlChange = (event) => {
+
+      // call user function to handle the url change.  This function will return a redux action
+      const action = handleUrlChange(window.location, store, event);
+
+      // use our new dispatch funciton, so the url will reflect the new state
+      // eg. if handleUrlChange redirects
+      dispatch(action);
+    };
+
+
+    // execute handleUrlChange on load if specified
+    if (handleLoad) { executeUrlChange(undefined, true); }
+
+    // when the url changes...
+    window.addEventListener("popstate", (event) => {
+      event.preventDefault();
+      executeUrlChange(event);
+    });
 
 
     // return the new dispatch function
