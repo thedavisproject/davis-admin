@@ -1,5 +1,6 @@
 import { navigateTo } from "./routing-actions.js";
 import R from "ramda";
+import { pages } from "../../components/routes.js";
 
 const escapeForwardSlash = (v) =>
   (typeof v === "string") ? v.replace("/", "&#47;") : v;
@@ -44,23 +45,30 @@ export function mapStateToPath(state) {
 
 
 // url path > state
-// fired when the url changes by browser back/forward buttons
+// fired on page load or when the url changes by browser back/forward buttons
 export function handleUrlChange(location, store) {
 
   // eg. /dataset/1/filter/22/sort/asc
   const path = location.href.replace(location.origin, "");
 
-  // get the page and id out of the url (first 2 tokens)
-  // eg /dataset/1 > ["dataset", "1"]
-  const [page = "", id = "", ...paramsArray] = R.compose(
+  // get the page out of the url (first token)
+  // eg /dataset/1/filter/22 > page = "dataset", tokens = ["1", "filter", "22"]
+  const [page, ...tokens] = R.compose(
     R.map(unescapeForwardSlash),
     R.reject(isBadToken),
     R.split("/")
   )(path);
 
+
+  // some craziness to figure out where the "pairs" start
+  // ie. whether or not the first token is the id
+  const [id, paramsArray] = (pages[page] && pages[page].hasId)
+    ? [tokens[0], R.drop(1, tokens)]
+    : ["", tokens];
+
   // if a number can be parsed, return that number instead of the string
   // eg, "filter" -> "filter", "22" -> 22
-  const maybeParseInt = v => parseInt(v) || v;
+  const maybeConvertToInt = v => !isNaN(v) ? Number(v) : v;
 
   // use "" as default if this pair doesn't have a buddy
   // eg. ["sort"] -> ["sort", ""], ["sort", "asc"] is untouched
@@ -69,12 +77,12 @@ export function handleUrlChange(location, store) {
   // pull out the params string key/values into an object
   // eg /filter/22/sort/asc -> { filter: 22, sort: "asc"}
   const params = R.compose(
-    R.map(maybeParseInt),
+    R.map(maybeConvertToInt),
     R.fromPairs,
     R.map(fillInPair),
     R.splitEvery(2)
   )(paramsArray);
 
 
-  store.dispatch(navigateTo(page, id, params));
+  return navigateTo(page, id, params);
 }

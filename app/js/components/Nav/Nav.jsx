@@ -1,8 +1,26 @@
 import React from "react";
 import classNames from "classnames";
-import { navigationLinks, routePropType } from "../routing.js";
+import { routePropType } from "../routes.js";
 
 
+export const navigationLinks = [
+  {
+    page: "",
+    label: "Home"
+  },
+  {
+    page: "datasets",
+    label: "Datasets"
+  },
+  {
+    page: "variables",
+    label: "Variables"
+  },
+  {
+    page: "attributes",
+    label: "Attributes"
+  }
+];
 
 const Nav = ({
   route = {},
@@ -18,8 +36,8 @@ const Nav = ({
         });
 
         return (
-          <div className={itemClasses} key={item.page + item.id}
-          onClick={() => onNavClick(item.page, item.id)}>
+          <div className={itemClasses} key={item.page}
+          onClick={() => onNavClick(item.page)}>
             {item.label}
           </div>
         );
