@@ -38,7 +38,7 @@ const { string, shape, object } = React.PropTypes;
 export const routePropType = shape({
   page: string.isRequired,
   id: string,
-  params: object
+  args: object
 });
 
 
@@ -46,7 +46,7 @@ export const renderPage = (route) => {
 
   const pageObj = pages[route.page];
 
-  const params = R.merge(route.params, {
+  const args = R.merge(route.args, {
     id: route.id
   });
 
@@ -55,7 +55,7 @@ export const renderPage = (route) => {
     ? (
       React.createElement(
         pageObj.component,
-        params
+        args
       )
     )
     : "Page not found!";

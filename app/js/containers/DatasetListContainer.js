@@ -15,8 +15,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapStateToDispatch(dispatch) {
   return {
-    onDatasetClick: (id, params) => {
-      dispatch(navigateTo("dataset", id, params));
+    onDatasetClick: (id, args) => {
+      dispatch(navigateTo("dataset", id, args));
     }
   };
 }

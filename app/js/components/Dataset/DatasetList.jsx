@@ -9,9 +9,9 @@ const DatasetList = ({datasets, onDatasetClick}) => {
 
       {datasets.map(i => {
 
-        // test params with dataset 3
-        const params = i === 3 ? {"filter": 22, "sort": "asc"} : {};
-        const onClick = onDatasetClick.bind(null, String(i), params);
+        // test args with dataset 3
+        const args = i === 3 ? {"filter": 22, "sort": "asc"} : {};
+        const onClick = onDatasetClick.bind(null, String(i), args);
 
         return(
           <div key={i} className="dataset-list__dataset"

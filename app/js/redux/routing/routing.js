@@ -25,17 +25,17 @@ export function mapStateToPath(state) {
 
   if (!state || !state.route) { return base; }
 
-  const { page, id, params } = state.route;
+  const { page, id, args } = state.route;
 
-  const paramsArray = R.compose(
+  const argsArray = R.compose(
     R.flatten,     // ->  ["sort", "asc", "filter", 22]
     R.toPairs      // ->  [["sort", "asc"], ["filter", 22]]
-  )(params);       // eg. { sort: "asc", filter: 22 }
+  )(args);       // eg. { sort: "asc", filter: 22 }
 
   const urlParts = R.compose(
     R.map(escapeForwardSlash),
     R.reject(isBadToken),
-    R.concat(R.__, paramsArray), // << put at end
+    R.concat(R.__, argsArray), // << put at end
     R.append(id),
     R.append(page)
   )([]);
@@ -67,7 +67,7 @@ export function handleUrlChange(location, store, event) {
 
   // some craziness to figure out where the "pairs" start
   // ie. whether or not the first token is the id
-  const [id, paramsArray] = (pages[page] && pages[page].hasId)
+  const [id, argsArray] = (pages[page] && pages[page].hasId)
     ? [tokens[0], R.drop(1, tokens)]
     : ["", tokens];
 
@@ -79,15 +79,15 @@ export function handleUrlChange(location, store, event) {
   // eg. ["sort"] -> ["sort", ""], ["sort", "asc"] is untouched
   const fillInPair = pair => (pair.length === 1) ? pair.concat("") : pair;
 
-  // pull out the params string key/values into an object
+  // pull out the args string key/values into an object
   // eg /filter/22/sort/asc -> { filter: 22, sort: "asc"}
-  const params = R.compose(
+  const args = R.compose(
     R.map(maybeConvertToInt),
     R.fromPairs,
     R.map(fillInPair),
     R.splitEvery(2)
-  )(paramsArray);
+  )(argsArray);
 
 
-  return navigateTo(page, id, params);
+  return navigateTo(page, id, args);
 }

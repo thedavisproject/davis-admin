@@ -9,9 +9,9 @@ import url from "url";
  * Helper functions
  */
 
-function createMockStateObj(page = "", id = "", params = {}){
+function createMockStateObj(page = "", id = "", args = {}){
   return {
-    route: { page, id, params }
+    route: { page, id, args }
   };
 }
 
@@ -67,7 +67,7 @@ describe("datasets route", function(){
     expect(url).to.equal("/datasets");
   });
 
-  it("should correctly generate the datasets path with params", () => {
+  it("should correctly generate the datasets path with args", () => {
     const state = createMockStateObj("datasets", "", { filter: 22, sort: "asc" });
     const url = mapStateToPath(state);
     expect(url).to.equal("/datasets/filter/22/sort/asc");
@@ -75,7 +75,7 @@ describe("datasets route", function(){
 
   /* handleUrlChange */
 
-  it("should correctly match the datasets path with params", () => {
+  it("should correctly match the datasets path with args", () => {
     const location = parseUrl("http://mikebook.velir.com:3000/datasets/filter/22/sort/asc");
     const action = handleUrlChange(location);
     expect(action).to.deep.equal(navigateTo("datasets", "", { filter: 22, sort: "asc" }));
@@ -94,13 +94,13 @@ describe("dataset route", function(){
     expect(url).to.equal("/dataset/2");
   });
 
-  it("should correctly generate the dataset path with params", () => {
+  it("should correctly generate the dataset path with args", () => {
     const state = createMockStateObj("dataset", "2", { filter: "22", sort: "asc" });
     const url = mapStateToPath(state);
     expect(url).to.equal("/dataset/2/filter/22/sort/asc");
   });
 
-  it("should correctly generate the dataset path with params that begin with numbers", () => {
+  it("should correctly generate the dataset path with args that begin with numbers", () => {
     const state = createMockStateObj("dataset", "2", { filter: "22a", sort: "asc" });
     const url = mapStateToPath(state);
     expect(url).to.equal("/dataset/2/filter/22a/sort/asc");
@@ -109,13 +109,13 @@ describe("dataset route", function(){
 
   /* handleUrlChange */
 
-  it("should correctly match the datasets path with params", () => {
+  it("should correctly match the datasets path with args", () => {
     const location = parseUrl("http://mikebook.velir.com:3000/dataset/2/filter/22/sort/asc");
     const action = handleUrlChange(location);
     expect(action).to.deep.equal(navigateTo("dataset", "2", { filter: 22, sort: "asc" }));
   });
 
-  it("should correctly match the datasets path with params that begin with numbers", () => {
+  it("should correctly match the datasets path with args that begin with numbers", () => {
     const location = parseUrl("http://mikebook.velir.com:3000/dataset/2/filter/22a/sort/asc");
     const action = handleUrlChange(location);
     expect(action).to.deep.equal(navigateTo("dataset", "2", { filter: "22a", sort: "asc" }));

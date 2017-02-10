@@ -11,8 +11,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapStateToDispatch(dispatch) {
   return {
-    onNavClick: (page, id, params) => {
-      dispatch(navigateTo(page, id, params));
+    onNavClick: (page, id, args) => {
+      dispatch(navigateTo(page, id, args));
     }
   };
 }

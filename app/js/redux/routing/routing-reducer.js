@@ -3,7 +3,7 @@ import { NAVIGATE_TO, REDIRECT_TO } from "./routing-actions.js";
 const initialState = {
   page: "", // eg "dataset"
   id: "", // eg "1"
-  params: {}
+  args: {}
 };
 
 // a lookup of all the actions for routingReducer to use
@@ -24,6 +24,6 @@ export default function routingReducer(state = initialState, action){
  * Actions
  */
 
-function navigateTo(state, { page = "", id = "", params = {} }){
-  return { page, id, params };
+function navigateTo(state, { page = "", id = "", args = {} }){
+  return { page, id, args };
 }
