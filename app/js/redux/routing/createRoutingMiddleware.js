@@ -12,7 +12,7 @@
   * handleUrlChange: User provided function to handle updating the state when the url changes
   * @callback handleUrlChange
   * @param  {Object} location : the current window.location object
-  * @param  {Object} store    : the current redux store.  Use store.getState() and store.dispatch
+  * @param  {Object} store    : the current redux store.  Use store.getState()
   * @param  {Object} event    : the popstate event
   * @return {Object} A redux action, will be passed to store.dispatch()
   */

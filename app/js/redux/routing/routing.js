@@ -46,7 +46,7 @@ export function mapStateToPath(state) {
 
 // url path > state
 // fired on page load or when the url changes by browser back/forward buttons
-export function handleUrlChange(location, store) {
+export function handleUrlChange(location, store, event) {
 
   // eg. /dataset/1/filter/22/sort/asc
   const path = location.href.replace(location.origin, "");
