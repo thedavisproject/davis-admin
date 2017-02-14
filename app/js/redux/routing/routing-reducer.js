@@ -1,3 +1,4 @@
+import createLookupReducer from "../createLookupReducer.js";
 import { NAVIGATE_TO, REDIRECT_TO } from "./routing-actions.js";
 
 const initialState = {
@@ -6,24 +7,20 @@ const initialState = {
   args: {}
 };
 
-// a lookup of all the actions for routingReducer to use
+// a lookup of all the actions
 const lookup = {
   [NAVIGATE_TO]: navigateTo,
   [REDIRECT_TO]: navigateTo
 };
 
-// when an action comes in, check the lookup for a handler
-// and execute if it's there, otherwise, return the current state.
-export default function routingReducer(state = initialState, action){
-  const handler = lookup[action.type];
-  return (handler) ? handler(state, action.payload) : state;
-}
+export default createLookupReducer(lookup, initialState);
 
 
 /**
  * Actions
  */
 
-function navigateTo(state, { page = "", id = "", args = {} }){
+function navigateTo(state, action){
+  const { page = "", id = "", args = {} } = action.payload;
   return { page, id, args };
 }

@@ -68,10 +68,7 @@
     }],
     "react/wrap-multilines": 1,
 
-    "indent": [
-      "warn",
-      2
-    ],
+    "indent": [ "warn", 2, { "SwitchCase": 1 } ],
     "jsx-quotes": [1, "prefer-double"],
     "linebreak-style": [ "error", "unix" ],
     "no-console": [
