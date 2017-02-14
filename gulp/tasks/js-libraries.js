@@ -11,6 +11,9 @@ const gulp       = require("gulp"),
 module.exports = function jsLibrariesTask(config, env){
 
   const js = {
+
+    src: config.taskConfig.js.src,
+
     dest: config.dest + "/js",
 
     filename: "libraries.js",
@@ -33,7 +36,7 @@ module.exports = function jsLibrariesTask(config, env){
 
   gulp.task("js-libraries", function(){
 
-    const npmPackages = quench.getInstalledNPMPackages();
+    const npmPackages = quench.findAllNpmDependencies(js.src);
 
     return getNpmStream(npmPackages, js.filename, js.browserify)
       .pipe(quench.drano())

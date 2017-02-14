@@ -1,15 +1,17 @@
 /**
  *    Quench: utilities for gulp builds
  */
-const gulp    = require("gulp"),
-  plumber     = require("gulp-plumber"),
-  notify      = require("gulp-notify"),
-  env         = require("gulp-environments"),
-  fs          = require("fs"),
-  path        = require("path"),
-  runSequence = require("run-sequence"),
-  color       = require("cli-color"),
-  watch       = require("gulp-watch");
+const gulp     = require("gulp"),
+  plumber      = require("gulp-plumber"),
+  notify       = require("gulp-notify"),
+  env          = require("gulp-environments"),
+  fs           = require("fs"),
+  path         = require("path"),
+  runSequence  = require("run-sequence"),
+  color        = require("cli-color"),
+  watch        = require("gulp-watch"),
+  R            = require("ramda"),
+  detective    = require("detective-es6");
 
 const environments = ["development", "production", "local"];
 
@@ -321,7 +323,7 @@ function fileExists(filepath) {
  * @return {String} the filepath of package.json in this directory,
  *                  or any parent directory
  */
-const findPackageJson = module.exports.findPackageJson = function findPackageJson(dirname) {
+module.exports.findPackageJson = function findPackageJson(dirname) {
 
   // use the current directory if dirname wasn't provided.
   if (typeof(dirname) === "undefined") {
@@ -353,17 +355,42 @@ const findPackageJson = module.exports.findPackageJson = function findPackageJso
 
 
 /**
- * getInstalledNPMPackages: looks for package.json in this directory and
- *                          in parent directories
+ * findAllNpmDependencies: given an entry entryFilePath, recurse through the imported
+ *   files and find all npm modules that are imported
+ * @param  {String} entryFilePath: eg. "app/js/index/js"
  * @return {Array} an array of package names (strings).
  *                 eg ["react", "react-dom", "classnames"]
  */
-module.exports.getInstalledNPMPackages = function getInstalledNPMPackages() {
+module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFilePath){
 
-  const packageJsonPath = findPackageJson();
+  // list of all imported modules and files from the entryFilePath
+  // eg. ["react", "../App.jsx"]
+  const imports = detective(fs.readFileSync(entryFilePath, "utf8"));
 
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-  const dependencies = packageJson.dependencies;
+  // if it begins with a dot or a /
+  // / if it's been resolved
+  const isFile = R.test(/^(\.|\/)/);
 
-  return Object.keys(dependencies);
+  // given a relativePath, resolve it's path from the current
+  // entryFilePath directory name
+  const resolvePath = (relativePath) => {
+    return path.resolve(path.dirname(entryFilePath), relativePath);
+  };
+
+  // list of all the modules in this entryFilePath
+  const modules = R.reject(isFile, imports);
+
+  // list of all the modules in imported files
+  const importedFilesModules = R.compose(
+    R.chain(findAllNpmDependencies), // recurse, and flatten
+    R.map(resolvePath),              // get the resolved path to this file
+    R.filter(isFile)                 // only look in files, not modules
+  )(imports);
+
+  // a set of the modules from this file + the modules from imported paths
+  const allModules = R.uniq(
+    R.concat( modules, importedFilesModules )
+  );
+
+  return allModules;
 };

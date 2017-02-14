@@ -24,14 +24,23 @@ const gulp = require("gulp"),
   quench = require("./quench.js"),
   path   = require("path");
 
+const root = path.resolve(__dirname, "../app")
+
 // default configuration
 const defaults = {
-  root: path.resolve(__dirname, "../app"),
+  root: root,
   dest: path.resolve(__dirname, "../build"),
   tasks: [ "js", "js-libraries", "css", "bower", "svg-sprite", "copy" ],
   env: "development", // "development", "production", "local"
   watch: false,
-  browserSync: false
+  browserSync: false,
+
+  // config for more than one tasks to share
+  taskConfig: {
+    js: {
+      src: root + "/js/index.js" // both js and js-libraries use this
+    }
+  }
 };
 
 /* watch for single tasks on the command line, eg "gulp js" */

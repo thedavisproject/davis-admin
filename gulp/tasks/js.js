@@ -12,7 +12,7 @@ const gulp           = require("gulp"),
 module.exports = function jsTask(config, env){
 
   const jsConfig = {
-    src: config.root + "/js/index.js",
+    src: config.taskConfig.js.src,
     dest: config.dest + "/js",
     // js uglify options.
     uglify: {},
@@ -33,7 +33,7 @@ module.exports = function jsTask(config, env){
   /* compile application javascript */
   gulp.task("js", function(){
 
-    const commonPackages = quench.getInstalledNPMPackages();
+    const commonPackages = quench.findAllNpmDependencies(jsConfig.src);
 
     return gulp.src(jsConfig.src)
       .pipe(quench.drano())
