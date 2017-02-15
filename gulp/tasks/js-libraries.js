@@ -1,12 +1,12 @@
-const gulp       = require("gulp"),
-  quench         = require("../quench.js"),
-  uglify         = require("gulp-uglify"),
-  rename         = require("gulp-rename"),
-  debug          = require("gulp-debug"),
-  sourcemaps     = require("gulp-sourcemaps"),
-  browserify     = require("browserify"),
-  vinylSource    = require("vinyl-source-stream"),
-  vinylBuffer    = require("vinyl-buffer");
+const gulp        = require("gulp");
+const quench      = require("../quench.js");
+const uglify      = require("gulp-uglify");
+const rename      = require("gulp-rename");
+const debug       = require("gulp-debug");
+const sourcemaps  = require("gulp-sourcemaps");
+const browserify  = require("browserify");
+const vinylSource = require("vinyl-source-stream");
+const vinylBuffer = require("vinyl-buffer");
 
 module.exports = function jsLibrariesTask(config, env){
 

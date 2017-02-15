@@ -1,13 +1,13 @@
-const gulp     = require("gulp"),
-  quench       = require("../quench.js"),
-  sass         = require("gulp-sass"),
-  autoprefixer = require("gulp-autoprefixer"),
-  pixrem       = require("gulp-pixrem"),
-  rename       = require("gulp-rename"),
-  debug        = require("gulp-debug"),
-  header       = require("gulp-header"),
-  concat       = require("gulp-concat"),
-  sourcemaps   = require("gulp-sourcemaps");
+const gulp         = require("gulp");
+const quench       = require("../quench.js");
+const sass         = require("gulp-sass");
+const autoprefixer = require("gulp-autoprefixer");
+const pixrem       = require("gulp-pixrem");
+const rename       = require("gulp-rename");
+const debug        = require("gulp-debug");
+const header       = require("gulp-header");
+const concat       = require("gulp-concat");
+const sourcemaps   = require("gulp-sourcemaps");
 
 module.exports = function cssTask(config, env) {
 

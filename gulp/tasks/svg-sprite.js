@@ -1,9 +1,10 @@
-const gulp  = require("gulp"),
-  quench    = require("../quench.js"),
-  svgmin    = require("gulp-svgmin"),
-  svgstore  = require("gulp-svgstore"),
-  rename    = require("gulp-rename"),
-  debug     = require("gulp-debug");
+const gulp     = require("gulp");
+const quench   = require("../quench.js");
+const svgmin   = require("gulp-svgmin");
+const svgstore = require("gulp-svgstore");
+const rename   = require("gulp-rename");
+const debug    = require("gulp-debug");
+
 
 /**
  * Usage: put svg's in svg.src directory.  eg. /img/svg-sprite/my-icon.svg

@@ -1,12 +1,12 @@
-const gulp       = require("gulp"),
-  quench         = require("../quench.js"),
-  concat         = require("gulp-concat"),
-  filter         = require("gulp-filter"),
-  rename         = require("gulp-rename"),
-  debug          = require("gulp-debug"),
-  uglify         = require("gulp-uglify"),
-  sourcemaps     = require("gulp-sourcemaps"),
-  mainBowerFiles = require("main-bower-files");
+const gulp           = require("gulp");
+const quench         = require("../quench.js");
+const concat         = require("gulp-concat");
+const filter         = require("gulp-filter");
+const rename         = require("gulp-rename");
+const debug          = require("gulp-debug");
+const uglify         = require("gulp-uglify");
+const sourcemaps     = require("gulp-sourcemaps");
+const mainBowerFiles = require("main-bower-files");
 
 module.exports = function bowerTask(config, env) {
 

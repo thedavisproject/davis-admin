@@ -3,10 +3,10 @@
  * This is handled in quench.js by passing browserSync: true
  * in the build config to quench.build().
  */
-const gulp    = require("gulp"),
-  quench      = require("../quench.js"),
-  path        = require("path"),
-  browserSync = require("browser-sync").create();
+const gulp        = require("gulp");
+const quench      = require("../quench.js");
+const path        = require("path");
+const browserSync = require("browser-sync").create();
 
 module.exports = function(config) {
 
@@ -28,9 +28,14 @@ module.exports = function(config) {
     ]
   };
 
+
+  // if we're using the server task, proxy the server
+  if (config.tasks.includes("server")){
+    settings.proxy = "http://localhost:3030"; // /server/server.js
+  }
   // set the server root, or proxy if it's set in local.js
   // use proxy if you have a server running the site already (eg, IIS)
-  if (config.local.hostname) {
+  else if (config.local.hostname) {
     // http://www.browsersync.io/docs/options/#option-proxy
     settings.proxy = config.local.hostname;
   }

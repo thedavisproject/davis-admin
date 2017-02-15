@@ -1,13 +1,13 @@
-const gulp           = require("gulp"),
-  quench         = require("../quench.js"),
-  uglify         = require("gulp-uglify"),
-  rename         = require("gulp-rename"),
-  cached         = require("gulp-cached"),
-  debug          = require("gulp-debug"),
-  sourcemaps     = require("gulp-sourcemaps"),
-  browserify     = require("browserify"),
-  through2       = require("through2"),
-  babelify       = require("babelify");
+const gulp       = require("gulp");
+const quench     = require("../quench.js");
+const uglify     = require("gulp-uglify");
+const rename     = require("gulp-rename");
+const cached     = require("gulp-cached");
+const debug      = require("gulp-debug");
+const sourcemaps = require("gulp-sourcemaps");
+const browserify = require("browserify");
+const through2   = require("through2");
+const babelify   = require("babelify");
 
 module.exports = function jsTask(config, env){
 

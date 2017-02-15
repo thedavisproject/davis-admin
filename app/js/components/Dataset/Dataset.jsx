@@ -1,10 +1,13 @@
 import React from "react";
 
 
-const Dataset = ({id}) => {
+const Dataset = (props) => {
   return (
     <div className="dataset">
-      Dataset {id}!
+      Dataset {props.id}!
+
+      <br /><br />
+      {JSON.stringify(props)}
     </div>
   );
 };

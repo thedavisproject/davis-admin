@@ -1,12 +1,12 @@
-const gulp   = require("gulp"),
-  quench     = require("../quench.js"),
-  debug      = require("gulp-debug"),
-  mocha      = require("gulp-mocha"),
-  browserify = require("browserify"),
-  through2   = require("through2"),
-  babelify   = require("babelify"),
-  vinylPaths = require("vinyl-paths"),
-  del        = require("del");
+const gulp       = require("gulp");
+const quench     = require("../quench.js");
+const debug      = require("gulp-debug");
+const mocha      = require("gulp-mocha");
+const browserify = require("browserify");
+const through2   = require("through2");
+const babelify   = require("babelify");
+const vinylPaths = require("vinyl-paths");
+const del        = require("del");
 
 
 const rename = require("gulp-rename");
