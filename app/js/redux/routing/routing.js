@@ -73,7 +73,7 @@ export function handleUrlChange(location, store, event) {
 
   // if a number can be parsed, return that number instead of the string
   // eg, "filter" -> "filter", "22" -> 22
-  const maybeConvertToInt = v => !isNaN(v) ? Number(v) : v;
+  const maybeConvertToInt = v => (Number(v) === parseInt(v, 10)) ? Number(v) : v;
 
   // use "" as default if this pair doesn't have a buddy
   // eg. ["sort"] -> ["sort", ""], ["sort", "asc"] is untouched
