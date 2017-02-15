@@ -365,26 +365,22 @@ module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFil
 
   // list of all imported modules and files from the entryFilePath
   // eg. ["react", "../App.jsx"]
-  const imports = detective(fs.readFileSync(entryFilePath, "utf8"));
-
-  // if it begins with a dot or a /
-  // / if it's been resolved
-  const isFile = R.test(/^(\.|\/)/);
-
-  // given a relativePath, resolve it's path from the current
-  // entryFilePath directory name
-  const resolvePath = (relativePath) => {
-    return path.resolve(path.dirname(entryFilePath), relativePath);
-  };
+  const imports = detective(fs.readFileSync(entryFilePath, "utf8"))
+    .map(moduleOrFilePath => {
+      // if this is a relativePath (begins with .), then resolve the path
+      // from the current entryFilePath directory name
+      return (R.test(/^(\.)/, moduleOrFilePath))
+        ? path.resolve(path.dirname(entryFilePath), moduleOrFilePath)
+        : moduleOrFilePath;
+    });
 
   // list of all the modules in this entryFilePath
-  const modules = R.reject(isFile, imports);
+  const modules = R.reject(fileExists, imports);
 
   // list of all the modules in imported files
   const importedFilesModules = R.compose(
     R.chain(findAllNpmDependencies), // recurse, and flatten
-    R.map(resolvePath),              // get the resolved path to this file
-    R.filter(isFile)                 // only look in files, not modules
+    R.filter(fileExists)             // only look in files, not modules
   )(imports);
 
   // a set of the modules from this file + the modules from imported paths
