@@ -2,9 +2,9 @@ import React from "react";
 import R from "ramda";
 
 import Home from "./Home/Home.jsx";
-import Dataset from "./Dataset/Dataset.jsx";
 import Variable from "./Variable/Variable.jsx";
 
+import DatasetContainer      from "../containers/DatasetContainer.js";
 import DatasetListContainer  from "../containers/DatasetListContainer.js";
 import VariableListContainer from "../containers/VariableListContainer.js";
 
@@ -20,7 +20,7 @@ export const pages = {
   },
   "dataset": {
     hasId: true,
-    component: Dataset
+    component: DatasetContainer
   },
   "variables": {
     label: "Variables",

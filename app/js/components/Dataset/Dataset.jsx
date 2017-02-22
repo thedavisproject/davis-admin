@@ -7,7 +7,9 @@ const Dataset = (props) => {
       Dataset {props.id}!
 
       <br /><br />
-      {JSON.stringify(props)}
+      <pre>
+        {JSON.stringify(props, null, 2)}
+      </pre>
     </div>
   );
 };
