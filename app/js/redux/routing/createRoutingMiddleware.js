@@ -50,7 +50,7 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
 
       // see routing-actions.js meta is a special key for things related to middleware
       // http://redux.js.org/docs/advanced/Middleware.html#seven-examples
-      if (action.meta.replaceState){
+      if (action.meta && action.meta.replaceState){
         history.replaceState(null, null, url);
       }
       // if the url is different, pushState the new url
@@ -75,7 +75,13 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
 
 
     // execute handleUrlChange on load if specified
-    if (handleLoad) { executeUrlChange(undefined, true); }
+    if (handleLoad) {
+      // this needs to happen later, in case handleUrlChange relys on other
+      // middleware, like thunk
+      window.addEventListener("load", function(){
+        executeUrlChange(undefined, true);
+      });
+    }
 
     // when the url changes...
     window.addEventListener("popstate", (event) => {

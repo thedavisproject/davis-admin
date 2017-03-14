@@ -1,22 +1,31 @@
 import React from "react";
 
 
-const DatasetList = ({datasets, onDatasetClick}) => {
+const DatasetList = ({datasets, onDatasetClick, isLoading, errorLoading}) => {
 
+  if (errorLoading){
+    return (
+      <div>There was an error loading the datasets!</div>
+    );
+  }
+
+  if (isLoading){
+    return (
+      <div>Loading...</div>
+    );
+  }
 
   return (
     <div className="dataset-list">
 
-      {datasets.map(i => {
+      {datasets.map(dataset => {
 
-        // test args with dataset 3
-        const args = i === 3 ? {"filter": 22, "sort": "asc"} : {};
-        const onClick = onDatasetClick.bind(null, String(i), args);
+        const onClick = onDatasetClick.bind(null, dataset.id, {});
 
         return(
-          <div key={i} className="dataset-list__dataset"
+          <div key={dataset.id} className="dataset-list__dataset"
           onClick={onClick}>
-            Dataset {i}
+            {dataset.name}
           </div>
         );
       })}
@@ -26,10 +35,15 @@ const DatasetList = ({datasets, onDatasetClick}) => {
 };
 
 
-const { array, func } = React.PropTypes;
+const { arrayOf, bool, func, shape, string } = React.PropTypes;
 
 DatasetList.propTypes = {
-  datasets: array.isRequired,
+  datasets: arrayOf(shape({
+    id: string.isRequired,
+    name: string.isRequired
+  })).isRequired,
+  isLoading: bool,
+  errorLoading: bool,
   onDatasetClick: func.isRequired
 };
 

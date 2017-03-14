@@ -12,7 +12,9 @@ const App = ({route = {}}) => {
 
       <NavContainer />
 
-      { renderPage(route) }
+      <div className="main">
+        { renderPage(route) }
+      </div>
 
     </div>
   );

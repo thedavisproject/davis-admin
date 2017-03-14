@@ -6,7 +6,10 @@ module.exports = function copyTask(config, env) {
 
   // copy files settings
   const copy = {
-    src: [config.root + "/index.html"],
+    src: [
+      config.root + "/index.html",
+      config.root + "/fakedata/**/*"
+    ],
     dest: config.dest
   };
 
@@ -16,7 +19,7 @@ module.exports = function copyTask(config, env) {
   /* copy files */
   gulp.task("copy", function() {
 
-    return gulp.src(copy.src)
+    return gulp.src(copy.src, { base: config.root })
       .pipe(quench.drano())
       .pipe(gulp.dest(copy.dest))
       .pipe(debug({title: "copy:"}));

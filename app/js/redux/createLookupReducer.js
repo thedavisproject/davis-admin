@@ -11,3 +11,17 @@ export default function createLookupReducer(lookup, initialState){
       : state;
   };
 }
+
+/**
+ * example:
+ * const lookup = {
+ *   [ACTION_ONE] : handleActionOne,
+ *   [ACTION_TOW] : handleActionTwo
+ * }
+ *
+ * const initialState = {};
+ *
+ * function handleActionOne(state, action) { ... }
+ *
+ * export default createLookupReducer(lookup, initialState);
+ */

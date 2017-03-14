@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import thunkMiddleware from "redux-thunk";
 
 import AppContainer from "./containers/AppContainer.js";
 
@@ -15,7 +16,9 @@ const routingMiddleware = createRoutingMiddleware({ mapStateToPath, handleUrlCha
 
 
 /* create store */
-const store = configureStore(rootReducer, {}, [routingMiddleware]);
+const store = configureStore(rootReducer, {}, [routingMiddleware, thunkMiddleware]);
+
+
 
 
 /* render app */

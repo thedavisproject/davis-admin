@@ -5,11 +5,11 @@ import { navigateTo } from "../redux/routing/routing-actions.js";
 
 import DatasetList from "../components/Dataset/DatasetList.jsx";
 
-const datasets = R.times(R.identity, 6);
 
 function mapStateToProps(state, ownProps) {
   return {
-    datasets: datasets
+    datasets: state.datasets.items,
+    isLoading: state.datasets.isLoading
   };
 }
 
