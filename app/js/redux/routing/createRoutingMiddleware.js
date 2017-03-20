@@ -22,13 +22,15 @@
  *                          and attaches a window popstate listener
  * @param  {Function} mapStateToPath  : callback function, see above
  * @param  {Function} handleUrlChange : callback function, see above
+ * @param  {Boolean}  handleLoad      : if true, it will call handleUrlChange when the page loads
+ *   NOTE: this depends on an event "@@INIT_STORE" being dispatched immediately after the store is created
+ *   see configureStore.js and https://github.com/reactjs/redux/issues/1240#issuecomment-268061029
  * @return {Function} redux middleware with an exposed function "handleUrlChange" which
  *   the consumer can use to trigger their function on page load.
  */
-export default function createRoutingMiddleware({mapStateToPath, handleUrlChange}) {
+export default function createRoutingMiddleware({mapStateToPath, handleUrlChange, handleLoad = true}) {
 
-  // return the middlware
-  // "next" is the next dispatch function
+  // "next" is the next dispatch function in the middleware chain
   const middleware = store => next => {
 
     // our augmented dispatch function
@@ -37,6 +39,12 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       // result is the action itself, this will also update the state
       // http://redux.js.org/docs/api/Store.html#dispatch
       const result = next(action);
+
+      // see handleLoad above in jsdoc
+      if (handleLoad && action.type === "@@INIT_STORE"){
+        executeUrlChange();
+        return result;
+      }
 
       // execute the user function to get the url out of the newly updated redux state
       const url = mapStateToPath(store.getState(), window.location);
@@ -72,11 +80,6 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       // eg. if handleUrlChange redirects
       dispatch(action);
     };
-
-    // expose a function for the user to executeUrlChange after the redux middleware chain has been set up.
-    // maybe there is a better option in the future: https://github.com/reactjs/redux/issues/1240
-    middleware.handleUrlChange = executeUrlChange;
-
 
     // when the url changes...
     window.addEventListener("popstate", (event) => {

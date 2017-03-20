@@ -18,9 +18,6 @@ const routingMiddleware = createRoutingMiddleware({ mapStateToPath, handleUrlCha
 /* create store */
 const store = configureStore(rootReducer, {}, [routingMiddleware, thunkMiddleware]);
 
-// read the url when the application loads
-routingMiddleware.handleUrlChange();
-
 /* render app */
 ReactDOM.render(
   <Provider store={store}>
