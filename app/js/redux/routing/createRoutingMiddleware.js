@@ -22,14 +22,14 @@
  *                          and attaches a window popstate listener
  * @param  {Function} mapStateToPath  : callback function, see above
  * @param  {Function} handleUrlChange : callback function, see above
- * @param  {Boolean}  handleLoad      : if true, it will call handleUrlChange when the page loads
- * @return {Function} redux middleware
+ * @return {Function} redux middleware with an exposed function "handleUrlChange" which
+ *   the consumer can use to trigger their function on page load.
  */
-export default function createRoutingMiddleware({mapStateToPath, handleUrlChange, handleLoad = true}) {
+export default function createRoutingMiddleware({mapStateToPath, handleUrlChange}) {
 
   // return the middlware
   // "next" is the next dispatch function
-  return store => next => {
+  const middleware = store => next => {
 
     // our augmented dispatch function
     const dispatch = action => {
@@ -73,15 +73,10 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       dispatch(action);
     };
 
+    // expose a function for the user to executeUrlChange after the redux middleware chain has been set up.
+    // maybe there is a better option in the future: https://github.com/reactjs/redux/issues/1240
+    middleware.handleUrlChange = executeUrlChange;
 
-    // execute handleUrlChange on load if specified
-    if (handleLoad) {
-      // this needs to happen later, in case handleUrlChange relys on other
-      // middleware, like thunk
-      window.addEventListener("load", function(){
-        executeUrlChange(undefined, true);
-      });
-    }
 
     // when the url changes...
     window.addEventListener("popstate", (event) => {
@@ -89,8 +84,10 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       executeUrlChange(event);
     });
 
-
     // return the new dispatch function
     return dispatch;
   };
+
+
+  return middleware;
 }
