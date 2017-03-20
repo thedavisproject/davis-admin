@@ -9,6 +9,7 @@ module.exports = function serverTask(config, env){
 
     return nodemon({
       script: config.server + "/server.js",
+      watch: config.server + "/server.js",
       ext: "js html",
       env: { "NODE_ENV": "development" }
     });

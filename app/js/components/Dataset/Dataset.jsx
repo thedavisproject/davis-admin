@@ -2,23 +2,33 @@ import React from "react";
 
 
 const Dataset = (props) => {
+
+  const { dataset } = props;
+
+
   return (
     <div className="dataset">
-      Dataset {props.id}!
+      {dataset.name}!
 
       <br /><br />
       <pre>
         {JSON.stringify(props, null, 2)}
       </pre>
+
     </div>
   );
 };
 
 
-const { string } = React.PropTypes;
+const { shape, string } = React.PropTypes;
 
 Dataset.propTypes = {
-  id: string
+
+  dataset: shape({
+    id: string.isRequired,
+    name: string.isRequired
+  }).isRequired
+
 };
 
 

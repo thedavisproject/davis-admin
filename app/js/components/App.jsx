@@ -8,7 +8,6 @@ const App = ({route = {}}) => {
 
   return (
     <div className="container">
-      Hello, Admin!
 
       <NavContainer />
 

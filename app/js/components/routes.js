@@ -46,16 +46,12 @@ export const renderPage = (route) => {
 
   const pageObj = pages[route.page];
 
-  const args = R.merge(route.args, {
-    id: route.id
-  });
-
 
   return (pageObj)
     ? (
       React.createElement(
         pageObj.component,
-        args
+        {} // don't pass anything (or should we pass the route.args?)
       )
     )
     : "Page not found!";

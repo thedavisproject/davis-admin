@@ -4,17 +4,17 @@ import { connect } from "react-redux";
 import { navigateTo } from "../redux/routing/routing-actions.js";
 
 import Dataset from "../components/Dataset/Dataset.jsx";
-
+import Promised from "../components/Promised/Promised.jsx";
 
 
 function mapStateToProps(state, ownProps) {
 
-  const route = state.route;
-
-  // TODO get dataset from redux
-
   return {
-    dataset: { id: route.id }
+    dataset: state.dataset.item,
+    isLoading: state.dataset.isLoading,
+    hasData: state.dataset.item !== null,
+    errorLoading: state.dataset.error !== null,
+    errorLoadingMessage: "There was an error loading the dataset!"
   };
 }
 
@@ -27,4 +27,4 @@ function mapStateToDispatch(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapStateToDispatch)(Dataset);
+export default connect(mapStateToProps, mapStateToDispatch)(Promised(Dataset));

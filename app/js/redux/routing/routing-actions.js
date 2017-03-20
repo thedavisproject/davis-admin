@@ -1,4 +1,5 @@
-import { fetchDatasets } from "../dataset/datasets-actions.js";
+import { fetchDatasets } from "../datasets/datasets-actions.js";
+import { fetchDataset } from "../dataset/dataset-actions.js";
 
 export const NAVIGATE_TO = "ROUTING/NAVIGATE_TO";
 export const REDIRECT_TO = "ROUTING/REDIRECT_TO";
@@ -19,7 +20,11 @@ export function navigateTo(page = "", id = "", args = {}){
       }
     });
 
-    if (page === "datasets"){
+
+    if (page === "dataset" && id !== ""){
+      dispatch(fetchDataset(id));
+    }
+    else if (page === "datasets"){
       dispatch(fetchDatasets());
     }
 

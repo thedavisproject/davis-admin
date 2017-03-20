@@ -11,23 +11,38 @@ export function fetchDatasets() {
       payload: {}
     });
 
-    // TODO better error handling, use data.task?
-    // EG. when there is a syntax error in the json
-    // dispatch({
-    //   type: DATASETS_FETCH_ERROR,
-    //   payload: {
-    //     error: response.statusText
-    //   }
-    // });
+
+    // TODO is this the best way to handle errors??
+    function handleNetworkErrors(response){
+      if (response.status > 299){
+        throw new Error(response.statusText);
+      }
+      else {
+        return response;
+      }
+    }
 
     // kick off fetch
-    fetch("fakedata/datasets.json")
+    fetch("/api/datasets")
+      .then(handleNetworkErrors)
       .then(response => response.json())
       .then(json => {
         dispatch({
           type: DATASETS_FETCH_SUCCESS,
           payload: {
             items: json
+          }
+        });
+      })
+      .catch(error => {
+
+        // TODO is this be the best way to handle errors??
+        setTimeout(() => { throw error; }, 0);
+
+        dispatch({
+          type: DATASETS_FETCH_ERROR,
+          payload: {
+            error: error.toString()
           }
         });
       });
