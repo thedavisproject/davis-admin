@@ -1,0 +1,33 @@
+{
+  "routing": {
+    "page": "String",
+    "id": "String",
+    "args": {}
+  },
+  "entities": {
+    "datasets": {
+      "1": {
+        "id": "1",
+        "name": "String",
+        "other": "info"
+      }
+    },
+    "variables": {
+      "2": {
+        "id": "2",
+        "name": "String"
+      }
+    },
+    "datasetVariable": [
+      {
+        "datasetId": 1,
+        "variableId": 1
+      },
+      {
+        "datasetId": 1,
+        "variableId": 2
+      }
+    ]
+  },
+
+}

@@ -1,25 +1,28 @@
-import R from "ramda";
 import { connect } from "react-redux";
 
 import { navigateTo } from "../redux/routing/routing-actions.js";
 
 import VariableList from "../components/Variable/VariableList.jsx";
+import Promised from "../components/Promised/Promised.jsx";
 
-const variables = R.times(R.identity, 20);
 
 function mapStateToProps(state, ownProps) {
   return {
-    variables: variables
+    variables: state.variables.items,
+    errorLoading: (state.variables.error !== null),
+    errorLoadingMessage: "There was an error loading the variables!",
+    hasData: (state.variables.items !== null),
+    isLoading: state.variables.isLoading,
   };
 }
 
 function mapStateToDispatch(dispatch) {
   return {
-    onVariableClick: (id) => {
-      dispatch(navigateTo("variable", id));
+    onVariableClick: (id, args = {}) => {
+      dispatch(navigateTo("variable", id, args));
     }
   };
 }
 
 
-export default connect(mapStateToProps, mapStateToDispatch)(VariableList);
+export default connect(mapStateToProps, mapStateToDispatch)(Promised(VariableList));

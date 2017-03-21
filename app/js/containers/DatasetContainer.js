@@ -1,7 +1,4 @@
-import R from "ramda";
 import { connect } from "react-redux";
-
-import { navigateTo } from "../redux/routing/routing-actions.js";
 
 import Dataset from "../components/Dataset/Dataset.jsx";
 import Promised from "../components/Promised/Promised.jsx";
@@ -20,9 +17,6 @@ function mapStateToProps(state, ownProps) {
 
 function mapStateToDispatch(dispatch) {
   return {
-    onDatasetClick: (id, args) => {
-      dispatch(navigateTo("dataset", id, args));
-    }
   };
 }
 

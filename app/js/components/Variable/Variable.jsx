@@ -1,19 +1,31 @@
 import React from "react";
 
 
-const Variable = ({id}) => {
+const Variable = (props) => {
+
+  const { name } = props.variable;
+
   return (
     <div className="variable">
-      Variable {id}!
+      {name}!
+
+      <br /><br />
+      <pre>
+        {JSON.stringify(props, null, 2)}
+      </pre>
+
     </div>
   );
 };
 
 
-const { string } = React.PropTypes;
+const { shape, string } = React.PropTypes;
 
 Variable.propTypes = {
-  id: string
+  variable: shape({
+    id: string.isRequired,
+    name: string.isRequired
+  }).isRequired
 };
 
 

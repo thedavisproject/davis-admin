@@ -5,11 +5,16 @@ const VariableList = ({variables, onVariableClick}) => {
   return (
     <div className="variable-list">
 
-      {variables.map(i => {
+      {variables.map(variable => {
+
+        const onClick = (e) => {
+          onVariableClick(variable.id);
+        };
+
         return(
-          <div key={i} className="variable-list__variable"
-          onClick={onVariableClick.bind(null, String(i))}>
-            Variable {i}
+          <div key={variable.id} className="variable-list__variable"
+          onClick={onClick}>
+            {variable.name}
           </div>
         );
       })}
@@ -19,10 +24,13 @@ const VariableList = ({variables, onVariableClick}) => {
 };
 
 
-const { array, func } = React.PropTypes;
+const { arrayOf, func, shape, string } = React.PropTypes;
 
 VariableList.propTypes = {
-  variables: array.isRequired,
+  variables: arrayOf(shape({
+    id: string.isRequired,
+    name: string.isRequired
+  })).isRequired,
   onVariableClick: func.isRequired
 };
 

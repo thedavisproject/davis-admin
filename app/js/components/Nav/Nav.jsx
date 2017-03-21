@@ -16,10 +16,6 @@ export const navigationLinks = [
     page: "variables",
     pages: ["variable", "variables"],
     label: "Variables"
-  },
-  {
-    page: "attributes",
-    label: "Attributes"
   }
 ];
 

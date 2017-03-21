@@ -1,5 +1,7 @@
-import { fetchDatasets } from "../datasets/datasets-actions.js";
-import { fetchDataset } from "../dataset/dataset-actions.js";
+import { fetchDatasets }  from "../datasets/datasets-actions.js";
+import { fetchDataset }   from "../dataset/dataset-actions.js";
+import { fetchVariable }  from "../variable/variable-actions.js";
+import { fetchVariables } from "../variables/variables-actions.js";
 
 export const NAVIGATE_TO = "ROUTING/NAVIGATE_TO";
 export const REDIRECT_TO = "ROUTING/REDIRECT_TO";
@@ -26,6 +28,12 @@ export function navigateTo(page = "", id = "", args = {}){
     }
     else if (page === "datasets"){
       dispatch(fetchDatasets());
+    }
+    else if (page === "variable" && id !== ""){
+      dispatch(fetchVariable(id));
+    }
+    else if (page === "variables"){
+      dispatch(fetchVariables());
     }
 
   };

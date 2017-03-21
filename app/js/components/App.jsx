@@ -6,7 +6,7 @@ import Home from "./Home/Home.jsx";
 
 import DatasetContainer      from "../containers/DatasetContainer.js";
 import DatasetListContainer  from "../containers/DatasetListContainer.js";
-import Variable              from "./Variable/Variable.jsx";
+import VariableContainer     from "../containers/VariableContainer.js";
 import VariableListContainer from "../containers/VariableListContainer.js";
 
 import { Router, Route } from "./Router.jsx";
@@ -30,7 +30,7 @@ const App = ({pageId}) => {
 
           <Route match="variables" render={() => <VariableListContainer />} />
 
-          <Route match="variable" render={() => <Variable />} />
+          <Route match="variable" render={() => <VariableContainer />} />
 
         </Router>
 
