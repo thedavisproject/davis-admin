@@ -51,24 +51,12 @@ quench.singleTasks(defaults);
  * development task
  * Default Task (run when you run 'gulp').
  */
-gulp.task("default", function(next) {
-
-  const config = Object.assign({}, defaults, {
-    env: "development",
-    watch: true,
-    browserSync: true
-  });
-
-  quench.build(config, next);
-
-});
-
-gulp.task("server", function(next){
+gulp.task("default", function(next){
   const config = Object.assign({}, defaults, {
     env: "development",
     watch: true,
     browserSync: true,
-    tasks: defaults.tasks.concat("server")
+    tasks: defaults.tasks.concat("server") // run server too
   });
 
   quench.build(config, next);
