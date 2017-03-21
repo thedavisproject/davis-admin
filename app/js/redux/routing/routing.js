@@ -1,7 +1,18 @@
-import { navigateTo, redirectTo } from "./routing-actions.js";
 import R from "ramda";
-import { pages } from "../../components/routes.js";
+import { navigateTo, redirectTo } from "./routing-actions.js";
 
+
+/* pages */
+export const pages = {
+  "": { },
+  "datasets": { },
+  "dataset": { hasId: true },
+  "variables": { },
+  "variable": { hasId: true }
+};
+
+
+/* helper functions */
 const escapeForwardSlash = (v) =>
   (typeof v === "string") ? v.replace("/", "&#47;") : v;
 
@@ -15,6 +26,9 @@ const isBadToken = R.anyPass([
   R.equals(""),
   R.isNil
 ]);
+
+
+
 
 // state > url path
 // fired when a user navigates

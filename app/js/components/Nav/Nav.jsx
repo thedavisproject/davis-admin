@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import { routePropType } from "../routes.js";
 
 
 export const navigationLinks = [
@@ -10,10 +9,12 @@ export const navigationLinks = [
   },
   {
     page: "datasets",
+    pages: ["dataset", "datasets"],
     label: "Datasets"
   },
   {
     page: "variables",
+    pages: ["variable", "variables"],
     label: "Variables"
   },
   {
@@ -23,7 +24,7 @@ export const navigationLinks = [
 ];
 
 const Nav = ({
-  route = {},
+  pageId = {},
   onNavClick = () => {}}
 ) => {
   return (
@@ -32,7 +33,8 @@ const Nav = ({
       {navigationLinks.map(item => {
 
         const itemClasses = classNames("nav__item", {
-          "is-selected": item.page === route.page
+          "is-selected": item.page === pageId
+            || (item.pages && item.pages.includes(pageId))
         });
 
         return (
@@ -48,12 +50,12 @@ const Nav = ({
 };
 
 
-const {  func } = React.PropTypes;
+const { func, string } = React.PropTypes;
 
 
 
 Nav.propTypes = {
-  route: routePropType,
+  pageId: string,
   onNavClick: func
 };
 

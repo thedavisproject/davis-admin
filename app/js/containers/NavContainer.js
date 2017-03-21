@@ -5,7 +5,7 @@ import Nav from "../components/Nav/Nav.jsx";
 
 function mapStateToProps(state, ownProps) {
   return {
-    route: state.route
+    pageId: state.route.page
   };
 }
 

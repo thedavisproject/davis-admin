@@ -4,7 +4,7 @@ import App from "../components/App.jsx";
 
 function mapStateToProps(state, ownProps) {
   return {
-    route: state.route
+    pageId: state.route.page
   };
 }
 

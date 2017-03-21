@@ -1,10 +1,17 @@
 import React from "react";
 
-import { routePropType, renderPage } from "./routes.js";
-
 import NavContainer from "../containers/NavContainer.js";
 
-const App = ({route = {}}) => {
+import Home from "./Home/Home.jsx";
+
+import DatasetContainer      from "../containers/DatasetContainer.js";
+import DatasetListContainer  from "../containers/DatasetListContainer.js";
+import Variable              from "./Variable/Variable.jsx";
+import VariableListContainer from "../containers/VariableListContainer.js";
+
+import { Router, Route } from "./Router.jsx";
+
+const App = ({pageId}) => {
 
   return (
     <div className="container">
@@ -12,17 +19,31 @@ const App = ({route = {}}) => {
       <NavContainer />
 
       <div className="main">
-        { renderPage(route) }
+
+        <Router match={pageId}>
+
+          <Route match="" render={() => <Home />} />
+
+          <Route match="dataset" render={() => <DatasetContainer />} />
+
+          <Route match="datasets" render={() => <DatasetListContainer />} />
+
+          <Route match="variables" render={() => <VariableListContainer />} />
+
+          <Route match="variable" render={() => <Variable />} />
+
+        </Router>
+
       </div>
 
     </div>
   );
 };
 
-
+const { string } = React.PropTypes;
 
 App.propTypes = {
-  route: routePropType
+  pageId: string
 };
 
 export default App;
