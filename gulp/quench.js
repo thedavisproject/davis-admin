@@ -259,7 +259,7 @@ const logError = module.exports.logError = function logError() {
       return arg.toString();
     }).join("");
 
-    console.log(color.red(argString));
+    console.log("[" + color.red("error") + "]", argString);
   }
 
 };
@@ -362,31 +362,38 @@ module.exports.findPackageJson = function findPackageJson(dirname) {
  *                 eg ["react", "react-dom", "classnames"]
  */
 module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFilePath){
+  try {
 
   // list of all imported modules and files from the entryFilePath
   // eg. ["react", "../App.jsx"]
-  const imports = detective(fs.readFileSync(entryFilePath, "utf8"))
-    .map(moduleOrFilePath => {
-      // if this is a relativePath (begins with .), then resolve the path
-      // from the current entryFilePath directory name
-      return (R.test(/^(\.)/, moduleOrFilePath))
-        ? path.resolve(path.dirname(entryFilePath), moduleOrFilePath)
-        : moduleOrFilePath;
-    });
+    const imports = detective(fs.readFileSync(entryFilePath, "utf8"))
+      .map(moduleOrFilePath => {
+        // if this is a relativePath (begins with .), then resolve the path
+        // from the current entryFilePath directory name
+        return (R.test(/^(\.)/, moduleOrFilePath))
+          ? path.resolve(path.dirname(entryFilePath), moduleOrFilePath)
+          : moduleOrFilePath;
+      });
 
-  // list of all the modules in this entryFilePath
-  const modules = R.reject(fileExists, imports);
+    // list of all the modules in this entryFilePath
+    const modules = R.reject(fileExists, imports);
 
-  // list of all the modules in imported files
-  const importedFilesModules = R.compose(
-    R.chain(findAllNpmDependencies), // recurse, and flatten
-    R.filter(fileExists)             // only look in files, not modules
-  )(imports);
+    // list of all the modules in imported files
+    const importedFilesModules = R.compose(
+      R.chain(findAllNpmDependencies), // recurse, and flatten
+      R.filter(fileExists)             // only look in files, not modules
+    )(imports);
 
-  // a set of the modules from this file + the modules from imported paths
-  const allModules = R.uniq(
-    R.concat( modules, importedFilesModules )
-  );
+    // a set of the modules from this file + the modules from imported paths
+    const allModules = R.uniq(
+      R.concat( modules, importedFilesModules )
+    );
 
-  return allModules;
+    return allModules;
+
+  }
+  catch(e) {
+    logError("findAllNpmDependencies failed :(");
+    return [];
+  }
 };
