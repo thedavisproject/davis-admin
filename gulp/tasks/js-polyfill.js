@@ -7,33 +7,36 @@ const debug          = require("gulp-debug");
 const uglify         = require("gulp-uglify");
 const sourcemaps     = require("gulp-sourcemaps");
 const mainBowerFiles = require("main-bower-files");
+const path           = require("path");
 
-module.exports = function bowerTask(config, env) {
+module.exports = function jsPolyfillTask(config, env) {
 
-  // bower config
-  const bower = {
+  // polyfill config
+  const polyfill = {
     root: config.root + "/polyfill",
     filename: "polyfill.js",
     dest: config.dest + "/js",
     uglify: {}
   };
 
+  const bowerJson = path.resolve(polyfill.root + "/bower.json");
+
   // watch bower.json to regenerate bundle
-  quench.registerWatcher("bower", [bower.root + "/bower.json"]);
+  quench.registerWatcher("polyfill", [bowerJson]);
 
-  /* bundle up bower libraries */
+  /* bundle up polyfill libraries */
   // http://engineroom.teamwork.com/hassle-free-third-party-dependencies/
-  gulp.task("bower", function(next) {
+  gulp.task("js-polyfill", function(next) {
 
-    if (!bower || !bower.root) {
-      quench.logYellow("bower", "not configured");
+    if (!polyfill || !polyfill.root || !quench.fileExists(bowerJson)) {
+      quench.logYellow("js-polyfill", "bower not configured");
       next();
       return;
     }
 
     // https://github.com/ck86/main-bower-files
     // mainBowerFiles returns array of "main" files from bower.json
-    const bowerfiles = mainBowerFiles({checkExistence: true, paths: bower.root, debugging: false});
+    const bowerfiles = mainBowerFiles({checkExistence: true, paths: polyfill.root, debugging: false});
 
     if (bowerfiles.length === 0) {
       next();
@@ -50,12 +53,12 @@ module.exports = function bowerTask(config, env) {
       .pipe(sourcemaps.init()) // start sourcemaps
 
       // putting a ; between each file to avoid problems when a library doesn't end in ;
-      .pipe(concat(bower.filename, {newLine: ";"}))
-      .pipe(env.production(uglify(bower.uglify)))
+      .pipe(concat(polyfill.filename, {newLine: ";"}))
+      .pipe(env.production(uglify(polyfill.uglify)))
       .pipe(rename({suffix: "-generated"}))
       .pipe(sourcemaps.write("./")) // end sourcemaps
-      .pipe(gulp.dest(bower.dest))
-      .pipe(debug({title: "bower: "}));
+      .pipe(gulp.dest(polyfill.dest))
+      .pipe(debug({title: "js-polyfill: "}));
 
   });
 

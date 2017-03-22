@@ -1,17 +1,17 @@
 /**
  *    Quench: utilities for gulp builds
  */
-const gulp     = require("gulp"),
-  plumber      = require("gulp-plumber"),
-  notify       = require("gulp-notify"),
-  env          = require("gulp-environments"),
-  fs           = require("fs"),
-  path         = require("path"),
-  runSequence  = require("run-sequence"),
-  color        = require("cli-color"),
-  watch        = require("gulp-watch"),
-  R            = require("ramda"),
-  detective    = require("detective-es6");
+const gulp         = require("gulp");
+const plumber      = require("gulp-plumber");
+const notify       = require("gulp-notify");
+const env          = require("gulp-environments");
+const fs           = require("fs");
+const path         = require("path");
+const runSequence  = require("run-sequence");
+const color        = require("cli-color");
+const watch        = require("gulp-watch");
+const R            = require("ramda");
+const detective    = require("detective-es6");
 
 const environments = ["development", "production", "local"];
 
@@ -39,11 +39,12 @@ const environments = ["development", "production", "local"];
  *     drano
  *     registerWatcher
  *     build
+ *     fileExists
  *     logYellow
  *     logError
  *     singleTasks
  *     findPackageJson
- *     getInstalledNPMPackages
+ *     findAllNpmDependencies
  */
 
 /**
@@ -58,11 +59,24 @@ const environments = ["development", "production", "local"];
  *        root: path.resolve(__dirname, "../../web/Website/assets"),
  *        dest: path.resolve(__dirname, "../../web/Website/assets/build"),
  *        env: "development", // "development", "production", or "local"
- *        tasks: ["js", "css"],
- *        watch: true,
- *        browserSync: true,
- *        vmSync: false
+ *        tasks: ["js", "css"], // see note below
+ *        watch: true
  *    }
+ *
+ *    ** NOTE : Tasks **
+ *    tasks: can be a flat array of tasks, or an array of arrays of tasks (one level deep).
+ *
+ *    - Flat: each task will be run in parallel
+ *      eg. ["js", "css"]
+ *      js and css will start at the same time.
+ *
+ *    - Nested: each task or array of tasks will be run in sequence.
+ *      eg. [["js", "css"], "browser-sync"]
+ *      js and css will start at the same time. when both finish, browser-sync will run
+ *
+ *    - If you want to run ALL your tasks in series, wrap the first or all in an array
+ *      eg. [["js"], "css", "svg-sprite"] << will run in series
+ *      eg. ["js", "css", "svg-sprite"] << will run in parallel
  *
  */
 let config = {};
@@ -99,8 +113,9 @@ module.exports.drano = function drano() {
 
       // gulp notify is freezing jenkins builds, so we're only going to show this message if we're watching
       if (config.watch) {
-        notify.onError({title: "<%= error.plugin %>", message: "<%= error.message %>", sound: "Beep"})(error);
-      } else {
+        notify.onError({ title: "<%= error.plugin %>", message: "<%= error.message %>", sound: "Beep" })(error);
+      }
+      else {
         logError(error.plugin + ": " + error.message);
         process.exit(1);
       }
@@ -136,7 +151,7 @@ const build = module.exports.build = function build(_config, callback) {
 
   config = _config;
 
-  if (!config || !config.root || !config.dest) {
+  if (!config || !config.root || !config.dest || !fileExists(config.root)) {
     logError("config.root and config.dest are required!");
     console.log("config:", JSON.stringify(config, null, 2));
     process.exit();
@@ -175,7 +190,8 @@ const build = module.exports.build = function build(_config, callback) {
     if (config.watch) {
       // gulp notify is freezing jenkins builds, so we're only going to show this message if we're watching
       gulp.src("").pipe(notify("Building for '" + config.env + "' environment"));
-    } else {
+    }
+    else {
       console.log(color.green("Building for '" + config.env + "' environment"));
     }
 
@@ -185,12 +201,18 @@ const build = module.exports.build = function build(_config, callback) {
   const localJs = path.join(__dirname, "local.js");
   config.local = fileExists(localJs) ? require(localJs) : {};
 
-  // loadTasks: given an array of tasks, require them, and pass params
-  config.tasks.forEach(function(name) {
+  // loadTask: given a task, require it, and pass params
+  const loadTask = function(name) {
     // console.log("loading task: ", name);
     const taskFactory = require(getTaskPath(name));
     taskFactory(config, env);
-  });
+  };
+
+  // flatten the task list and load all of them
+  R.compose(
+    R.forEach(loadTask),
+    R.flatten
+  )(config.tasks);
 
   // start watchers if specified
   if (config.watch && config.watchers) {
@@ -208,16 +230,20 @@ const build = module.exports.build = function build(_config, callback) {
     });
   }
 
-  if (config.tasks && config.browserSync) {
-    // browserSync needs special treatment because it needs to be started AFTER the
-    // build directory has been created and filled (for livereload to work)
-    require(getTaskPath("browser-sync"))(config, env);
-    runSequence(config.tasks, "browser-sync", callback);
-  }
-  else if (config.tasks) {
-    // or just run the tasks
-    runSequence(config.tasks, callback);
-  }
+
+  // figure out how to run the tasks
+  const tasksAreNested = R.any(Array.isArray, config.tasks);
+  const taskArg = tasksAreNested
+    // if the tasks are nested, they will run in series,
+    // add the callback to the end
+    ? config.tasks.concat(callback)
+    // if not, nest them so config.tasks runs in parallel,
+    // then the callback afterward
+    : [config.tasks, callback];
+
+  // 3, 2, 1, take off!
+  runSequence.apply(null, taskArg);
+
 };
 
 
@@ -259,7 +285,7 @@ const logError = module.exports.logError = function logError() {
       return arg.toString();
     }).join("");
 
-    console.log("[" + color.red("error") + "]", argString);
+    console.log("[" + color.red("error") + "]", color.red(argString));
   }
 
 };
@@ -289,11 +315,7 @@ module.exports.singleTasks = function singleTasks(config) {
 
     if (tasks.length) {
 
-      const watch = (typeof argv.watch !== "undefined")
-        ? {
-          watch: argv.watch
-        }
-        : {};
+      const watch = (typeof argv.watch !== "undefined") ? { watch: argv.watch } : {};
 
       // load and build those tasks
       build(Object.assign({}, config, watch, {tasks: tasks}));
@@ -307,14 +329,15 @@ module.exports.singleTasks = function singleTasks(config) {
  * @param  {String} filepath : path to the file
  * @return {Boolean} true if the filepath exists and is readable
  */
-function fileExists(filepath) {
+const fileExists = module.exports.fileExists = function fileExists(filepath) {
   try {
     fs.accessSync(filepath, fs.R_OK);
     return true;
-  } catch (e) {
+  }
+  catch(e) {
     return false;
   }
-}
+};
 
 
 /**
@@ -355,8 +378,8 @@ module.exports.findPackageJson = function findPackageJson(dirname) {
 
 
 /**
- * findAllNpmDependencies: given an entry entryFilePath, recurse through the imported
- *   files and find all npm modules that are imported
+ * findAllNpmDependencies: given an entry entryFilePath, recurse through the
+ *   imported files and find all npm modules that are imported
  * @param  {String} entryFilePath: eg. "app/js/index/js"
  * @return {Array} an array of package names (strings).
  *                 eg ["react", "react-dom", "classnames"]
@@ -364,8 +387,8 @@ module.exports.findPackageJson = function findPackageJson(dirname) {
 module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFilePath){
   try {
 
-  // list of all imported modules and files from the entryFilePath
-  // eg. ["react", "../App.jsx"]
+    // list of all imported modules and files from the entryFilePath
+    // eg. ["react", "../App.jsx"]
     const imports = detective(fs.readFileSync(entryFilePath, "utf8"))
       .map(moduleOrFilePath => {
         // if this is a relativePath (begins with .), then resolve the path
@@ -385,9 +408,7 @@ module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFil
     )(imports);
 
     // a set of the modules from this file + the modules from imported paths
-    const allModules = R.uniq(
-      R.concat( modules, importedFilesModules )
-    );
+    const allModules = R.uniq(R.concat( modules, importedFilesModules ));
 
     return allModules;
 

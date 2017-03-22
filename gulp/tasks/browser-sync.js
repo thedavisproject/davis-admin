@@ -3,6 +3,7 @@
  * This is handled in quench.js by passing browserSync: true
  * in the build config to quench.build().
  */
+const R           = require("ramda");
 const gulp        = require("gulp");
 const quench      = require("../quench.js");
 const path        = require("path");
@@ -30,7 +31,7 @@ module.exports = function(config) {
 
 
   // if we're using the server task, proxy the server
-  if (config.tasks.includes("server")){
+  if (R.flatten(config.tasks).includes("server")){
     settings.proxy = "http://localhost:3030"; // /server/server.js
   }
   // set the server root, or proxy if it's set in local.js

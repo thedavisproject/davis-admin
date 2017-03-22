@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const historyApiFallback = require("connect-history-api-fallback");
-
+const quench = require("../gulp/quench.js");
 const app = express();
 
 const root = path.resolve(__dirname, "..", "build");
@@ -72,7 +72,7 @@ app.use(express.static(root));
 
 
 app.listen(3030, function () {
-  console.log("Listening on port 3030...");
+  quench.logYellow("server.js", "Listening on port 3030...");
 });
 
 module.exports = app;

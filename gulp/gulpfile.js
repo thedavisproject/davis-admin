@@ -20,9 +20,15 @@
 **/
 
 // Include gulp and plugins
-const gulp = require("gulp"),
-  quench = require("./quench.js"),
-  path   = require("path");
+const gulp   = require("gulp");
+const quench = require("./quench.js");
+const path   = require("path");
+
+
+// tasks: can run in parallel or in series, see "user supplied keys" in quench.js
+const defaultTasks = [ "js", "js-libraries", "js-polyfill", "css", "svg-sprite", "copy" ];
+
+
 
 const app = path.resolve(__dirname, "../app");
 
@@ -31,10 +37,9 @@ const defaults = {
   root: app,
   server: path.resolve(__dirname, "../server"),
   dest: path.resolve(__dirname, "../build"),
-  tasks: [ "js", "js-libraries", "css", "bower", "svg-sprite", "copy" ],
+  tasks: defaultTasks,
   env: "development", // "development", "production", "local"
   watch: false,
-  browserSync: false,
 
   // config for more than one tasks to share
   taskConfig: {
@@ -55,8 +60,7 @@ gulp.task("default", function(next){
   const config = Object.assign({}, defaults, {
     env: "development",
     watch: true,
-    browserSync: true,
-    tasks: defaults.tasks.concat("server") // run server too
+    tasks: [defaultTasks.concat("server"), "browser-sync"] // run server too
   });
 
   quench.build(config, next);
@@ -69,8 +73,7 @@ gulp.task("prod", function(next) {
 
   const config = Object.assign({}, defaults, {
     env: "production",
-    watch: false,
-    browserSync: false
+    watch: false
   });
 
   quench.build(config, next);
@@ -84,8 +87,7 @@ gulp.task("build", function(next) {
 
   const config = Object.assign({}, defaults, {
     env: "development",
-    watch: false,
-    browserSync: false
+    watch: false
   });
 
   quench.build(config, next);
