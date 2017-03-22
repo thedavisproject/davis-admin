@@ -22,7 +22,7 @@ module.exports = function cssTask(config, env) {
     filename: "index.css",
 
     sass: {
-      outputStyle: env.development() ? "nested" : "compressed"
+      outputStyle: env.development() ? "expanded" : "compressed"
     },
 
     autoprefixer: {
