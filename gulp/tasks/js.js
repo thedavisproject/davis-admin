@@ -62,7 +62,10 @@ function bundleEm(browserifyOptions, externalPackages){
     // https://github.com/substack/node-browserify/issues/1044#issuecomment-72384131
     const b = browserify(browserifyOptions || {}) // pass options
       .add(file.path) // this file
-      .transform(babelify, { presets: ["es2015", "react"] }); // run it through babel, for es6 transpiling
+      .transform(babelify, { // run it through babel, for es6 transpiling
+        presets: ["es2015", "react"],
+        plugins: [ "transform-object-rest-spread" ]
+      });
 
     // externalize common packages
     try {
