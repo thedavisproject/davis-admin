@@ -36,13 +36,13 @@ const Link = (props) => {
 };
 
 
-const { func, node, object, shape, string } = React.PropTypes;
+const { func, node, shape, string } = React.PropTypes;
 
 Link.propTypes = {
+  // route can contain other args too
   route: shape({
-    page: string,
-    id: string,
-    args: object
+    page: string.isRequired,
+    id: string
   }).isRequired,
   children: node,
   className: string,

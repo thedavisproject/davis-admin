@@ -6,12 +6,15 @@ import Promised from "../components/Promised/Promised.jsx";
 
 function mapStateToProps(state, ownProps) {
 
+  const { page, id, ...routeArgs } = state.route;
+
   return {
     dataset: state.dataset.item,
     isLoading: state.dataset.isLoading,
     hasData: state.dataset.item !== null,
     errorLoading: state.dataset.error !== null,
-    errorLoadingMessage: "There was an error loading the dataset!"
+    errorLoadingMessage: "There was an error loading the dataset!",
+    ...routeArgs
   };
 }
 

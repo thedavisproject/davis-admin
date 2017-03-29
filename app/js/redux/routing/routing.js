@@ -2,6 +2,10 @@ import R from "ramda";
 import { navigateTo, redirectTo } from "./routing-actions.js";
 
 
+// use "/" or "/#/" or "/?/" here if you want
+const URL_BASE = "/";
+
+
 
 /* pages */
 export const pages = {
@@ -12,8 +16,6 @@ export const pages = {
   "variable": { hasId: true }
 };
 
-// use "/" or "/#/" or "/?/" here if you want
-const URL_BASE = "/";
 
 
 /* helper functions */
@@ -31,26 +33,38 @@ const isBadToken = R.anyPass([
   R.isNil
 ]);
 
-/**
- * @param  {String} [page=""]  a key in pages defined above
- * @param  {String} [id=""]    optional, only valid for pages with hasId
- * @param  {Object} [args={}}] key:value additional args
- * @return {String}            the pathname of a url
- */
-export function routeToUrl({page = "", id = "", args = {}}){
 
-  const argsArray = R.compose(
-    R.flatten,     // ->  ["sort", "asc", "filter", 22]
-    R.toPairs      // ->  [["sort", "asc"], ["filter", 22]]
-  )(args);       // eg. { sort: "asc", filter: 22 }
+/**
+ * page: a key in pages defined above, defaults to homepage
+ * id: optional, will omit /id/ for pages that "hasId"
+ * @param  {Object} route key/value of args + special keys page and id
+ * @return {String} the pathname of a url
+ */
+export function routeToUrl(route = {}){
+
+  const { page = "", id = "", ...otherArgs } = route;
+
+  // if the id is defined, either add /id/2 or just /2
+  const maybeAddId = R.when(
+    () => (id !== ""),
+    R.prepend((pages[page].hasId) ? id : ["id", id])
+  );
 
   const urlParts = R.compose(
     R.map(escapeForwardSlash),
     R.reject(isBadToken),
-    R.concat(R.__, argsArray), // << put at end
-    R.append(id),
-    R.append(page)
-  )([]);
+    R.prepend(page),     // make sure the page is first
+    R.flatten,           // ->  ["sort", "asc", "filter", 22]
+    maybeAddId,          // maybe add the id to the beginning
+    R.toPairs            // ->  [["sort", "asc"], ["filter", 22]]
+  )(otherArgs);          // eg. { sort: "asc", filter: 22 }
+
+  // const urlParts = R.compose(
+  //   R.map(escapeForwardSlash),
+  //   R.reject(isBadToken),
+  //   R.concat(R.__, argsArray), // << put argsArray at end
+  //   R.append(page)
+  // )([]);
 
   return URL_BASE + urlParts.join("/");
 }
@@ -58,30 +72,10 @@ export function routeToUrl({page = "", id = "", args = {}}){
 
 
 /**
- * state > url path
- * fired when a user navigates
- * @param  {Object} state : redux state
- * @return {String} url to pushState
+ * @param  {Object} location window.location object
+ * @return {Object} route object, should always have page key, sometimes id
  */
-export function mapStateToPath(state) {
-
-  if (!state || !state.route) { return URL_BASE; }
-
-  return routeToUrl(state.route);
-}
-
-
-
-
-/**
- * url path > state
- * fired on page load or when the url changes by browser back/forward buttons
- * @param  {Object} location : window.location object
- * @param  {Object} store    : redux store
- * @param  {Object} [event]  : popstate event
- * @return {Object} return a redux action
- */
-export function handleUrlChange(location, store, event) {
+export function locationToRoute(location) {
 
   // eg. /dataset/1/filter/22/sort/asc
   const path = location.href.replace(location.origin, "");
@@ -93,11 +87,6 @@ export function handleUrlChange(location, store, event) {
     R.reject(isBadToken),
     R.split("/")
   )(path);
-
-  // if this page was not found, redirect to the homepage using replaceState
-  if (!pages[page]) {
-    return redirectTo({page: ""});
-  }
 
 
   // some craziness to figure out where the "pairs" start
@@ -124,5 +113,49 @@ export function handleUrlChange(location, store, event) {
   )(argsArray);
 
 
-  return navigateTo({page, id, args});
+  const route = { page, id, ...args };
+
+  // return the route, but don't include the id if it's empty
+  return (id === "")
+    ? R.omit("id", route)
+    : route;
+}
+
+
+/**
+ * state > url path
+ * fired when a user navigates
+ * @param  {Object} state : redux state
+ * @return {String} url to pushState
+ */
+export function mapStateToPath(state) {
+
+  if (!state || !state.route) { return URL_BASE; }
+
+  return routeToUrl(state.route);
+}
+
+
+/**
+ * url location > state
+ * fired on page load or when the url changes by browser back/forward buttons
+ * NOT when a user navigates with navigateTo or pushState
+ * @param  {Object} location : window.location object
+ * @param  {Object} store    : redux store
+ * @param  {Object} [event]  : popstate event
+ * @return {Object} a redux action
+ */
+export function handleUrlChange(location, store, event) {
+
+  const route = locationToRoute(location);
+
+  // if this page was not found, redirect to the homepage using replaceState
+  if (!pages[route.page]) {
+    return redirectTo({page: ""});
+  }
+  else {
+    // otherwise
+    return navigateTo(route);
+  }
+
 }

@@ -6,12 +6,15 @@ import Promised from "../components/Promised/Promised.jsx";
 
 function mapStateToProps(state, ownProps) {
 
+  const { page, id, ...routeArgs } = state.route;
+
   return {
     variable: state.variable.item,
     isLoading: state.variable.isLoading,
     hasData: state.variable.item !== null,
     errorLoading: state.variable.error !== null,
-    errorLoadingMessage: "There was an error loading the variable!"
+    errorLoadingMessage: "There was an error loading the variable!",
+    ...routeArgs
   };
 }
 

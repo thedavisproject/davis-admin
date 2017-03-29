@@ -2,9 +2,8 @@ import createLookupReducer from "../createLookupReducer.js";
 import { NAVIGATE_TO, REDIRECT_TO } from "./routing-actions.js";
 
 const initialState = {
-  page: "", // eg "dataset"
-  id: "", // eg "1"
-  args: {}
+  page: "" // eg "dataset"
+  // ... other arguments, including id here
 };
 
 // a lookup of all the actions
@@ -21,6 +20,5 @@ export default createLookupReducer(lookup, initialState);
  */
 
 function navigateTo(state, action){
-  const { page = "", id = "", args = {} } = action.payload;
-  return { page, id, args };
+  return action.payload;
 }
