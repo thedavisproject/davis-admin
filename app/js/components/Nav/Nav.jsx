@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-
+import Link from "../Link/Link.jsx";
 
 export const navigationLinks = [
   {
@@ -20,9 +20,8 @@ export const navigationLinks = [
 ];
 
 const Nav = ({
-  pageId = {},
-  onNavClick = () => {}}
-) => {
+  pageId = {}
+}) => {
   return (
     <nav className="nav">
 
@@ -34,10 +33,9 @@ const Nav = ({
         });
 
         return (
-          <div className={itemClasses} key={item.page}
-          onClick={() => onNavClick(item.page)}>
+          <Link route={{page: item.page}} className={itemClasses} key={item.page}>
             {item.label}
-          </div>
+          </Link>
         );
       })}
 
@@ -51,8 +49,7 @@ const { func, string } = React.PropTypes;
 
 
 Nav.propTypes = {
-  pageId: string,
-  onNavClick: func
+  pageId: string
 };
 
 

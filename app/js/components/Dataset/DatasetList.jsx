@@ -1,7 +1,7 @@
 import React from "react";
+import Link from "../Link/Link.jsx";
 
-
-const DatasetList = ({datasets, onDatasetClick}) => {
+const DatasetList = ({datasets}) => {
 
 
   return (
@@ -9,15 +9,14 @@ const DatasetList = ({datasets, onDatasetClick}) => {
 
       {datasets.map(dataset => {
 
-        const onClick = (e) => {
-          onDatasetClick(dataset.id);
-        };
 
         return(
-          <div key={dataset.id} className="dataset-list__dataset"
-          onClick={onClick}>
-            {dataset.name}
-          </div>
+          <Link key={dataset.id}
+            route={{page: "dataset", id: dataset.id}}
+            className="dataset-list__dataset"
+          >
+              {dataset.name}
+          </Link>
         );
       })}
 
@@ -26,14 +25,13 @@ const DatasetList = ({datasets, onDatasetClick}) => {
 };
 
 
-const { arrayOf, func, shape, string } = React.PropTypes;
+const { arrayOf, shape, string } = React.PropTypes;
 
 DatasetList.propTypes = {
   datasets: arrayOf(shape({
     id: string.isRequired,
     name: string.isRequired
-  })).isRequired,
-  onDatasetClick: func.isRequired
+  })).isRequired
 };
 
 

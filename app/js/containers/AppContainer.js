@@ -8,9 +8,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapStateToDispatch(dispatch) {
+function mapDispatchToProps(dispatch) {
   return {};
 }
 
 
-export default connect(mapStateToProps, mapStateToDispatch)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App);

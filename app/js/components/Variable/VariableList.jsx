@@ -1,21 +1,18 @@
 import React from "react";
+import Link from "../Link/Link.jsx";
 
-
-const VariableList = ({variables, onVariableClick}) => {
+const VariableList = ({variables}) => {
   return (
     <div className="variable-list">
 
       {variables.map(variable => {
-
-        const onClick = (e) => {
-          onVariableClick(variable.id);
-        };
-
         return(
-          <div key={variable.id} className="variable-list__variable"
-          onClick={onClick}>
+          <Link route={{page: "variable", id: variable.id}}
+            key={variable.id}
+            className="variable-list__variable"
+          >
             {variable.name}
-          </div>
+          </Link>
         );
       })}
 
@@ -24,14 +21,13 @@ const VariableList = ({variables, onVariableClick}) => {
 };
 
 
-const { arrayOf, func, shape, string } = React.PropTypes;
+const { arrayOf, shape, string } = React.PropTypes;
 
 VariableList.propTypes = {
   variables: arrayOf(shape({
     id: string.isRequired,
     name: string.isRequired
-  })).isRequired,
-  onVariableClick: func.isRequired
+  })).isRequired
 };
 
 

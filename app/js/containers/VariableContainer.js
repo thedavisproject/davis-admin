@@ -15,10 +15,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapStateToDispatch(dispatch) {
-  return {
-  };
+function mapDispatchToProps(dispatch) {
+  return {};
 }
 
 
-export default connect(mapStateToProps, mapStateToDispatch)(Promised(Variable));
+export default connect(mapStateToProps, mapDispatchToProps)(Promised(Variable));

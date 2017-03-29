@@ -2,6 +2,7 @@ import R from "ramda";
 import { navigateTo, redirectTo } from "./routing-actions.js";
 
 
+
 /* pages */
 export const pages = {
   "": { },
@@ -10,6 +11,9 @@ export const pages = {
   "variables": { },
   "variable": { hasId: true }
 };
+
+// use "/" or "/#/" or "/?/" here if you want
+const URL_BASE = "/";
 
 
 /* helper functions */
@@ -27,19 +31,13 @@ const isBadToken = R.anyPass([
   R.isNil
 ]);
 
-
-
-
-// state > url path
-// fired when a user navigates
-export function mapStateToPath(state) {
-
-  // use "/" or "/#/" or "/?/" here if you want
-  const base = "/";
-
-  if (!state || !state.route) { return base; }
-
-  const { page, id, args } = state.route;
+/**
+ * @param  {String} [page=""]  a key in pages defined above
+ * @param  {String} [id=""]    optional, only valid for pages with hasId
+ * @param  {Object} [args={}}] key:value additional args
+ * @return {String}            the pathname of a url
+ */
+export function routeToUrl({page = "", id = "", args = {}}){
 
   const argsArray = R.compose(
     R.flatten,     // ->  ["sort", "asc", "filter", 22]
@@ -54,12 +52,35 @@ export function mapStateToPath(state) {
     R.append(page)
   )([]);
 
-  return base + urlParts.join("/");
+  return URL_BASE + urlParts.join("/");
 }
 
 
-// url path > state
-// fired on page load or when the url changes by browser back/forward buttons
+
+/**
+ * state > url path
+ * fired when a user navigates
+ * @param  {Object} state : redux state
+ * @return {String} url to pushState
+ */
+export function mapStateToPath(state) {
+
+  if (!state || !state.route) { return URL_BASE; }
+
+  return routeToUrl(state.route);
+}
+
+
+
+
+/**
+ * url path > state
+ * fired on page load or when the url changes by browser back/forward buttons
+ * @param  {Object} location : window.location object
+ * @param  {Object} store    : redux store
+ * @param  {Object} [event]  : popstate event
+ * @return {Object} return a redux action
+ */
 export function handleUrlChange(location, store, event) {
 
   // eg. /dataset/1/filter/22/sort/asc
@@ -75,7 +96,7 @@ export function handleUrlChange(location, store, event) {
 
   // if this page was not found, redirect to the homepage using replaceState
   if (!pages[page]) {
-    return redirectTo("");
+    return redirectTo({page: ""});
   }
 
 
@@ -103,5 +124,5 @@ export function handleUrlChange(location, store, event) {
   )(argsArray);
 
 
-  return navigateTo(page, id, args);
+  return navigateTo({page, id, args});
 }

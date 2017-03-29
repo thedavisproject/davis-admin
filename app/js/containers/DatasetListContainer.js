@@ -1,7 +1,5 @@
 import { connect } from "react-redux";
 
-import { navigateTo } from "../redux/routing/routing-actions.js";
-
 import DatasetList from "../components/Dataset/DatasetList.jsx";
 import Promised from "../components/Promised/Promised.jsx";
 
@@ -17,14 +15,10 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapStateToDispatch(dispatch) {
-  return {
-    onDatasetClick: (id, args = {}) => {
-      dispatch(navigateTo("dataset", id, args));
-    }
-  };
+function mapDispatchToProps(dispatch) {
+  return {};
 }
 
 
 
-export default connect(mapStateToProps, mapStateToDispatch)(Promised(DatasetList));
+export default connect(mapStateToProps, mapDispatchToProps)(Promised(DatasetList));
