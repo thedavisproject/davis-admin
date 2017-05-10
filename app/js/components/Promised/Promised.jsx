@@ -1,7 +1,7 @@
 import React from "react";
 import R from "ramda";
 
-const { bool, string } = React.PropTypes;
+import { bool, string } from "prop-types";
 
 /**
  * A Higher order component that adds loading and loading errors to a component
@@ -65,7 +65,5 @@ const Promised = (Component) => {
   return PromisedComponent;
 
 };
-
-
 
 export default Promised;

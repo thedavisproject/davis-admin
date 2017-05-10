@@ -8,14 +8,12 @@ const initialState = {
   items: []
 };
 
-// a lookup of all the actions for the reducer to use
-const lookup = {
+
+export default createLookupReducer({
   [VARIABLES_FETCH]: fetchVariabless,
   [VARIABLES_FETCH_SUCCESS]: fetchVariablessSuccess,
   [VARIABLES_FETCH_ERROR]: fetchVariablessError
-};
-
-export default createLookupReducer(lookup, initialState);
+}, initialState);
 
 
 

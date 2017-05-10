@@ -1,7 +1,16 @@
 import React from "react";
 import Link from "../Link/Link.jsx";
 
-const DatasetList = ({datasets}) => {
+import { arrayOf, shape, string } from "prop-types";
+
+const propTypes = {
+  datasets: arrayOf(shape({
+    id: string.isRequired,
+    name: string.isRequired
+  })).isRequired
+};
+
+const DatasetList = ({ datasets }) => {
 
 
   return (
@@ -12,7 +21,7 @@ const DatasetList = ({datasets}) => {
 
         return(
           <Link key={dataset.id}
-            route={{page: "dataset", id: dataset.id}}
+            route={{ page: "dataset", id: dataset.id }}
             className="dataset-list__dataset"
           >
               {dataset.name}
@@ -24,15 +33,6 @@ const DatasetList = ({datasets}) => {
   );
 };
 
-
-const { arrayOf, shape, string } = React.PropTypes;
-
-DatasetList.propTypes = {
-  datasets: arrayOf(shape({
-    id: string.isRequired,
-    name: string.isRequired
-  })).isRequired
-};
-
+DatasetList.propTypes = propTypes;
 
 export default DatasetList;

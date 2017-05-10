@@ -1,17 +1,20 @@
 import React from "react";
 
-import NavContainer from "../containers/NavContainer.js";
-
 import Home from "./Home/Home.jsx";
-
+import { Router, Route } from "./Router.jsx";
+import NavContainer          from "../containers/NavContainer.js";
 import DatasetContainer      from "../containers/DatasetContainer.js";
 import DatasetListContainer  from "../containers/DatasetListContainer.js";
 import VariableContainer     from "../containers/VariableContainer.js";
 import VariableListContainer from "../containers/VariableListContainer.js";
 
-import { Router, Route } from "./Router.jsx";
+import { string } from "prop-types";
 
-const App = ({pageId}) => {
+const propTypes = {
+  pageId: string
+};
+
+const App = ({ pageId }) => {
 
   return (
     <div className="container">
@@ -40,10 +43,6 @@ const App = ({pageId}) => {
   );
 };
 
-const { string } = React.PropTypes;
-
-App.propTypes = {
-  pageId: string
-};
+App.propTypes = propTypes;
 
 export default App;

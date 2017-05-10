@@ -6,13 +6,11 @@ const initialState = {
   // ... other arguments, including id here
 };
 
-// a lookup of all the actions
-const lookup = {
+
+export default createLookupReducer({
   [NAVIGATE_TO]: navigateTo,
   [REDIRECT_TO]: navigateTo
-};
-
-export default createLookupReducer(lookup, initialState);
+}, initialState);
 
 
 /**

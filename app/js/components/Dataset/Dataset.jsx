@@ -1,5 +1,13 @@
 import React from "react";
 
+import { shape, string } from "prop-types";
+
+const propTypes = {
+  dataset: shape({
+    id: string.isRequired,
+    name: string.isRequired
+  }).isRequired
+};
 
 const Dataset = (props) => {
 
@@ -19,17 +27,6 @@ const Dataset = (props) => {
   );
 };
 
-
-const { shape, string } = React.PropTypes;
-
-Dataset.propTypes = {
-
-  dataset: shape({
-    id: string.isRequired,
-    name: string.isRequired
-  }).isRequired
-
-};
-
+Dataset.propTypes = propTypes;
 
 export default Dataset;

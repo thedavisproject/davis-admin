@@ -1,3 +1,4 @@
+import R from "ramda";
 import { connect } from "react-redux";
 
 import Variable from "../components/Variable/Variable.jsx";
@@ -6,7 +7,7 @@ import Promised from "../components/Promised/Promised.jsx";
 
 function mapStateToProps(state, ownProps) {
 
-  const { page, id, ...routeArgs } = state.route;
+  const routeArgs = R.omit(["page", "id"], state.route);
 
   return {
     variable: state.variable.item,

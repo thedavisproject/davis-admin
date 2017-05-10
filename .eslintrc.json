@@ -106,6 +106,7 @@
         "vars": "all",
         "args": "none"
       }
-    ]
+    ],
+    "object-curly-spacing": ["warn", "always"]
   }
 }

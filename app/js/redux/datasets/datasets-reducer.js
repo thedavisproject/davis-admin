@@ -8,14 +8,12 @@ const initialState = {
   items: []
 };
 
-// a lookup of all the actions for the reducer to use
-const lookup = {
+
+export default createLookupReducer({
   [DATASETS_FETCH]: fetchDatasets,
   [DATASETS_FETCH_SUCCESS]: fetchDatasetsSuccess,
   [DATASETS_FETCH_ERROR]: fetchDatasetsError
-};
-
-export default createLookupReducer(lookup, initialState);
+}, initialState);
 
 
 

@@ -1,5 +1,13 @@
 import React from "react";
 
+import { shape, string } from "prop-types";
+
+const propTypes = {
+  variable: shape({
+    id: string.isRequired,
+    name: string.isRequired
+  }).isRequired
+};
 
 const Variable = (props) => {
 
@@ -18,15 +26,6 @@ const Variable = (props) => {
   );
 };
 
-
-const { shape, string } = React.PropTypes;
-
-Variable.propTypes = {
-  variable: shape({
-    id: string.isRequired,
-    name: string.isRequired
-  }).isRequired
-};
-
+Variable.propTypes = propTypes;
 
 export default Variable;

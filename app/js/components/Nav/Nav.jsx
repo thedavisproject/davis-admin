@@ -19,9 +19,13 @@ export const navigationLinks = [
   }
 ];
 
-const Nav = ({
-  pageId = {}
-}) => {
+import {  string } from "prop-types";
+
+const propTypes = {
+  pageId: string
+};
+
+const Nav = ({ pageId = {} }) => {
   return (
     <nav className="nav">
 
@@ -33,7 +37,7 @@ const Nav = ({
         });
 
         return (
-          <Link route={{page: item.page}} className={itemClasses} key={item.page}>
+          <Link route={{ page: item.page }} className={itemClasses} key={item.page}>
             {item.label}
           </Link>
         );
@@ -43,14 +47,6 @@ const Nav = ({
   );
 };
 
-
-const { func, string } = React.PropTypes;
-
-
-
-Nav.propTypes = {
-  pageId: string
-};
-
+Nav.propTypes = propTypes;
 
 export default Nav;

@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * A very simple router. Usage:
  *
@@ -9,7 +7,7 @@ import React from "react";
  * </Router>
  */
 
-const { arrayOf, func, string } = React.PropTypes;
+import { arrayOf, func, string } from "prop-types";
 
 // an element to be used with Router
 export const Route = () => {};
@@ -22,7 +20,7 @@ Route.propTypes = {
 // emulating https://reacttraining.com/react-router/web/api/Switch
 // look at all child <Route>'s and find the first that matches
 // the Router's match
-export const Router = ({match, children}) => {
+export const Router = ({ match, children }) => {
 
   const firstMatched = children.find(element => {
     return (element.props.match === match);

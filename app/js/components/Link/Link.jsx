@@ -5,6 +5,19 @@ import classNames from "classnames";
 import { routeToUrl } from "../../redux/routing/routing.js";
 import { navigateTo } from "../../redux/routing/routing-actions.js";
 
+import { func, node, shape, string } from "prop-types";
+
+const propTypes = {
+  // route can contain other args too
+  route: shape({
+    page: string.isRequired,
+    id: string
+  }).isRequired,
+  children: node,
+  className: string,
+  onClick: func
+};
+
 const Link = (props) => {
 
   const { route, children, className, onClick, ...otherProps } = props;
@@ -35,19 +48,7 @@ const Link = (props) => {
   );
 };
 
-
-const { func, node, shape, string } = React.PropTypes;
-
-Link.propTypes = {
-  // route can contain other args too
-  route: shape({
-    page: string.isRequired,
-    id: string
-  }).isRequired,
-  children: node,
-  className: string,
-  onClick: func
-};
+Link.propTypes = propTypes;
 
 
 /** connect to redux so we can fire navigateTo **/

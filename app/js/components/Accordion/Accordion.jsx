@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-const { node } = React.PropTypes;
+import { node } from "prop-types";
 
 // empty components, so the user can use <Title>
 export const Title = () => {};

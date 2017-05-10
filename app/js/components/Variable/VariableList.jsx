@@ -1,13 +1,22 @@
 import React from "react";
 import Link from "../Link/Link.jsx";
 
-const VariableList = ({variables}) => {
+import { arrayOf, shape, string } from "prop-types";
+
+const propTypes = {
+  variables: arrayOf(shape({
+    id: string.isRequired,
+    name: string.isRequired
+  })).isRequired
+};
+
+const VariableList = ({ variables }) => {
   return (
     <div className="variable-list">
 
       {variables.map(variable => {
         return(
-          <Link route={{page: "variable", id: variable.id}}
+          <Link route={{ page: "variable", id: variable.id }}
             key={variable.id}
             className="variable-list__variable"
           >
@@ -20,15 +29,6 @@ const VariableList = ({variables}) => {
   );
 };
 
-
-const { arrayOf, shape, string } = React.PropTypes;
-
-VariableList.propTypes = {
-  variables: arrayOf(shape({
-    id: string.isRequired,
-    name: string.isRequired
-  })).isRequired
-};
-
+VariableList.propTypes = propTypes;
 
 export default VariableList;
