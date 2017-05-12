@@ -6,10 +6,10 @@ import Promised from "../components/Promised/Promised.jsx";
 
 function mapStateToProps(state, ownProps) {
   return {
-    variables: state.variables.items,
+    variables: state.variables.data,
     errorLoading: (state.variables.error !== null),
     errorLoadingMessage: "There was an error loading the variables!",
-    hasData: (state.variables.items !== null),
+    hasData: (state.variables.data !== null),
     isLoading: state.variables.isLoading,
   };
 }

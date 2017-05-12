@@ -7,10 +7,10 @@ import Promised from "../components/Promised/Promised.jsx";
 function mapStateToProps(state, ownProps) {
 
   return {
-    datasets: state.datasets.items,
+    datasets: state.datasets.data,
     errorLoading: (state.datasets.error !== null),
     errorLoadingMessage: "There was an error loading the datasets!",
-    hasData: (state.datasets.items !== null),
+    hasData: (state.datasets.data !== null),
     isLoading: state.datasets.isLoading,
   };
 }

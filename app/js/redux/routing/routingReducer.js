@@ -1,5 +1,5 @@
 import createLookupReducer from "../createLookupReducer.js";
-import { NAVIGATE_TO, REDIRECT_TO } from "./routing-actions.js";
+import { NAVIGATE_TO, REDIRECT_TO } from "./routingActions.js";
 
 const initialState = {
   page: "" // eg "dataset"

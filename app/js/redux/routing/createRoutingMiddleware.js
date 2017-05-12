@@ -56,7 +56,7 @@ export default function createRoutingMiddleware({mapStateToPath, handleUrlChange
       // TODO:  this only compares the part after the origin, what if mapStateToPath returns a full url
       // then it will pushState even if the urls are the same
 
-      // see routing-actions.js meta is a special key for things related to middleware
+      // see routingActions.js meta is a special key for things related to middleware
       // http://redux.js.org/docs/advanced/Middleware.html#seven-examples
       if (action.meta && action.meta.replaceState){
         history.replaceState(null, null, url);

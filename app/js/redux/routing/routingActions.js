@@ -1,7 +1,7 @@
-import { fetchDatasets }  from "../datasets/datasets-actions.js";
-import { fetchDataset }   from "../dataset/dataset-actions.js";
-import { fetchVariable }  from "../variable/variable-actions.js";
-import { fetchVariables } from "../variables/variables-actions.js";
+import { fetchDatasets }  from "../datasets/datasetsActions.js";
+import { fetchDataset }   from "../dataset/datasetActions.js";
+import { fetchVariable }  from "../variable/variableActions.js";
+import { fetchVariables } from "../variables/variablesActions.js";
 
 export const NAVIGATE_TO = "ROUTING/NAVIGATE_TO";
 export const REDIRECT_TO = "ROUTING/REDIRECT_TO";

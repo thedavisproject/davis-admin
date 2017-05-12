@@ -1,7 +1,7 @@
 /* global describe, it */
 import { expect } from "chai";
 import { locationToRoute, routeToUrl, handleUrlChange } from "./routing.js";
-import { redirectTo } from "./routing-actions.js";
+import { redirectTo } from "./routingActions.js";
 import url from "url";
 
 

@@ -1,8 +1,8 @@
-import datasetReducer   from "./dataset/dataset-reducer.js";
-import datasetsReducer  from "./datasets/datasets-reducer.js";
-import routingReducer   from "./routing/routing-reducer.js";
-import variableReducer  from "./variable/variable-reducer.js";
-import variablesReducer from "./variables/variables-reducer.js";
+import datasetReducer   from "./dataset/datasetReducer.js";
+import datasetsReducer  from "./datasets/datasetsReducer.js";
+import routingReducer   from "./routing/routingReducer.js";
+import variableReducer  from "./variable/variableReducer.js";
+import variablesReducer from "./variables/variablesReducer.js";
 
 const defaultState = {};
 

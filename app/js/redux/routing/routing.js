@@ -1,5 +1,5 @@
 import R from "ramda";
-import { navigateTo, redirectTo } from "./routing-actions.js";
+import { navigateTo, redirectTo } from "./routingActions.js";
 
 
 // use "/" or "/#/" or "/?/" here if you want

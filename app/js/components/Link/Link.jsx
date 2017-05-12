@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import classNames from "classnames";
 
 import { routeToUrl } from "../../redux/routing/routing.js";
-import { navigateTo } from "../../redux/routing/routing-actions.js";
+import { navigateTo } from "../../redux/routing/routingActions.js";
 
 import { func, node, shape, string } from "prop-types";
 
