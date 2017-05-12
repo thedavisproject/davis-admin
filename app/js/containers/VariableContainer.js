@@ -10,11 +10,11 @@ function mapStateToProps(state, ownProps) {
   const routeArgs = R.omit(["page", "id"], state.route);
 
   return {
-    variable: state.variable.data,
-    isLoading: state.variable.isLoading,
-    hasData: state.variable.data !== null,
-    errorLoading: state.variable.error !== null,
+    errorLoading: !R.isNil(state.variable.error),
     errorLoadingMessage: "There was an error loading the variable!",
+    hasData: !R.isNil(state.variable.data),
+    isLoading: state.variable.isLoading,
+    variable: state.variable.data,
     ...routeArgs
   };
 }

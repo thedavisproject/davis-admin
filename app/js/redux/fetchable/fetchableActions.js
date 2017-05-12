@@ -1,5 +1,3 @@
-
-
 /**
  * Factory function to create a redux action to fetch a url.
  * example usage:
@@ -15,12 +13,14 @@
  */
 export const createFetchUrlAction = (actionKey) => (url) => {
 
+  const actions = getActions(actionKey);
+
 
   return (dispatch, getState) => {
 
     // let the store know we're fetching
     dispatch({
-      type: `${actionKey}/FETCH_REQUEST`,
+      type: actions.request,
       payload: { url }
     });
 
@@ -42,7 +42,7 @@ export const createFetchUrlAction = (actionKey) => (url) => {
       .then(
         json => {
           dispatch({
-            type: `${actionKey}/FETCH_SUCCESS`,
+            type: actions.success,
             payload: {
               json: json
             }
@@ -53,7 +53,7 @@ export const createFetchUrlAction = (actionKey) => (url) => {
           setTimeout(() => { throw error; }, 0);
 
           dispatch({
-            type: `${actionKey}/FETCH_ERROR`,
+            type: actions.error,
             payload: {
               error: error.toString()
             }
@@ -62,3 +62,12 @@ export const createFetchUrlAction = (actionKey) => (url) => {
       );
   };
 };
+
+
+export function getActions(actionKey) {
+  return {
+    request: `${actionKey}/FETCH_REQUEST`,
+    success: `${actionKey}/FETCH_SUCCESS`,
+    error: `${actionKey}/FETCH_ERROR`
+  };
+}

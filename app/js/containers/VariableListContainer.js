@@ -1,3 +1,4 @@
+import R from "ramda";
 import { connect } from "react-redux";
 
 import VariableList from "../components/Variable/VariableList.jsx";
@@ -6,11 +7,11 @@ import Promised from "../components/Promised/Promised.jsx";
 
 function mapStateToProps(state, ownProps) {
   return {
-    variables: state.variables.data,
-    errorLoading: (state.variables.error !== null),
+    errorLoading: !R.isNil(state.variables.error),
     errorLoadingMessage: "There was an error loading the variables!",
-    hasData: (state.variables.data !== null),
+    hasData: !R.isNil(state.variables.data),
     isLoading: state.variables.isLoading,
+    variables: state.variables.data,
   };
 }
 

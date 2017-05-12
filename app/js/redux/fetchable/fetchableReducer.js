@@ -1,9 +1,9 @@
-import createLookupReducer from "../createLookupReducer.js";
+import { getActions } from "./fetchableActions.js";
 
 const initialState = {
-  error: undefined,
+  error: null,
   isLoading: false,
-  data: undefined
+  data: null
 };
 
 
@@ -13,7 +13,7 @@ const initialState = {
  * @param  {[type]} reducer   [description]
  * @return {[type]}           [description]
  */
-const fetchable = (actionKey, reducer) => {
+const fetchable = ({ actionKey, reducer, onSuccess = (json) => json }) => {
 
   /**
    * Actions
@@ -33,7 +33,7 @@ const fetchable = (actionKey, reducer) => {
       ...state,
       error: null,
       isLoading: false,
-      data: json
+      data: onSuccess(json)
     };
   }
 
@@ -48,13 +48,14 @@ const fetchable = (actionKey, reducer) => {
   }
 
 
+  const actions = getActions(actionKey);
 
   return function(state = initialState, action = {}){
 
     const lookup = {
-      [`${actionKey}/FETCH_REQUEST`]: fetchRequest,
-      [`${actionKey}/FETCH_SUCCESS`]: fetchSuccess,
-      [`${actionKey}/FETCH_ERROR`]: fetchError
+      [actions.request]: fetchRequest,
+      [actions.success]: fetchSuccess,
+      [actions.error]: fetchError
     };
 
     const fetchHandler = lookup[action.type];

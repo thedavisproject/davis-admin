@@ -1,3 +1,4 @@
+import R from "ramda";
 import { connect } from "react-redux";
 
 import DatasetList from "../components/Dataset/DatasetList.jsx";
@@ -8,9 +9,9 @@ function mapStateToProps(state, ownProps) {
 
   return {
     datasets: state.datasets.data,
-    errorLoading: (state.datasets.error !== null),
+    errorLoading: !R.isNil(state.datasets.error),
     errorLoadingMessage: "There was an error loading the datasets!",
-    hasData: (state.datasets.data !== null),
+    hasData: !R.isNil(state.datasets.data),
     isLoading: state.datasets.isLoading,
   };
 }

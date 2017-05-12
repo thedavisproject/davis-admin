@@ -13,10 +13,10 @@ function mapStateToProps(state, ownProps) {
 
   return {
     dataset: state.dataset.data,
-    isLoading: state.dataset.isLoading,
-    hasData: state.dataset.data !== null,
-    errorLoading: state.dataset.error !== null,
+    errorLoading: !R.isNil(state.dataset.error),
     errorLoadingMessage: "There was an error loading the dataset!",
+    hasData: !R.isNil(state.dataset.data),
+    isLoading: state.dataset.isLoading,
     ...routeArgs
   };
 }

@@ -10,7 +10,10 @@ const datasetReducer = createLookupReducer({
 }, initialState);
 
 
-export default fetchable(DATASET, datasetReducer);
+export default fetchable({
+  actionKey: DATASET,
+  reducer: datasetReducer
+});
 
 
 
