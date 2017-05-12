@@ -1,5 +1,6 @@
 /**
  *    Quench: utilities for gulp builds
+ *    v3.0.0
  */
 const gulp         = require("gulp");
 const plumber      = require("gulp-plumber");
@@ -21,14 +22,14 @@ const environments = ["development", "production", "local"];
  *
  * The function should register watcher via quench.registerWatcher and
  * create a gulp task with gulp.task().  The task name should be exactly the
- * same as the filename.  eg. js-common.js should define the "js-common" task
+ * same as the filename.  eg. css.js should define the "css" task
  *
  * The parameters passed to this module's function:
- * @param config: the object passed to build() in gulpfile.js.  this can
+ * @param config: The object passed to build() in gulpfile.js.  This can
  *                be used to configure the tasks.  It is also augmented with
  *                config.local from local.js
  *                See config below
- * @param env   : an instance of gulp-environments.  Basic usage:
+ * @param env   : An instance of gulp-environments.  Basic usage:
  *                eg: env.development() ? "nested" : "compressed"
  *                eg: .pipe(env.production(uglify()))
  *                see https://github.com/gunpowderlabs/gulp-environments
@@ -39,7 +40,6 @@ const environments = ["development", "production", "local"];
  *     drano
  *     registerWatcher
  *     build
- *     fileExists
  *     logYellow
  *     logError
  *     singleTasks
@@ -59,7 +59,7 @@ const environments = ["development", "production", "local"];
  *        root: path.resolve(__dirname, "../../web/Website/assets"),
  *        dest: path.resolve(__dirname, "../../web/Website/assets/build"),
  *        env: "development", // "development", "production", or "local"
- *        tasks: ["js", "css"], // see note below
+ *        tasks: ["js", "css"], // see NOTE below
  *        watch: true
  *    }
  *
@@ -187,14 +187,7 @@ const build = module.exports.build = function build(_config, callback) {
     // set gulp-environments
     env.current(env[environment]);
 
-    if (config.watch) {
-      // gulp notify is freezing jenkins builds, so we're only going to show this message if we're watching
-      gulp.src("").pipe(notify("Building for '" + config.env + "' environment"));
-    }
-    else {
-      console.log(color.green("Building for '" + config.env + "' environment"));
-    }
-
+    console.log(color.green("Building for '" + config.env + "' environment"));
   }
 
   // load local.js config or initalize to empty object
@@ -300,6 +293,7 @@ const logError = module.exports.logError = function logError() {
  *         $ gulp css                  // will use the environment from config
  *         $ gulp css --env production // will use the production environment
  *         $ gulp css --watch          // will override the watch configuration
+ *         $ gulp css js               // will run both css and js tasks
  */
 module.exports.singleTasks = function singleTasks(config) {
 
@@ -385,8 +379,8 @@ module.exports.findPackageJson = function findPackageJson(dirname) {
  *                 eg ["react", "react-dom", "classnames"]
  */
 module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFilePath){
-  try {
 
+  try {
     // list of all imported modules and files from the entryFilePath
     // eg. ["react", "../App.jsx"]
     const imports = detective(fs.readFileSync(entryFilePath, "utf8"))
@@ -414,7 +408,7 @@ module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFil
 
   }
   catch(e) {
-    logError("findAllNpmDependencies failed :(");
+    logError("findAllNpmDependencies failed :( ", e);
     return [];
   }
 };

@@ -26,27 +26,18 @@ const path   = require("path");
 
 
 // tasks: can run in parallel or in series, see "user supplied keys" in quench.js
-const defaultTasks = [ "js", "js-libraries", "js-polyfill", "css", "svg-sprite", "copy" ];
+const defaultTasks = [ "js", "css", "svg-sprite", "copy" ];
 
 
-
-const app = path.resolve(__dirname, "../app");
 
 // default configuration
 const defaults = {
-  root: app,
+  root: path.resolve(__dirname, "../app"),
   server: path.resolve(__dirname, "../server"),
   dest: path.resolve(__dirname, "../build"),
   tasks: defaultTasks,
   env: "development", // "development", "production", "local"
-  watch: false,
-
-  // config for more than one tasks to share
-  taskConfig: {
-    js: {
-      src: app + "/js/index.js" // both js and js-libraries use this
-    }
-  }
+  watch: false
 };
 
 /* watch for single tasks on the command line, eg "gulp js" */
@@ -60,7 +51,7 @@ gulp.task("default", function(next){
   const config = Object.assign({}, defaults, {
     env: "development",
     watch: true,
-    tasks: [defaultTasks.concat("server"), "browser-sync"] // run server too
+    tasks: [[...defaultTasks, "server"], "browser-sync"] // run server too
   });
 
   quench.build(config, next);
