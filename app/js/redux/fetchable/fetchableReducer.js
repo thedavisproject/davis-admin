@@ -1,11 +1,5 @@
 import { getActions } from "./fetchableActions.js";
 
-const initialState = {
-  error: null,
-  isLoading: false,
-  data: null
-};
-
 
 /**
  * [fetchable description]
@@ -13,7 +7,7 @@ const initialState = {
  * @param  {[type]} reducer   [description]
  * @return {[type]}           [description]
  */
-const fetchable = ({ actionKey, reducer, onSuccess = (json) => json }) => {
+const fetchable = ({ actionKey, reducer }) => {
 
   /**
    * Actions
@@ -33,7 +27,8 @@ const fetchable = ({ actionKey, reducer, onSuccess = (json) => json }) => {
       ...state,
       error: null,
       isLoading: false,
-      data: onSuccess(json)
+      // pass the json to the reducer so it can do with it what it wants
+      data: reducer(json, action)
     };
   }
 
@@ -49,6 +44,14 @@ const fetchable = ({ actionKey, reducer, onSuccess = (json) => json }) => {
 
 
   const actions = getActions(actionKey);
+
+  const reducerInitialState = reducer();
+
+  const initialState = {
+    error: null,
+    isLoading: false,
+    data: reducerInitialState
+  };
 
   return function(state = initialState, action = {}){
 

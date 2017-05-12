@@ -1,5 +1,6 @@
 import createLookupReducer from "../createLookupReducer.js";
 import fetchable from "../fetchable/fetchableReducer.js";
+import undoable from "../undoable/undoableReducer.js";
 import { DATASET, DATASET_UPDATE_FIELD } from "./datasetActions.js";
 
 const initialState = {};
@@ -12,7 +13,7 @@ const datasetReducer = createLookupReducer({
 
 export default fetchable({
   actionKey: DATASET,
-  reducer: datasetReducer
+  reducer: undoable(datasetReducer)
 });
 
 

@@ -12,7 +12,7 @@ function mapStateToProps(state, ownProps) {
   const routeArgs = R.omit(["page", "id"], state.route);
 
   return {
-    dataset: state.dataset.data,
+    dataset: R.map(R.prop("present"), state.dataset.data),
     errorLoading: !R.isNil(state.dataset.error),
     errorLoadingMessage: "There was an error loading the dataset!",
     hasData: !R.isNil(state.dataset.data),
