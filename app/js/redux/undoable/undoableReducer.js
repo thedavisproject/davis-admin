@@ -1,30 +1,63 @@
 import R from "ramda";
+import { getPresent, isHistoryItem } from "./undoableSelectors.js";
+
+const HISTORY_LIMIT = 20;
 
 export default function undoable(reducer){
 
+  // reducer() (with no arguments) will return the initalState
   const initialState = reducer();
 
-  return function(state = initialState, action) {
+
+  return function undoableReducer(state = initialState, action) {
+
+    // get the "present" state to pass to the original reducer
+    const presentState = getPresent(state);
+
+    // get what the state should be so we can augment it with the history
+    const reducerState = reducer(presentState, action);
 
 
-    const reducerState = reducer(state, action);
+    // for each field
+    const newState = R.mapObjIndexed(
+      (history, key) => updateField(key, history, reducerState[key])
+    )(state);
 
-    const newState = R.compose(
-      R.map(R.when(v => !isHistoryItem(v), createHistoryItem))
-    )(reducerState);
+
 
     return newState;
   };
 
+
+
+}
+
+// update a single field
+function updateField(key, history, newValue){
+
+  if (!isHistoryItem(history)){
+    return createHistory(newValue);
+  }
+  else if (history.present !== newValue){
+    return insert(history, newValue);
+  }
+  else {
+    return history;
+  }
+
 }
 
 
-function isHistoryItem(v){
-  return R.has("past", v) && R.has("present", v) && R.has("future", v);
+function insert(history, newValue){
+  return {
+    past: R.takeLast(HISTORY_LIMIT, [...history.past, history.present]),
+    present: newValue,
+    future: []
+  };
 }
 
 
-function createHistoryItem(value){
+function createHistory(value){
   return {
     past: [],
     present: value,
