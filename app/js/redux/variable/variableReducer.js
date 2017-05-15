@@ -11,7 +11,7 @@ const datasetsReducer = createLookupReducer({
 
 
 export default fetchable({
-  actionKey: VARIABLE,
+  actionNamespace: VARIABLE,
   reducer: datasetsReducer
 });
 

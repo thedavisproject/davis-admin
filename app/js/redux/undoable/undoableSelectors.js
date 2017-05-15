@@ -7,7 +7,14 @@ export function getPresent(state){
 }
 
 
-export function isHistoryItem(v){
-  if (!v) { return false; }
-  return R.has("past", v) && R.has("present", v) && R.has("future", v);
+export function isHistoryItem(value){
+
+  if (!value) { return false; }
+
+  const keys = ["past", "present", "future", "updated"];
+
+  return R.all(
+    R.has(R.__, value)
+  )(keys);
+
 }

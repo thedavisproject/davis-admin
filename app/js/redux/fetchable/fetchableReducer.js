@@ -3,11 +3,11 @@ import { getActions } from "./fetchableActions.js";
 
 /**
  * [fetchable description]
- * @param  {String} actionKey [description]
- * @param  {[type]} reducer   [description]
- * @return {[type]}           [description]
+ * @param  {String} actionNamespace string to be prepended to actions. eg DATASET
+ * @param  {Func}   reducer         Redux reducer to augment
+ * @return {Func}                   a new redux reducer
  */
-const fetchable = ({ actionKey, reducer }) => {
+const fetchable = ({ actionNamespace, reducer }) => {
 
   /**
    * Actions
@@ -43,7 +43,7 @@ const fetchable = ({ actionKey, reducer }) => {
   }
 
 
-  const actions = getActions(actionKey);
+  const actions = getActions(actionNamespace);
 
   const reducerInitialState = reducer();
 

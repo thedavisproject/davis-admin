@@ -7,13 +7,13 @@
  *      return fetchDatasetByUrl(`/api/dataset/${datasetId}`);
  *    };
  *
- * @param  {String} actionKey Uppercase string to describe the redux module.
- *                            Usually a const, eg. DATASET
- * @return {Function}         A function expecting a url
+ * @param  {String} actionNamespace Uppercase string to describe the redux module.
+ *                  Usually a const, eg. DATASET
+ * @return {Func}   A function expecting a url
  */
-export const createFetchUrlAction = (actionKey) => (url) => {
+export const createFetchUrlAction = (actionNamespace) => (url) => {
 
-  const actions = getActions(actionKey);
+  const actions = getActions(actionNamespace);
 
 
   return (dispatch, getState) => {
@@ -64,10 +64,10 @@ export const createFetchUrlAction = (actionKey) => (url) => {
 };
 
 
-export function getActions(actionKey) {
+export function getActions(actionNamespace) {
   return {
-    request: `${actionKey}/FETCH_REQUEST`,
-    success: `${actionKey}/FETCH_SUCCESS`,
-    error: `${actionKey}/FETCH_ERROR`
+    request: `${actionNamespace}/FETCH_REQUEST`,
+    success: `${actionNamespace}/FETCH_SUCCESS`,
+    error: `${actionNamespace}/FETCH_ERROR`
   };
 }
