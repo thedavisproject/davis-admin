@@ -1,26 +1,37 @@
 import React from "react";
 
-import { func, shape, string } from "prop-types";
+import { func, shape } from "prop-types";
+import Undoable, { historyType } from "../Form/Undoable.jsx";
+import SingleLine from "../Form/SingleLine.jsx";
 
+const UndoableSingleLine = Undoable(SingleLine);
 
 const propTypes = {
   dataset: shape({
-    id: string.isRequired,
-    name: string.isRequired
+    id: historyType.isRequired,
+    name: historyType.isRequired,
+    info: historyType.isRequired
   }).isRequired,
-  onFieldChange: func.isRequired
+  onFieldChange: func.isRequired,
+  onUndoClick: func.isRequired,
+  onRedoClick: func.isRequired
 };
 
 const Dataset = (props) => {
 
-  const { dataset, onFieldChange } = props;
+  const { dataset, onFieldChange, onUndoClick, onRedoClick } = props;
 
   const renderTextInput = (key) => {
     return (
       <div style={{ paddingBottom: 10 }}>
-        <label>
-          {key}: <input type="text" value={dataset[key]} onChange={(e) => onFieldChange(key, e.target.value)}/>
-        </label>
+        <UndoableSingleLine
+          key={key}
+          label={key}
+          history={dataset[key]}
+          onChange={(e) => onFieldChange(key, e.target.value)}
+          onUndoClick={(e) => onUndoClick(key, e)}
+          onRedoClick={(e) => onRedoClick(key, e)}
+        />
       </div>
     );
   };

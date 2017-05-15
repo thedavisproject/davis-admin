@@ -13,7 +13,7 @@ const datasetReducer = createLookupReducer({
 
 export default fetchable({
   actionKey: DATASET,
-  reducer: undoable(datasetReducer)
+  reducer: undoable(DATASET, datasetReducer)
 });
 
 

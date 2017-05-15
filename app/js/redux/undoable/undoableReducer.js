@@ -1,12 +1,16 @@
 import R from "ramda";
 import { getPresent, isHistoryItem } from "./undoableSelectors.js";
+import { getActions } from "./undoableActions.js";
 
 const HISTORY_LIMIT = 20;
 
-export default function undoable(reducer){
+export default function undoable(actionNamespace, reducer){
 
   // reducer() (with no arguments) will return the initalState
   const initialState = reducer();
+
+  // get the specific actions for this reducer namespace (eg. DATASET)
+  const actions = getActions(actionNamespace);
 
 
   return function undoableReducer(state = initialState, action) {
@@ -18,17 +22,23 @@ export default function undoable(reducer){
     const reducerState = reducer(presentState, action);
 
 
-    // for each field
-    const newState = R.mapObjIndexed(
-      (history, key) => updateField(key, history, reducerState[key])
+    // for each field...
+    return R.mapObjIndexed(
+      (history, key) => {
+        const { type } = action;
+        if (type === actions.undo && action.key === key){
+          return undo(history);
+        }
+        else if (type === actions.redo && action.key === key){
+          return redo(history);
+        }
+        else {
+          return updateField(key, history, reducerState[key]);
+        }
+      }
     )(state);
 
-
-
-    return newState;
   };
-
-
 
 }
 
@@ -54,6 +64,34 @@ function insert(history, newValue){
     present: newValue,
     future: []
   };
+}
+
+function undo(history){
+
+  if (history.past.length < 1){
+    return history;
+  }
+  else {
+    return {
+      past: R.init(history.past),
+      present: R.last(history.past),
+      future: R.takeLast(HISTORY_LIMIT, [history.present, ...history.future])
+    };
+  }
+
+}
+
+function redo(history){
+  if (history.future.length < 1){
+    return history;
+  }
+  else {
+    return {
+      past: R.takeLast(HISTORY_LIMIT, [...history.past, history.present]),
+      present: R.head(history.future),
+      future: R.tail(history.future)
+    };
+  }
 }
 
 
