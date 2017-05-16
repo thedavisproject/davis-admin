@@ -1,5 +1,5 @@
 import React from "react";
-import { any, array, bool, func, shape, string } from "prop-types";
+import { any, array, func, shape, string } from "prop-types";
 
 export const historyType = shape({
   past: array,
@@ -8,15 +8,19 @@ export const historyType = shape({
 });
 
 const propTypes = {
-  children: any,
   history: historyType,
-  isEditing: bool,
   label: string,
   onUndoClick: func.isRequired,
   onRedoClick: func.isRequired
 };
 
-const Undoable = (FieldComponent) => {
+
+/**
+ * Higher order component to create an Undoable version of a field component
+ * @param {Func} renderValue (value, props -> component)
+ * @returns {Func} React component
+ */
+const Undoable = (renderValue) => {
 
   const UndoableField = (props) => {
 
@@ -24,16 +28,16 @@ const Undoable = (FieldComponent) => {
 
 
     return (
-      <div className="undoable-field">
-        <div className="undoable-field__top">
-          <label className="undoable-field__label">{label}</label>
-          <div className="undo-btns undoable-field__undo-btns">
+      <div className="undoable">
+        <div className="undoable__top">
+          <label className="undoable__label">{label}</label>
+          <div className="undo-btns undoable__undo-btns">
             <button type="button" disabled={(history.past.length < 1)} className="btn--undo" onClick={onUndoClick}>undo</button>
             <button type="button" disabled={(history.future.length < 1)} className="btn--redo" onClick={onRedoClick}>redo</button>
           </div>
         </div>
-        <div className="undoable-field__field">
-          <FieldComponent contentEditable={true} value={history.present} {...rest} />
+        <div className="undoable__field">
+          {renderValue(history.present, rest)}
         </div>
 
       </div>

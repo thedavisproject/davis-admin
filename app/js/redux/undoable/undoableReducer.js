@@ -5,7 +5,7 @@ import { getActions } from "./undoableActions.js";
 const HISTORY_LIMIT = 20;
 const DEBOUNCE = 500;
 
-export default function undoable(actionNamespace, reducer){
+export default function undoable({ actionNamespace, reducer }){
 
   // reducer() (with no arguments) will return the initalState
   const initialState = reducer();
