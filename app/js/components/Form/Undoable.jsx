@@ -8,8 +8,8 @@ export const historyType = shape({
 });
 
 const propTypes = {
-  history: historyType,
-  label: string,
+  history: historyType.isRequired,
+  label: string.isRequired,
   onUndoClick: func.isRequired,
   onRedoClick: func.isRequired
 };

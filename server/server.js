@@ -16,10 +16,13 @@ app.get("/api/dataset/:id", function(req, res){
 
   const id = req.params.id;
 
+  const colorValues = ["red", "green", "blue"];
+
   const json = {
     id: id,
     name: `Dataset ${id}`,
-    info: `what ${id}`
+    info: `what ${id}`,
+    color: colorValues[Math.floor(Math.random() * 3)]
   };
 
   res.send(JSON.stringify(json, null, 2));
