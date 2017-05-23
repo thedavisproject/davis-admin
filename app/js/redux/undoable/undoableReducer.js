@@ -2,9 +2,18 @@ import R from "ramda";
 import { getPresent, isHistoryItem } from "./undoableSelectors.js";
 import { getActions } from "./undoableActions.js";
 
-const HISTORY_LIMIT = 20;
+const HISTORY_LIMIT = 50;
 const DEBOUNCE = 500;
 
+/**
+ * Higher-order reducer to make the key's of a reducer undoable
+ *
+ * @param  {String} actionNamespace
+ *   Uppercase string to describe the redux module. Usually a const, eg. DATASET
+ * @param  {Func} reducer
+ *   A redux reducer
+ * @return {Func} a new reducer
+ */
 export default function undoable({ actionNamespace, reducer }){
 
   // reducer() (with no arguments) will return the initalState
@@ -16,9 +25,20 @@ export default function undoable({ actionNamespace, reducer }){
   // return the new reducer
   return function undoableReducer(state = initialState, action = {}) {
 
-    // for each field...
+    // get the "present" state (without the history) to pass to the original reducer
+    const presentState = getPresent(state);
+
+    // get what the next state should be so we can augment it with the history
+    const reducerState = reducer(presentState, action);
+
+    // for each field in that new state...
     return R.mapObjIndexed(
-      (history, key) => {
+      (value, key) => {
+
+        // get the history object or create the history object the first time
+        const history = isHistoryItem(state[key])
+          ? state[key]
+          : createHistory(value);
 
         if (action.type === actions.UNDO && action.key === key){
           return undo(history);
@@ -27,17 +47,10 @@ export default function undoable({ actionNamespace, reducer }){
           return redo(history);
         }
         else {
-          // get the "present" state (without the history) to pass to the original reducer
-          const presentState = getPresent(state);
-
-          // get what the next state should be so we can augment it with the history
-          const reducerState = reducer(presentState, action);
-
           return updateField(history, reducerState[key]);
         }
       }
-    )(state);
-
+    )(reducerState);
   };
 
 }
@@ -46,13 +59,9 @@ export default function undoable({ actionNamespace, reducer }){
 // update a single field
 function updateField(history, newValue){
 
-  // create the history object the first time
-  if (!isHistoryItem(history)){
-    return createHistory(newValue);
-  }
-  // otherwise, update the value if it's changed
+  // update the value if it's changed
   // using R.equals to check deep equality if the value is an object/array
-  else if (!R.equals(history.present, newValue)){
+  if (!R.equals(history.present, newValue)){
 
     // update the value in place if an update happened recently
     if (Date.now() - history.updated < DEBOUNCE){
