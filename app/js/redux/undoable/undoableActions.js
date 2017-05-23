@@ -16,7 +16,7 @@ export function redo(actionNamespace, key){
 
 export function getActions(actionNamespace) {
   return {
-    UNDO: `${actionNamespace}/HISTORY_UNDO`,
-    REDO: `${actionNamespace}/HISTORY_REDO`
+    UNDO: `${actionNamespace}/UNDO_EDIT`,
+    REDO: `${actionNamespace}/REDO_EDIT`
   };
 }

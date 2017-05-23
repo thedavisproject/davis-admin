@@ -14,14 +14,13 @@ export default function createLookupReducer(lookup = {}, initialState){
 
 /**
  * example:
- * const lookup = {
- *   [ACTION_ONE] : handleActionOne,
- *   [ACTION_TOW] : handleActionTwo
- * }
  *
  * const initialState = {};
  *
  * function handleActionOne(state, action) { ... }
  *
- * export default createLookupReducer(lookup, initialState);
+ * export default createLookupReducer({
+ *   [ACTION_ONE] : handleActionOne,
+ *   [ACTION_TOW] : handleActionTwo
+ * }, initialState);
  */

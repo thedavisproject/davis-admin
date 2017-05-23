@@ -51,7 +51,8 @@ function updateField(history, newValue){
     return createHistory(newValue);
   }
   // otherwise, update the value if it's changed
-  else if (history.present !== newValue){
+  // using R.equals to check deep equality if the value is an object/array
+  else if (!R.equals(history.present, newValue)){
 
     // update the value in place if an update happened recently
     if (Date.now() - history.updated < DEBOUNCE){

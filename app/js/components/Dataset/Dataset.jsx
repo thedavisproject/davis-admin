@@ -5,6 +5,8 @@ import { historyType }   from "../Form/Undoable.jsx";
 import UndoableTextInput from "../Form/UndoableTextInput.jsx";
 import UndoableTextArea  from "../Form/UndoableTextArea.jsx";
 import UndoableDropdown  from "../Form/UndoableDropdown.jsx";
+import UndoableRichtext  from "../Form/UndoableRichtext.jsx";
+import RichText  from "../Form/RichText.jsx";
 
 const propTypes = {
   dataset: shape({
@@ -21,11 +23,11 @@ const Dataset = (props) => {
 
   const { dataset, onFieldChange, onUndoClick, onRedoClick } = props;
 
-  const renderTextInput = (key) => {
+  const renderTextInput = (key, label) => {
     return (
       <UndoableTextInput
         key={key}
-        label={key}
+        label={label}
         history={dataset[key]}
         onChange={(e) => onFieldChange(key, e.target.value)}
         onUndoClick={(e) => onUndoClick(key, e)}
@@ -34,11 +36,11 @@ const Dataset = (props) => {
     );
   };
 
-  const renderTextArea = (key) => {
+  const renderTextArea = (key, label) => {
     return (
       <UndoableTextArea
         key={key}
-        label={key}
+        label={label}
         history={dataset[key]}
         onChange={(e) => onFieldChange(key, e.target.value)}
         onUndoClick={(e) => onUndoClick(key, e)}
@@ -61,6 +63,18 @@ const Dataset = (props) => {
     );
   };
 
+  const renderRichText = (key, label) => {
+    return (
+      <UndoableRichtext
+        label={label}
+        history={dataset[key]}
+        onChange={(editorState) => onFieldChange(key, editorState)}
+        onUndoClick={(e) => onUndoClick(key, e)}
+        onRedoClick={(e) => onRedoClick(key, e)}
+      />
+    );
+  };
+
   const colorOptions = [
     { label: "Red", value: "red" },
     { label: "Green", value: "green" },
@@ -71,9 +85,10 @@ const Dataset = (props) => {
   return (
     <div className="dataset">
 
-      {renderTextInput("name")}
-      {renderTextArea("info")}
+      {renderTextInput("name", "Name")}
+      {renderRichText("info", "Info")}
       {renderDropdown("color", "Favorite Color", colorOptions)}
+
 
       <br /><br />
 
