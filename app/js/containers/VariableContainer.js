@@ -2,7 +2,7 @@ import R from "ramda";
 import { connect } from "react-redux";
 
 import Variable from "../components/Variable/Variable.jsx";
-import Promised from "../components/Promised/Promised.jsx";
+import Fetchable from "../components/Fetchable/Fetchable.jsx";
 
 
 function mapStateToProps(state, ownProps) {
@@ -24,4 +24,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Promised(Variable));
+export default connect(mapStateToProps, mapDispatchToProps)(Fetchable(Variable));

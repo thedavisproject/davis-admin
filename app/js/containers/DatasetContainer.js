@@ -2,7 +2,7 @@ import R from "ramda";
 import { connect } from "react-redux";
 
 import Dataset from "../components/Dataset/Dataset.jsx";
-import Promised from "../components/Promised/Promised.jsx";
+import Fetchable from "../components/Fetchable/Fetchable.jsx";
 
 import { DATASET, updateDatasetField } from "../redux/dataset/datasetActions.js";
 import { undo, redo } from "../redux/undoable/undoableActions.js";
@@ -37,4 +37,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Promised(Dataset));
+export default connect(mapStateToProps, mapDispatchToProps)(Fetchable(Dataset));

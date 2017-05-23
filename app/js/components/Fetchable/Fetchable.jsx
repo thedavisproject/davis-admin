@@ -8,24 +8,24 @@ import { bool, string } from "prop-types";
  * (http://natpryce.com/articles/000814.html)
  *
  * usage:
- * const AsyncMyComponent = Promised(MyComponent)
+ * const AsyncMyComponent = Fetchable(MyComponent)
  *
  * <AsyncMyComponent isLoading={false} ... myComponentProps="..." />
  *
  * @param {Component} Component : A react component
  * @returns {Component} enhanced component
  */
-const Promised = (Component) => {
+const Fetchable = (Component) => {
 
   // defining these here so we can use R.keys below
-  const promisedPropTypes = {
+  const fetchablePropTypes = {
     errorLoading       : bool.isRequired,
     errorLoadingMessage: string.isRequired,
     hasData            : bool.isRequired,
     isLoading          : bool.isRequired,
   };
 
-  const PromisedComponent = (props) => {
+  const FetchableComponent = (props) => {
 
     const { isLoading, errorLoading, errorLoadingMessage, hasData } = props;
 
@@ -47,8 +47,8 @@ const Promised = (Component) => {
     // hasData is a way for the consumer to let us know when we can render
     else if (hasData) {
 
-      // remove the props specific to PromisedComponent so we can pass them to Component
-      const componentProps = R.omit(R.keys(promisedPropTypes), props);
+      // remove the props specific to FetchableComponent so we can pass them to Component
+      const componentProps = R.omit(R.keys(fetchablePropTypes), props);
 
       // if there was no error and it's not loading, show the component
       return <Component {...componentProps} />;
@@ -60,10 +60,10 @@ const Promised = (Component) => {
 
   };
 
-  PromisedComponent.propTypes = promisedPropTypes;
+  FetchableComponent.propTypes = fetchablePropTypes;
 
-  return PromisedComponent;
+  return FetchableComponent;
 
 };
 
-export default Promised;
+export default Fetchable;

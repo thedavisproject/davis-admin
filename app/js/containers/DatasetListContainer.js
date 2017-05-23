@@ -2,7 +2,7 @@ import R from "ramda";
 import { connect } from "react-redux";
 
 import DatasetList from "../components/Dataset/DatasetList.jsx";
-import Promised from "../components/Promised/Promised.jsx";
+import Fetchable from "../components/Fetchable/Fetchable.jsx";
 
 
 function mapStateToProps(state, ownProps) {
@@ -22,4 +22,4 @@ function mapDispatchToProps(dispatch) {
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Promised(DatasetList));
+export default connect(mapStateToProps, mapDispatchToProps)(Fetchable(DatasetList));
