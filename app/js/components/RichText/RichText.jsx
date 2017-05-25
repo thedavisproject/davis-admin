@@ -10,6 +10,7 @@ import { func, object, oneOfType, string } from "prop-types";
 // https://draftjs-examples.herokuapp.com/
 //
 // https://www.caffeinecoding.com/react-redux-draftjs/
+// https://github.com/nikgraf/awesome-draft-js
 
 
 
@@ -82,33 +83,79 @@ export default class RichText extends React.Component {
     return EditorState.acceptSelection(EditorState.createWithContent(contentState), selectionState);
   }
 
+  getCurrentBlockType = () => {
+    try {
+      return RichUtils.getCurrentBlockType(this.getEditorState());
+    }
+    catch(e){
+      return "";
+    }
+  }
+
+  getCurrentInlineStyles = () => {
+    try {
+      const editorState = this.getEditorState();
+      return editorState.getCurrentInlineStyle().toArray();
+    }
+    catch(e){
+      return [];
+    }
+  }
+
+
+  renderBlockButton = (style, text) => {
+    return (
+      <Button
+        onClick={this.handleBlockStyleClick}
+        current={this.getCurrentBlockType()}
+        style={style}
+      >
+        {text}
+      </Button>
+    );
+  }
+
+  renderInlineButton = (style, text) => {
+    return (
+      <Button
+        onClick={this.handleInlineStyleClick}
+        current={this.getCurrentInlineStyles()}
+        style={style}
+      >
+        {text}
+      </Button>
+    );
+  }
 
 
   render() {
+
+    const editorState = this.getEditorState();
 
     return (
       <div className="rich-text__container">
         <div className="rich-text__tools">
           <span className="rich-text__tool-section">
-            <Button onClick={this.handleInlineStyleClick} style="BOLD">B</Button>
-            <Button onClick={this.handleInlineStyleClick} style="ITALIC">I</Button>
-            <Button onClick={this.handleInlineStyleClick} style="CODE">{"{}"}</Button>
+            {this.renderInlineButton("BOLD", "B")}
+            {this.renderInlineButton("ITALIC", "I")}
+            {this.renderInlineButton("CODE", "{ }")}
           </span>
           <span className="rich-text__tool-section">
             {/* https://draftjs.org/docs/advanced-topics-custom-block-render-map.html */}
-            <Button onClick={this.handleBlockStyleClick} style="header-one">h1</Button>
-            <Button onClick={this.handleBlockStyleClick} style="header-two">h2</Button>
-            <Button onClick={this.handleBlockStyleClick} style="header-three">h3</Button>
-            <Button onClick={this.handleBlockStyleClick} style="blockquote">"</Button>
-            <Button onClick={this.handleBlockStyleClick} style="code-block">{"{}"}</Button>
-            <Button onClick={this.handleBlockStyleClick} style="unordered-list-item">{"-"}</Button>
-            <Button onClick={this.handleBlockStyleClick} style="ordered-list-item">{"1"}</Button>
+
+            {this.renderBlockButton("header-one", "h1")}
+            {this.renderBlockButton("header-two", "h2")}
+            {this.renderBlockButton("header-three", "h3")}
+            {this.renderBlockButton("blockquote", "\"")}
+            {this.renderBlockButton("code-block", "{ }")}
+            {this.renderBlockButton("unordered-list-item", "•")}
+            {this.renderBlockButton("ordered-list-item", "1.")}
           </span>
 
         </div>
         <Editor
           ref={el => this.editor = el}
-          editorState={this.getEditorState()}
+          editorState={editorState}
           onChange={this.handleEditorChange}
         />
       </div>

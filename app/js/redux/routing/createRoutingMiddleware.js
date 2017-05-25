@@ -28,7 +28,7 @@
  * @return {Function} redux middleware with an exposed function "handleUrlChange" which
  *   the consumer can use to trigger their function on page load.
  */
-export default function createRoutingMiddleware({mapStateToPath, handleUrlChange, handleLoad = true}) {
+export default function createRoutingMiddleware({ mapStateToPath, handleUrlChange, handleLoad = true }) {
 
   // "next" is the next dispatch function in the middleware chain
   const middleware = store => next => {

@@ -1,8 +1,11 @@
 import React from "react";
-import { func, node, string } from "prop-types";
+import R from "ramda";
+import classNames from "classnames";
+import { arrayOf, func, node, oneOfType, string } from "prop-types";
 
 const propTypes = {
   style: string.isRequired,
+  current: oneOfType([string, arrayOf(string)]),
   onClick: func.isRequired,
   children: node
 };
@@ -11,15 +14,21 @@ const propTypes = {
 
 const Button = (props) => {
 
-  const { style, onClick, children } = props;
+  const { children, current, onClick, style } = props;
 
   const handleClick = (e) => {
     e.preventDefault();
     onClick(style);
   };
 
+  const classes = classNames("rich-text__button", {
+    "is-selected": (Array.isArray(current))
+      ? R.contains(style, current)
+      : current === style
+  });
+
   return (
-    <button type="button" className="rich-text__button" onMouseDown={handleClick}>{children}</button>
+    <button type="button" className={classes} onMouseDown={handleClick}>{children}</button>
   );
 
 };
