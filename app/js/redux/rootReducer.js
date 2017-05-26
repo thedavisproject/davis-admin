@@ -1,4 +1,4 @@
-import datasetReducer   from "../components/Dataset/datasetReducer.js";
+import datasetReducer   from "./dataset/datasetReducer.js";
 import datasetsReducer  from "./datasets/datasetsReducer.js";
 
 

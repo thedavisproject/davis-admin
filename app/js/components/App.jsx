@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./Home/Home.jsx";
 import Nav from "./Nav/Nav.jsx";
 import DatasetListContainer from "./DatasetList/DatasetListContainer.js";
-import DatasetRoute from "./Dataset/DatasetRoute.js";
+import DatasetContainer from "./Dataset/DatasetContainer.js";
+
 import parsePairs from "./parsePairs.js";
 
 const App = () => {
@@ -29,7 +30,11 @@ const App = () => {
               );
             }} />
 
-            {/* <DatasetRoute /> */}
+            <Route path="/dataset/:id/:rest*" render={({ match }) => {
+              return (
+                <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)}/>
+              );
+            }} />
 
             <Route exact path="/variables/:rest*" render={({ match }) => (
               <div> variables </div>

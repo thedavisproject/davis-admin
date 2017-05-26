@@ -7,13 +7,13 @@ import DatasetList from "./DatasetList.jsx";
 
 
 function mapStateToProps(state, ownProps) {
+
   return {
     datasets: state.datasets.data,
     errorLoading: !R.isNil(state.datasets.error),
     errorLoadingMessage: "There was an error loading the datasets!",
     hasData: !R.isNil(state.datasets.data),
-    isLoading: state.datasets.isLoading,
-    ...ownProps
+    isLoading: state.datasets.isLoading
   };
 }
 
