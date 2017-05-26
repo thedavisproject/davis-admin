@@ -1,96 +1,33 @@
 import React from "react";
+import R from "ramda";
+import UndoableTextInput from "../Undoable/UndoableTextInput.jsx";
 
-import { func, shape }   from "prop-types";
-import { historyType }   from "../Form/Undoable.jsx";
-import UndoableTextInput from "../Form/UndoableTextInput.jsx";
-import UndoableTextArea  from "../Form/UndoableTextArea.jsx";
-import UndoableDropdown  from "../Form/UndoableDropdown.jsx";
-import UndoableRichtext  from "../Form/UndoableRichtext.jsx";
-import RichText  from "../Form/RichText.jsx";
+import { func, shape, string } from "prop-types";
 
 const propTypes = {
-  dataset: shape({
-    id: historyType.isRequired,
-    name: historyType.isRequired,
-    info: historyType.isRequired
-  }).isRequired,
   onFieldChange: func.isRequired,
-  onUndoClick: func.isRequired,
-  onRedoClick: func.isRequired
+  dataset: shape({
+    id: string.isRequired,
+    name: string.isRequired,
+    info: string.isRequired
+  }).isRequired,
 };
 
 const Dataset = (props) => {
+  const { onChange, dataset } = props;
+  const { info } = dataset;
 
-  const { dataset, onFieldChange, onUndoClick, onRedoClick } = props;
-
-  const renderTextInput = (key, label) => {
-    return (
-      <UndoableTextInput
-        key={key}
-        label={label}
-        history={dataset[key]}
-        onChange={(e) => onFieldChange(key, e.target.value)}
-        onUndoClick={(e) => onUndoClick(key, e)}
-        onRedoClick={(e) => onRedoClick(key, e)}
-      />
-    );
-  };
-
-  const renderTextArea = (key, label) => {
-    return (
-      <UndoableTextArea
-        key={key}
-        label={label}
-        history={dataset[key]}
-        onChange={(e) => onFieldChange(key, e.target.value)}
-        onUndoClick={(e) => onUndoClick(key, e)}
-        onRedoClick={(e) => onRedoClick(key, e)}
-      />
-    );
-  };
-
-
-  const renderDropdown = (key, label, options) => {
-    return (
-      <UndoableDropdown
-        label={label}
-        history={dataset[key]}
-        options={options}
-        onChange={(e) => onFieldChange(key, e.target.value)}
-        onUndoClick={(e) => onUndoClick(key, e)}
-        onRedoClick={(e) => onRedoClick(key, e)}
-      />
-    );
-  };
-
-  const renderRichText = (key, label) => {
-    return (
-      <UndoableRichtext
-        label={label}
-        history={dataset[key]}
-        onChange={(editorState) => onFieldChange(key, editorState)}
-        onUndoClick={(e) => onUndoClick(key, e)}
-        onRedoClick={(e) => onRedoClick(key, e)}
-      />
-    );
-  };
-
-  const colorOptions = [
-    { label: "Red", value: "red" },
-    { label: "Green", value: "green" },
-    { label: "Blue", value: "blue" }
-  ];
-
+  const updateField = R.curry((key, value) => {
+    onChange(R.merge(dataset, {
+      [key]: value
+    }));
+  });
 
   return (
     <div className="dataset">
 
-      {renderTextInput("name", "Name")}
-      {renderRichText("info", "Info")}
-      {renderDropdown("color", "Favorite Color", colorOptions)}
 
-
-      <br /><br />
+      {/* <UndoableTextInput value={info} onChange={updateField("info")} /> */}
 
       <pre>
         {JSON.stringify(props, null, 2)}
@@ -101,7 +38,5 @@ const Dataset = (props) => {
 };
 
 Dataset.propTypes = propTypes;
-
-
 
 export default Dataset;

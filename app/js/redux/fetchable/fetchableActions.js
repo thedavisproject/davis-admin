@@ -36,7 +36,7 @@ export const createFetchUrlAction = (actionNamespace) => (url) => {
     }
 
     // kick off fetch
-    fetch(url)
+    return fetch(url)
       .then(handleNetworkErrors)
       .then(response => response.json())
       .then(

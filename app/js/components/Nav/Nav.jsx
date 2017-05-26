@@ -1,20 +1,21 @@
 import React from "react";
-import classNames from "classnames";
-import Link from "../Link/Link.jsx";
+import R from "ramda";
+import { NavLink } from "react-router-dom";
 
 export const navigationLinks = [
   {
     page: "",
-    label: "Home"
+    isActiveTest: "^/$",
+    label: "Home",
   },
   {
     page: "datasets",
-    pages: ["dataset", "datasets"],
+    isActiveTest: "^/dataset",
     label: "Datasets"
   },
   {
     page: "variables",
-    pages: ["variable", "variables"],
+    isActiveTest: "^/variable",
     label: "Variables"
   }
 ];
@@ -25,21 +26,26 @@ const propTypes = {
   pageId: string
 };
 
-const Nav = ({ pageId = {} }) => {
+const Nav = () => {
   return (
     <nav className="nav">
 
       {navigationLinks.map(item => {
 
-        const itemClasses = classNames("nav__item", {
-          "is-selected": item.page === pageId
-            || (item.pages && item.pages.includes(pageId))
-        });
+        const isActive = (match, location) => {
+          return R.test(RegExp(item.isActiveTest), location.pathname);
+        };
 
         return (
-          <Link route={{ page: item.page }} className={itemClasses} key={item.page}>
+          <NavLink
+            key={item.page}
+            to={`/${item.page}`}
+            className="nav__item"
+            activeClassName="is-active"
+            isActive={isActive}
+          >
             {item.label}
-          </Link>
+          </NavLink>
         );
       })}
 

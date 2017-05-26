@@ -1,48 +1,45 @@
 import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import Home from "./Home/Home.jsx";
-import { Router, Route } from "./Router.jsx";
-import NavContainer          from "../containers/NavContainer.js";
-import DatasetContainer      from "../containers/DatasetContainer.js";
-import DatasetListContainer  from "../containers/DatasetListContainer.js";
-import VariableContainer     from "../containers/VariableContainer.js";
-import VariableListContainer from "../containers/VariableListContainer.js";
+import Nav from "./Nav/Nav.jsx";
+import DatasetListRoute from "./DatasetList/DatasetListRoute.jsx";
+import DatasetRoute from "./Dataset/DatasetRoute.js";
 
-import { string } from "prop-types";
+import Fetch from "./Fetch/Fetch.jsx";
+import parsePairs from "./parsePairs.js";
 
-const propTypes = {
-  pageId: string
-};
-
-const App = ({ pageId }) => {
+const App = () => {
 
   return (
-    <div className="container">
+    <Router>
+      <div className="container">
 
-      <NavContainer />
+        <Nav />
 
-      <div className="main">
+        <div className="main">
 
-        <Router match={pageId}>
+            <Route exact path="/" render={({ match }) => (
+              <Home />
+            )} />
 
-          <Route match="" render={() => <Home />} />
+            <DatasetListRoute />
 
-          <Route match="dataset" render={() => <DatasetContainer />} />
+            <DatasetRoute />
 
-          <Route match="datasets" render={() => <DatasetListContainer />} />
+            <Route exact path="/variables/:rest*" render={({ match }) => (
+              <div> variables </div>
+            )} />
 
-          <Route match="variables" render={() => <VariableListContainer />} />
+            <Route exact path="/variable/:id/:rest*" render={({ match }) => (
+              <div> variable {match.params.id} </div>
+            )} />
 
-          <Route match="variable" render={() => <VariableContainer />} />
-
-        </Router>
+        </div>
 
       </div>
-
-    </div>
+    </Router>
   );
 };
-
-App.propTypes = propTypes;
 
 export default App;

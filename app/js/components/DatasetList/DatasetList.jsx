@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "../Link/Link.jsx";
+import { Link } from "react-router-dom";
 
 import { arrayOf, shape, string } from "prop-types";
 
@@ -21,7 +21,7 @@ const DatasetList = ({ datasets }) => {
 
         return(
           <Link key={dataset.id}
-            route={{ page: "dataset", id: dataset.id }}
+            to={`/dataset/${dataset.id}`}
             className="dataset-list__dataset"
           >
               {dataset.name}

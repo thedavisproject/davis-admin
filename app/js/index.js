@@ -3,25 +3,18 @@ import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import thunkMiddleware from "redux-thunk";
 
-import AppContainer from "./containers/AppContainer.js";
+import App from "./components/App.jsx";
 
 import configureStore from "./redux/configureStore.js";
 import rootReducer from "./redux/rootReducer.js";
 
-/* routing */
-import createRoutingMiddleware             from "./redux/routing/createRoutingMiddleware.js";
-import { mapStateToPath, handleUrlChange } from "./redux/routing/routing.js";
-
-const routingMiddleware = createRoutingMiddleware({ mapStateToPath, handleUrlChange });
-
-
 /* create store */
-const store = configureStore(rootReducer, {}, [routingMiddleware, thunkMiddleware]);
+const store = configureStore(rootReducer, {}, [ thunkMiddleware ]);
 
 /* render app */
 ReactDOM.render(
   <Provider store={store}>
-    <AppContainer />
+    <App />
   </Provider>,
   document.querySelector(".js-mount")
 );
