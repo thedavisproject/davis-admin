@@ -151,7 +151,7 @@ export function handleUrlChange(location, store, event) {
 
   // if this page was not found, redirect to the homepage using replaceState
   if (!pages[route.page]) {
-    return redirectTo({page: ""});
+    return redirectTo({ page: "" });
   }
   else {
     // otherwise

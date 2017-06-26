@@ -9,7 +9,6 @@ import { undo, redo } from "../../redux/undoable/undoableActions.js";
 
 
 function mapStateToProps(state, ownProps) {
-
   return {
     dataset: state.dataset.data,
     errorLoading: !R.isNil(state.dataset.error),
@@ -20,7 +19,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-
   return {
     fetchAction: () => {
       dispatch(fetchDataset(ownProps.id));

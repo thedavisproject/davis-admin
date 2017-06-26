@@ -17,6 +17,11 @@ export const navigationLinks = [
     page: "variables",
     isActiveTest: "^/variable",
     label: "Variables"
+  },
+  {
+    page: "import",
+    isActiveTest: "^/import",
+    label: "Import"
   }
 ];
 
@@ -48,6 +53,7 @@ const Nav = () => {
           </NavLink>
         );
       })}
+
 
     </nav>
   );

@@ -10,8 +10,5 @@ export default function configureStore(rootReducer, initialState = {}, middlewar
     window.devToolsExtension ? window.devToolsExtension() : x => x
   ));
 
-  // https://github.com/reactjs/redux/issues/1240#issuecomment-268061029
-  store.dispatch({type: "@@INIT_STORE"});
-
   return store;
 }

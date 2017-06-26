@@ -80,7 +80,10 @@ export default class RichText extends React.Component {
       : convertFromRaw(this.props.editorState);
 
     // merge the ContentState and the SelectionState
-    return EditorState.acceptSelection(EditorState.createWithContent(contentState), selectionState);
+    return EditorState.acceptSelection(
+      EditorState.createWithContent(contentState),
+      selectionState
+    );
   }
 
   getCurrentBlockType = () => {

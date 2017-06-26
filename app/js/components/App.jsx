@@ -1,54 +1,63 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 
 import Home from "./Home/Home.jsx";
 import Nav from "./Nav/Nav.jsx";
 import DatasetListContainer from "./DatasetList/DatasetListContainer.js";
 import DatasetContainer from "./Dataset/DatasetContainer.js";
+import ImportContainer from "./Import/ImportContainer.js";
 
 import parsePairs from "./parsePairs.js";
 
 const App = () => {
 
   return (
-    <Router>
-      <div className="container">
+    <div className="container">
 
-        <Nav />
+      <Nav />
 
-        <div className="main">
+      <div className="main">
 
-          <Switch>
+        <Switch>
 
-            <Route exact path="/" render={({ match }) => (
-              <Home />
-            )} />
+          <Route exact path="/" render={({ match }) => (
+            <Home />
+          )} />
 
-            <Route path="/datasets/:rest*" render={({ match }) => {
-              return (
-                <DatasetListContainer {...parsePairs(match.params.rest)}/>
-              );
-            }} />
+          <Route path="/datasets/:rest*" render={({ match }) => {
+            return (
+              <DatasetListContainer {...parsePairs(match.params.rest)} />
+            );
+          }} />
 
-            <Route path="/dataset/:id/:rest*" render={({ match }) => {
-              return (
-                <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)}/>
-              );
-            }} />
+          <Route path="/dataset/:id/:rest*" render={({ match }) => {
+            return (
+              <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)} />
+            );
+          }} />
 
-            <Route exact path="/variables/:rest*" render={({ match }) => (
-              <div> variables </div>
-            )} />
+          <Route path="/variables/:rest*" render={({ match }) => (
+            <div> variables </div>
+          )} />
 
-            <Route exact path="/variable/:id/:rest*" render={({ match }) => (
-              <div> variable {match.params.id} </div>
-            )} />
+          <Route path="/variable/:id/:rest*" render={({ match }) => (
+            <div> variable {match.params.id} </div>
+          )} />
 
-          </Switch>
 
-        </div>
+          <Route path="/import/:rest*" render={({ match }) => {
+            return (
+              <ImportContainer {...parsePairs(match.params.rest)} />
+            );
+          }} />
+
+          {/* 404 redirects to homepage */}
+          <Redirect to="/" />
+
+        </Switch>
+
       </div>
-    </Router>
+    </div>
   );
 };
 
