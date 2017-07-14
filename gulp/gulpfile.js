@@ -32,7 +32,7 @@ const defaultTasks = [ "js", "css", "svg-sprite", "copy" ];
 
 // default configuration
 const defaults = {
-  root: path.resolve(__dirname, "../app"),
+  root: path.resolve(__dirname, "../client"),
   server: path.resolve(__dirname, "../server"),
   dest: path.resolve(__dirname, "../build"),
   tasks: defaultTasks,
