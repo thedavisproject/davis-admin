@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { arrayOf, shape, string } from "prop-types";
+import { arrayOf, number, shape, string } from "prop-types";
 
 const propTypes = {
   datasets: arrayOf(shape({
-    id: string.isRequired,
+    id: number.isRequired,
     name: string.isRequired
   })).isRequired
 };
@@ -17,8 +17,6 @@ const DatasetList = ({ datasets }) => {
     <div className="dataset-list">
 
       {datasets.map(dataset => {
-
-
         return(
           <Link key={dataset.id}
             to={`/dataset/${dataset.id}`}

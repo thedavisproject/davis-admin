@@ -1,0 +1,38 @@
+import R from "ramda";
+import { graphql, gql } from "react-apollo";
+import Variable from "./Variable.jsx";
+import Fetchable from "../Fetchable/Fetchable.jsx";
+
+const query = gql`query variableById($id:Int){
+  entities {
+    variable(id: $id) {
+      id
+      name
+    }
+  }
+}`;
+
+const mapResultsToProps = ({ ownProps, data }) => {
+  return {
+    variable: R.defaultTo([], R.path(["entities","variable", 0], data)),
+    loading: data.loading,
+    error: data.error
+  };
+};
+
+const mapPropsToOptions = (props) => {
+
+  const { id } = props;
+
+  return {
+    variables: { id }
+  };
+};
+
+export default R.compose(
+  graphql(query, {
+    props: mapResultsToProps,
+    options: mapPropsToOptions
+  }),
+  Fetchable
+)(Variable);

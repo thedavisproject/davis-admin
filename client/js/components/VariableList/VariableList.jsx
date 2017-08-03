@@ -1,11 +1,11 @@
 import React from "react";
-import Link from "../Link/Link.jsx";
+import { Link } from "react-router-dom";
 
-import { arrayOf, shape, string } from "prop-types";
+import { arrayOf, number, shape, string } from "prop-types";
 
 const propTypes = {
   variables: arrayOf(shape({
-    id: string.isRequired,
+    id: number.isRequired,
     name: string.isRequired
   })).isRequired
 };
@@ -16,8 +16,8 @@ const VariableList = ({ variables }) => {
 
       {variables.map(variable => {
         return(
-          <Link route={{ page: "variable", id: variable.id }}
-            key={variable.id}
+          <Link key={variable.id}
+            to={`/variable/${variable.id}`}
             className="variable-list__variable"
           >
             {variable.name}

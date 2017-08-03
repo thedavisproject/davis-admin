@@ -1,10 +1,10 @@
 import React from "react";
 
-import { shape, string } from "prop-types";
+import { number, shape, string } from "prop-types";
 
 const propTypes = {
   variable: shape({
-    id: string.isRequired,
+    id: number.isRequired,
     name: string.isRequired
   }).isRequired
 };
@@ -15,9 +15,8 @@ const Variable = (props) => {
 
   return (
     <div className="variable">
-      {name}!
+      <h2>{name}</h2>
 
-      <br /><br />
       <pre>
         {JSON.stringify(props, null, 2)}
       </pre>

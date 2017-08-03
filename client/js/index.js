@@ -4,20 +4,35 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider }      from "react-redux";
 import thunkMiddleware   from "redux-thunk";
 
+import {
+  ApolloClient, ApolloProvider, createNetworkInterface
+} from "react-apollo";
+
 import configureStore from "./redux/configureStore.js";
-import rootReducer    from "./redux/rootReducer.js";
+import createRootReducer    from "./redux/createRootReducer.js";
 
 import App from "./components/App.jsx";
 
-/* create store */
-const store = configureStore(rootReducer, {}, [ thunkMiddleware ]);
 
-/* render app */
+// Initialize Apollo Client with URL to our server
+const apolloClient = new ApolloClient({
+  networkInterface: createNetworkInterface({
+    uri: "http://api.davis.velir.com/graphql",
+  }),
+});
+
+// integrate apollo into the store http://dev.apollodata.com/react/redux.html
+const rootReducer = createRootReducer(apolloClient.reducer());
+const middlewares = [ thunkMiddleware, apolloClient.middleware() ];
+
+const store = configureStore(rootReducer, {}, middlewares);
+
+// render app
 ReactDOM.render(
-  <Provider store={store}>
+  <ApolloProvider store={store} client={apolloClient} >
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </Provider>,
+  </ApolloProvider>,
   document.querySelector(".js-mount")
 );
