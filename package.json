@@ -56,6 +56,7 @@
     "draft-convert": "^1.4.6",
     "draft-js": "^0.10.1",
     "express": "^4.14.1",
+    "lodash.debounce": "^4.0.8",
     "prop-types": "^15.5.9",
     "ramda": "^0.23.0",
     "react": "^15.5.4",

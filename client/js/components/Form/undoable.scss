@@ -3,10 +3,14 @@
 }
 
 .undoable__label {
-    
+
 }
 
 .undoable__undo-btns {
     display: inline-block;
     margin-left: 1em;
+}
+
+.undoable__field input {
+    width: 100%;
 }

@@ -4,7 +4,7 @@ const HISTORY_LIMIT = 50;
 const DEBOUNCE = 500;
 
 // update a single field
-export function updateField(history, newValue){
+export function update(history, newValue){
 
   // update the value if it's changed
   // using R.equals to check deep equality if the value is an object/array
@@ -26,7 +26,7 @@ export function updateField(history, newValue){
 }
 
 // create an empty history object with an initial value
-export function createHistory(value){
+export function createHistory(value = ""){
   return {
     past: [],
     present: value,
@@ -36,7 +36,7 @@ export function createHistory(value){
 }
 
 // update the present value without adding to the past array
-export function changeInPlace(history, newValue){
+function changeInPlace(history, newValue){
   return {
     ...history,
     present: newValue,
@@ -46,7 +46,7 @@ export function changeInPlace(history, newValue){
 
 // update the present value and put the current value in the past array
 // will also clear the future
-export function insert(history, newValue){
+function insert(history, newValue){
   return {
     past: R.takeLast(HISTORY_LIMIT, [...history.past, history.present]),
     present: newValue,

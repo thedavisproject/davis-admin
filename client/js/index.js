@@ -18,14 +18,16 @@ import App from "./components/App.jsx";
 const apolloClient = new ApolloClient({
   networkInterface: createNetworkInterface({
     uri: "http://api.davis.velir.com/graphql",
-  }),
+  })
 });
+
 
 // integrate apollo into the store http://dev.apollodata.com/react/redux.html
 const rootReducer = createRootReducer(apolloClient.reducer());
 const middlewares = [ thunkMiddleware, apolloClient.middleware() ];
 
 const store = configureStore(rootReducer, {}, middlewares);
+
 
 // render app
 ReactDOM.render(

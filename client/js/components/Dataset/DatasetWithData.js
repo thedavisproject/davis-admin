@@ -1,24 +1,37 @@
 import R from "ramda";
 import { graphql, gql } from "react-apollo";
-import DatasetNotUndoable from "./DatasetNotUndoable.jsx";
+import Dataset from "./Dataset.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
+import debounce from "lodash.debounce";
 
+const dataSetByIdQuery = gql`
+  query datasetById($id: Int!){
+    entities {
+      dataSet(id: $id) {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const updateDatasetMutation = gql`
+  mutation updateDataset($entity: EntityUpdate) {
+    entities {
+      update(entities: [$entity]) {
+        id
+        name
+      }
+    }
+  }
+`;
 
 export default R.compose(
 
   // load the data
-  graphql(gql`
-    query datasetById($id: Int){
-      entities {
-        dataSet(id: $id) {
-          id
-          name
-        }
-      }
-    }
-  `, {
+  graphql(dataSetByIdQuery, {
     props: ({ ownProps, data }) => ({
-      dataset: R.defaultTo([], R.path(["entities","dataSet", 0], data)),
+      dataset: R.defaultTo([], R.path(["entities","dataSet"], data)),
       loading: data.loading,
       error: data.error
     }),
@@ -30,26 +43,17 @@ export default R.compose(
   }),
 
   // mutation to update the dataset
-  graphql(gql`
-    mutation updateDataset($entity: EntityUpdate) {
-      entities {
-        update(entities: [$entity]) {
-          id
-          name
-        }
-      }
-    }
-  `, {
-    props: ({ ownProps, mutate }) => ({
+  graphql(updateDatasetMutation, {
+    props: ({ ownProps, mutate }) => {
 
       /**
        * @param {Object} fields key/values of fields of the dataset to update
        * @returns {Nothing} will mutate the dataset in graphql
        */
-      onDatasetUpdate: (fields) => {
+      const onDatasetUpdate = (fields) => {
 
         // id and entityType are required to select the correct entity
-        // combine them the given fields
+        // combine them with the given fields
         const variables = {
           entity: R.merge(fields, {
             id: ownProps.id,
@@ -57,19 +61,35 @@ export default R.compose(
           })
         };
 
+        const newDataset = R.merge(ownProps.dataset, fields);
+
+        console.log("optimistic: ", newDataset.name);
+
         // update!
-        mutate({ variables })
-          // .then(data => {
-          //   console.log("data", data);
-          // })
-          .catch(error => {
-            console.log("error", error);
-          });
-      }
-    })
+        mutate({
+          variables,
+          optimisticResponse: {
+            entities: {
+              __typename: "EntityMutation",
+              update: [ newDataset ]
+            }
+          }
+        })
+        .then(({ data }) => {
+          console.log("   written:", data.entities.update[0].name);
+        })
+        .catch(error => {
+          console.log("error", error);
+        });
+      };
+
+      return {
+        onDatasetUpdate: debounce(onDatasetUpdate, 400)
+      };
+    }
   }),
 
   // wrap this component in Fetchable
   Fetchable
 
-)(DatasetNotUndoable);
+)(Dataset);
