@@ -26,7 +26,9 @@ const Undoable = (renderValue) => {
     componentWillReceiveProps = (nextProps) => {
 
       if (nextProps.value !== this.state.history.present){
-        this.handleValueChange(nextProps.value);
+
+        console.log("undoable ignoring new value");
+        // this.handleValueChange(nextProps.value);
       }
     }
 
