@@ -16,12 +16,14 @@ const dataSetByIdQuery = gql`
   }
 `;
 
+
+// use { id } as the response (instead of { id, name, ... }) so it doesn't update
+// the apollo cache with potenially already stale values
 const updateDatasetMutation = gql`
   mutation updateDataset($entity: EntityUpdate) {
     entities {
       update(entities: [$entity]) {
         id
-        name
       }
     }
   }
@@ -30,12 +32,14 @@ const updateDatasetMutation = gql`
 
 const queue = createOneAtATimeQueue();
 
-const persist = debounce((mutate, variables, newDataset) => {
+const debouncedPersist = debounce((mutate, variables, newDataset) => {
 
   console.log("debounce: ", newDataset.name);
 
   return queue.enqueue(() => {
+
     console.log("mutating!", newDataset.name);
+
     return mutate({
       variables,
       // optimisticResponse: {
@@ -52,7 +56,7 @@ const persist = debounce((mutate, variables, newDataset) => {
       console.log("error", error);
     });
   });
-}, 0);
+}, 400);
 
 
 export default R.compose(
@@ -97,7 +101,7 @@ export default R.compose(
 
         const newDataset = R.merge(ownProps.dataset, fields);
 
-        persist(mutate, variables, newDataset);
+        debouncedPersist(mutate, variables, newDataset);
 
         // super optimistic, using this instead of optimisticResponse in mutate
         // because we're debouncing the mutation
