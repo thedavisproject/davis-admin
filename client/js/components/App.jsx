@@ -7,7 +7,7 @@ import DatasetListWithData from "./DatasetList/DatasetListWithData.js";
 import DatasetWithData from "./Dataset/DatasetWithData.js";
 import VariableListWithData from "./VariableList/VariableListWithData.js";
 import VariableWithData from "./Variable/VariableWithData.js";
-import ImportContainer from "./Import/ImportContainer.js";
+import Import from "./Import/Import.jsx";
 
 import parsePairs from "./parsePairs.js";
 
@@ -53,7 +53,7 @@ const App = () => {
 
           <Route path="/import/:rest*" render={({ match }) => {
             return (
-              <ImportContainer {...parsePairs(match.params.rest)} />
+              <Import {...parsePairs(match.params.rest)} />
             );
           }} />
 
