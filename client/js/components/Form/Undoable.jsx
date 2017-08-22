@@ -25,6 +25,7 @@ const Undoable = (renderValue) => {
 
     componentWillReceiveProps = (nextProps) => {
 
+      // update the value if we've received a new one
       if (nextProps.value !== this.state.history.present){
 
         console.log("undoable new value:", nextProps.value);
@@ -35,15 +36,15 @@ const Undoable = (renderValue) => {
     componentDidUpdate = (prevProps, prevState) => {
 
       const { onChange } = this.props;
-      const prevValue = prevState.history.present;
+      const prevStateValue = prevState.history.present;
+      const propsValue = this.props.value;
       const value = this.state.history.present;
 
-      if (prevValue !== value && onChange){
+      if (prevStateValue !== value && propsValue !== value && onChange){
         onChange(value);
       }
 
     }
-
 
 
     handleValueChange = (newValue) => {
@@ -76,6 +77,8 @@ const Undoable = (renderValue) => {
 
     render = () => {
 
+      // remove label, value, onChange
+      // eslint-disable-next-line no-unused-vars
       const { label, value, onChange, ...rest } = this.props;
       const { history } = this.state;
 

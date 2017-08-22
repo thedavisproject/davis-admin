@@ -1,4 +1,3 @@
-
 /**
  * @param  {Function} [onEmpty] fired when the queue is empty
  * @return {Function} function that queues up a lazy promise
@@ -7,26 +6,28 @@ export default function createOneAtATimeQueue({ onEmpty = () => {} } = {}) {
 
   // local state
   const state = {
-    isInFlight: false,
-    next: null
+    inFlight: null, // Promise
+    next: null // Lazy promise (function that returns a promise)
   };
 
   // a function to execute a lazy promise and handle it's return
   const firePromise = (lazyPromise) => {
-    state.isInFlight = true;
-
-    lazyPromise()
-      .then(() => {
+    state.inFlight = lazyPromise()
+      .then(result => {
+        console.log("    NEXT", state.next);
         if (state.next){
           console.log("fire queued!");
-          firePromise(state.next);
+          const next = state.next;
           state.next = null;
+          firePromise(next);
         }
         else {
-          console.log("empty!");
           onEmpty();
-          state.isInFlight = false;
+          state.inFlight = null;
+          console.log("empty!", state.inFlight);
         }
+
+        return result;
       });
   };
 
@@ -39,9 +40,11 @@ export default function createOneAtATimeQueue({ onEmpty = () => {} } = {}) {
     */
     enqueue: (lazyPromise) => {
 
+      console.log("state.inFlight", state.inFlight);
+
       // if there is a promise currently in flight,
-      // repace the next with this lazyPromise
-      if (state.isInFlight) {
+      // replace the next with this lazyPromise
+      if (state.inFlight !== null) {
         console.log("replace!");
         state.next = lazyPromise;
       }
@@ -50,6 +53,8 @@ export default function createOneAtATimeQueue({ onEmpty = () => {} } = {}) {
         console.log("fire new!");
         firePromise(lazyPromise);
       }
+
+      return state.inFlight;
     }
   };
 }
