@@ -1,6 +1,6 @@
 import React from "react";
 import { func, number, shape, string }   from "prop-types";
-import UndoableTextInput from "../Form/UndoableTextInput.jsx";
+import UndoableTextInput from "../Undoable/UndoableTextInput.jsx";
 
 const propTypes = {
   dataset: shape({
