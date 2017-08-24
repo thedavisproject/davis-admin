@@ -4,7 +4,7 @@ import R from "ramda";
 
 
 import FileUpload from "./FileUpload.jsx";
-import Resolver from "./Resolver/Resolver.jsx";
+import ResolverContainer from "./Resolver/ResolverContainer.js";
 import TextInput from "../TextInput/TextInput.jsx";
 
 
@@ -52,10 +52,10 @@ export default class Import extends React.Component {
         .then(response => {
           const id = R.path(["entities", "create", 0, "id"], response)
           this.setState({ datasetId: id });
-        })
-        .catch(error => {
-          console.log("roar!", error);
         });
+        // .catch(error => {
+        //   console.log("roar!", error);
+        // });
     }
   }
 
@@ -75,7 +75,7 @@ export default class Import extends React.Component {
 
   renderStep = () => {
 
-    const { fileUploading } = this.state;
+    const { fileUploading, datasetId, fileId } = this.state;
 
     switch(this.getStep()){
       case 1:
@@ -100,12 +100,13 @@ export default class Import extends React.Component {
             </form>
           </div>
         );
+      case 3:
+        return (
+          <ResolverContainer datasetId={datasetId} fileId={fileId} />
+        );
       default:
         return (
-          <div>
-            wooo!
-            <pre>{JSON.stringify(this.state, null, 2)}</pre>
-          </div>
+          <div>Uhh ohhhhhhh</div>
         );
     }
   }

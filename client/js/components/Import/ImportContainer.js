@@ -1,5 +1,4 @@
 import { graphql, gql } from "react-apollo";
-import R from "ramda";
 
 import Import from "./Import.jsx";
 
@@ -29,31 +28,28 @@ const submitDatasetNameMutation = gql`
 `;
 
 
-export default R.compose(
-  graphql(submitDatasetNameMutation, {
-    props: ({ ownProps, mutate }) => {
-      return {
-        onDatasetSubmit: (name) => {
+export default graphql(submitDatasetNameMutation, {
+  props: ({ ownProps, mutate }) => {
+    return {
+      onDatasetSubmit: (name) => {
 
-          return mutate({
-            variables: {
-              entity: {
-                name: name,
-                entityType: "dataset"
-              }
+        return mutate({
+          variables: {
+            entity: {
+              name: name,
+              entityType: "dataset"
             }
-          })
-          .then(({ data }) => {
-            console.log("success!",  data);
-            return data;
-          })
-          .catch(error => {
-            // eslint-disable-next-line no-console
-            console.log("error", error);
-          });
-        }
-      };
-    }
-  })
-
-)(Import);
+          }
+        })
+        .then(({ data }) => {
+          console.log("success!",  data);
+          return data;
+        })
+        .catch(error => {
+          // eslint-disable-next-line no-console
+          console.log("error", error);
+        });
+      }
+    };
+  }
+})(Import);

@@ -1,12 +1,18 @@
 import React from "react";
 import ResolverRow from "./ResolverRow.jsx";
 
-import { arrayOf, object, shape, string } from "prop-types";
+import { arrayOf, bool, number, object, shape, string } from "prop-types";
 
 const propTypes = {
   results: arrayOf(shape({
+    // TODO replace object with shape
+    attributes: arrayOf(object),
     key: string.isRequired,
-    variable: object,
+    match: bool,
+    variable: shape({
+      id: number,
+      name: string
+    }),
 
     // if categorical...
     // attributes: arrayOf(shape({
