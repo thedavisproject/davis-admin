@@ -8,13 +8,10 @@ const propTypes = {
   onUploadError: func.isRequired
 };
 
-const Upload = (props) => {
+const FileUpload = (props) => {
 
   return (
-    <div className="upload">
-      <h2>Upload a file</h2>
-      <input type="file" onChange={handleFileUpload(props)} />
-    </div>
+    <input type="file" onChange={handleFileUpload(props)} />
   );
 };
 
@@ -38,10 +35,9 @@ const handleFileUpload = R.curry(({ onUploadStart, onUploadSuccess, onUploadErro
   .then( success => onUploadSuccess(success) )
   .catch( error => onUploadError(error) );
 
-
 });
 
 
-Upload.propTypes = propTypes;
+FileUpload.propTypes = propTypes;
 
-export default Upload;
+export default FileUpload;
