@@ -115,7 +115,6 @@ export default class Import extends React.Component {
   render = () => {
     return (
       <div>
-        {this.getStep()}
         {this.renderStep()}
       </div>
     );

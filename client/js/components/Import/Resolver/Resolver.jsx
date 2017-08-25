@@ -1,55 +1,83 @@
 import React from "react";
 import ResolverRow from "./ResolverRow.jsx";
+import R from "ramda";
 
-import { arrayOf, bool, number, object, shape, string } from "prop-types";
+import { arrayOf, bool, number, shape, string } from "prop-types";
 
-const propTypes = {
-  results: arrayOf(shape({
-    // TODO replace object with shape
-    attributes: arrayOf(object),
-    key: string.isRequired,
-    match: bool,
-    variable: shape({
-      id: number,
-      name: string
-    }),
 
-    // if categorical...
-    // attributes: arrayOf(shape({
-    //   name: string.isRequired,
-    //   match: bool.isRequired,
-    //   atrribute: string.isRequired
-    // }))
-  })).isRequired
-};
+export default class Resolver extends React.Component {
 
-const Resolver = (props) => {
+  static propTypes = {
+    results: arrayOf(shape({
+      // if categorical...
+      attributes: arrayOf(shape({
+        name: string.isRequired,
+        match: bool.isRequired,
+        atrribute: string.isRequired
+      })),
+      key: string.isRequired,
+      match: bool,
+      variable: shape({
+        id: number,
+        name: string
+      })
+    })).isRequired
+  };
 
-  const { results } = props;
+  state = {
+    // initalize the resolved status for each variable
+    resolved: R.compose(
+      R.fromPairs,
+      R.map(result => {
+        const { key, variable } = result;
+        return [key, {
+          // method: oneOf(["", "new", "choose", "ignore"])
+          method: variable ? "new" : "choose"
+        }];
+      }),
+    )(this.props.results)
 
-  return (
-    <div>
-      <div>Found {results.length} variables:</div>
+  };
 
-      <table>
-        <tbody>
-          {results.map(result => {
+  handleMethodChange = R.memoize((key) => (method) => {
+    const { resolved } = this.state;
 
-            const { key, variable } = result;
+    // we want to set { key: { method: "this!" }}
+    const methodLens = R.lensPath([key, "method"]);
 
-            return (
-              <ResolverRow key={key}
-                columnHeader={key}
-                variable={variable}
-              />
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+    this.setState({
+      resolved: R.set(methodLens, method, resolved)
+    });
+  })
 
-Resolver.propTypes = propTypes;
+  render = () => {
 
-export default Resolver;
+    const { resolved } = this.state;
+    const { results } = this.props;
+
+    return (
+      <div>
+        <div>Found {results.length} variables:</div>
+
+        <table>
+          <tbody>
+            {results.map(result => {
+
+              const { key, variable } = result;
+
+              return (
+                <ResolverRow key={key}
+                  columnHeader={key}
+                  variable={variable}
+                  method={resolved[key].method}
+                  onMethodChange={this.handleMethodChange(key)}
+                />
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+}

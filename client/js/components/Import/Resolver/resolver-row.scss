@@ -2,6 +2,8 @@
 .resolver-row {
 
     td {
+        border-top: 1px solid #999;
+        padding-top: 10px;
         padding-bottom: 10px;
         vertical-align: top;
     }
@@ -9,4 +11,8 @@
 
 .resolver-row__column-header {
     padding-right: 10px;
+}
+
+.resolver-row__method {
+    padding-left: 10px;
 }

@@ -6,67 +6,64 @@ import ResolveIgnore from "./ResolveIgnore.jsx";
 
 import { func, number, oneOf, shape, string } from "prop-types";
 
-export default class ResolverRow extends React.Component {
 
-  static propTypes = {
-    columnHeader: string.isRequired,
-    variable: shape({
-      id: number,
-      type: oneOf(["categorical", "number", "text"]),
-      name: string
-    })
+const propTypes = {
+  columnHeader: string.isRequired,
+  variable: shape({
+    id: number,
+    type: oneOf(["categorical", "number", "text"]),
+    name: string
+  }),
+  method: oneOf(["", "new", "choose", "ignore"]),
+  onMethodChange: func.isRequired
+};
+
+
+const renderMethod = (method) => {
+
+  if (!method) { return ""; }
+
+  switch (method) {
+    case "choose":
+      return (
+        <ResolveChoose />
+      );
+    case "new":
+      return (
+        <ResolveNew />
+      );
+    case "ignore":
+      return (
+        <ResolveIgnore />
+      );
+  }
+};
+
+
+const renderResolveChoices = ({ method, onClick }) => {
+
+  const handleClick = (m) => (e) => {
+    const newMethod =  (method !== m) ? m : "";
+    onClick(newMethod);
   };
 
-  state = {
-    method: "", // new, choose, ignore
-    resolvedTo: null
-  }
+  const renderButton = (method, label) => (
+    <button key={method} type="button" onClick={handleClick(method)}>{label}</button>
+  );
+
+  return [
+    renderButton("choose", "Choose"),
+    renderButton("new", "New"),
+    renderButton("ignore", "Ignore")
+  ];
+};
 
 
-  renderResolveChoices = () => {
+const ResolverRow = (props) => {
 
-    const handleClick = (method) => (e) => {
-      this.setState({
-        method: (this.state.method !== method) ? method : ""
-      });
-    };
+  const { columnHeader, method, onMethodChange, variable } = props;
 
-    const renderButton = (method, label) => (
-      <button key={method} type="button" onClick={handleClick(method)}>{label}</button>
-    );
-
-    return [
-      renderButton("choose", "Choose"),
-      renderButton("new", "New"),
-      renderButton("ignore", "Ignore")
-    ];
-  }
-
-  renderMethod = (method) => {
-
-    if (!method) { return ""; }
-
-
-
-    switch (method) {
-      case "choose":
-        return (
-          <ResolveChoose />
-        );
-      case "new":
-        return (
-          <ResolveNew />
-        );
-      case "ignore":
-        return (
-          <ResolveIgnore />
-        );
-    }
-  }
-
-  renderResolve = () => {
-    const { variable } = this.props;
-    const { method } = this.state;
+  const renderResolve = () => {
 
     const handleChangeClick = (e) => {
       e.preventDefault();
@@ -84,25 +81,24 @@ export default class ResolverRow extends React.Component {
     else {
       return (
         <div>
-          {method !== "ignore" && this.renderResolveChoices()}
-          {this.renderMethod(method)}
+          {method !== "ignore" && renderResolveChoices({ method, onClick: onMethodChange })}
+          {renderMethod(method)}
         </div>
       );
     }
-  }
-
-  render = () => {
-
-    const { columnHeader, variable, resolvedTo } = this.props;
-
-    return (
-      <tr className="resolver-row">
-        <td className="resolver-row__column-header">{columnHeader}</td>
-        <td className="resolver-row__status"> { variable ? "✔" : "?"} </td>
-        <td className="resolver-row__resolve">
-          {this.renderResolve()}
-        </td>
-      </tr>
-    );
   };
-}
+
+  return (
+    <tr className="resolver-row">
+      <td className="resolver-row__column-header">{columnHeader}</td>
+      <td className="resolver-row__status"> { variable ? "✔" : "?"} </td>
+      <td className="resolver-row__method">
+        {renderResolve(props)}
+      </td>
+    </tr>
+  );
+};
+
+ResolverRow.propTypes = propTypes;
+
+export default ResolverRow;
