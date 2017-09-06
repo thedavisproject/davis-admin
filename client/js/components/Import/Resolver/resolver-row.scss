@@ -15,4 +15,9 @@
 
 .resolver-row__method {
     padding-left: 10px;
+
+    label {
+        text-transform: uppercase;
+        font-size: 12px;
+    }
 }

@@ -31,14 +31,13 @@ const analyzeFileQuery = gql`
 export default R.compose(
   graphql(analyzeFileQuery, {
     props: ({ ownProps, data }) => {
-      console.log("ownProps", ownProps);
-      console.log("data", data);
 
       return {
         results: R.path(["data", "analyze"], data),
         loading: data.loading,
         error: data.error
-      }
+      };
+
     },
     options: (props) => ({
       variables: {

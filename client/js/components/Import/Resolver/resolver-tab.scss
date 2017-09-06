@@ -1,0 +1,25 @@
+.resolver-tab {
+
+    margin-bottom: 10px;
+    padding: 4px 8px;
+
+    font-size: 12px;
+
+    border: 0;
+    background: #eee;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    & + .resolver-tab {
+        margin-left: 12px;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &.is-active {
+        background-color: #74b0ff;
+    }
+}

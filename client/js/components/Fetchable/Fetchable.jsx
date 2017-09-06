@@ -28,8 +28,7 @@ const FetchableHOC = (Component) => {
   const propTypes = {
     error   : apolloError,
     errorLoadingMessage: string,
-    loading : bool.isRequired,
-    props   : any
+    loading : bool
   };
 
 

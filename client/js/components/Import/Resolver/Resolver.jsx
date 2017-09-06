@@ -24,35 +24,95 @@ export default class Resolver extends React.Component {
     })).isRequired
   };
 
-  state = {
-    // initalize the resolved status for each variable
-    resolved: R.compose(
-      R.fromPairs,
-      R.map(result => {
-        const { key, variable } = result;
-        return [key, {
-          // method: oneOf(["", "new", "choose", "ignore"])
-          method: variable ? "new" : "choose"
-        }];
-      }),
-    )(this.props.results)
+  // state is initialized in componentWillMount
+  state = {};
 
-  };
+  componentWillMount = () => {
+
+    // TODO this sucks having to do this here instead of in state = {} above,
+    // but this.handleChooseQueryUpdate is undefined then...
+    this.setState({
+      resolveMethod: R.reduce((lookup, result) => {
+        const { attributes, key, match, variable } = result;
+
+        lookup[key] = {
+          selected: "", // "choose", "new", "ignore", or ""
+          choose: {
+            query: key,
+            onQueryUpdate: this.handleChooseQueryUpdate(key),
+            selectedVariable: null,
+            onVariableSelect: this.handleChooseVariableSelect(key),
+            onChangeClick: this.handleChooseChange(key)
+          },
+          new: {},
+          ignore: {
+            // onResetClick: () => console.log("POOO")
+            onResetClick: this.handleMethodReset(key)
+          }
+        };
+
+        return lookup;
+      }, {})(this.props.results)
+    });
+  }
 
   handleMethodChange = R.memoize((key) => (method) => {
-    const { resolved } = this.state;
+    const { resolveMethod } = this.state;
 
-    // we want to set { key: { method: "this!" }}
-    const methodLens = R.lensPath([key, "method"]);
+    // console.log("change", key, method);
+
+    // we want to set { [key]: { type: "this!" }}
+    const methodLens = R.lensPath([key, "selected"]);
 
     this.setState({
-      resolved: R.set(methodLens, method, resolved)
+      resolveMethod: R.set(methodLens, method, resolveMethod)
     });
   })
 
+
+  handleMethodReset = R.memoize((key) => () => {
+    this.handleMethodChange(key)("");
+  })
+
+
+  handleChooseQueryUpdate = R.memoize((key) => (query) => {
+    const { resolveMethod } = this.state;
+
+    const queryLens = R.lensPath([key, "choose", "query"]);
+
+    this.setState({
+      resolveMethod: R.set(queryLens, query, resolveMethod)
+    });
+  })
+
+  handleChooseVariableSelect = (key) => (variable) => {
+
+    const { resolveMethod } = this.state;
+
+    const queryLens = R.lensPath([key, "choose", "query"]);
+    const selectedVariableLens = R.lensPath([key, "choose", "selectedVariable"]);
+
+    this.setState({
+      resolveMethod: R.compose(
+        R.set(queryLens, ""),
+        R.set(selectedVariableLens, variable)
+      )(resolveMethod)
+    });
+  }
+
+  handleChooseChange = (key) => () => {
+    const { resolveMethod } = this.state;
+
+    const selectedVariableLens = R.lensPath([key, "choose", "selectedVariable"]);
+
+    this.setState({
+      resolveMethod: R.set(selectedVariableLens, null, resolveMethod)
+    });
+  }
+
   render = () => {
 
-    const { resolved } = this.state;
+    const { resolveMethod } = this.state;
     const { results } = this.props;
 
     return (
@@ -69,7 +129,7 @@ export default class Resolver extends React.Component {
                 <ResolverRow key={key}
                   columnHeader={key}
                   variable={variable}
-                  method={resolved[key].method}
+                  method={resolveMethod[key]}
                   onMethodChange={this.handleMethodChange(key)}
                 />
               );

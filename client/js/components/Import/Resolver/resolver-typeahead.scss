@@ -1,0 +1,21 @@
+.resolver-typeahead {
+
+}
+
+.resolver-typeahead__variable-list {
+    margin-top: 10px;
+}
+
+.resolver-typeahead__variable {
+
+    cursor: pointer;
+    padding: 2px 6px;
+
+    &.is-highlighted {
+        background-color: #eee;
+    }
+
+    &.is-selected {
+        font-weight: bold;
+    }
+}

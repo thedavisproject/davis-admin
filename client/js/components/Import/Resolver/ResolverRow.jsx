@@ -1,10 +1,10 @@
 import React from "react";
-
-import ResolveChoose from "./ResolveChoose.jsx";
+import classNames from "classnames";
+import ResolveChooseContainer from "./ResolveChooseContainer.js";
 import ResolveNew    from "./ResolveNew.jsx";
 import ResolveIgnore from "./ResolveIgnore.jsx";
 
-import { func, number, oneOf, shape, string } from "prop-types";
+import { func, number, object, oneOf, shape, string } from "prop-types";
 
 
 const propTypes = {
@@ -14,30 +14,15 @@ const propTypes = {
     type: oneOf(["categorical", "number", "text"]),
     name: string
   }),
-  method: oneOf(["", "new", "choose", "ignore"]),
+  method: shape({
+    selected: oneOf(["", "new", "choose", "ignore"]).isRequired,
+    choose: object,
+    new: object,
+    ignore: object
+  }).isRequired,
   onMethodChange: func.isRequired
 };
 
-
-const renderMethod = (method) => {
-
-  if (!method) { return ""; }
-
-  switch (method) {
-    case "choose":
-      return (
-        <ResolveChoose />
-      );
-    case "new":
-      return (
-        <ResolveNew />
-      );
-    case "ignore":
-      return (
-        <ResolveIgnore />
-      );
-  }
-};
 
 
 const renderResolveChoices = ({ method, onClick }) => {
@@ -47,9 +32,18 @@ const renderResolveChoices = ({ method, onClick }) => {
     onClick(newMethod);
   };
 
-  const renderButton = (method, label) => (
-    <button key={method} type="button" onClick={handleClick(method)}>{label}</button>
-  );
+  const renderButton = (m, label) => {
+
+    const buttonClasses = classNames("button", "resolver-tab", {
+      "is-active": m === method.selected
+    });
+
+    return (
+      <button key={m} type="button" className={buttonClasses} onClick={handleClick(m)}>
+        {label}
+      </button>
+    );
+  };
 
   return [
     renderButton("choose", "Choose"),
@@ -61,20 +55,52 @@ const renderResolveChoices = ({ method, onClick }) => {
 
 const ResolverRow = (props) => {
 
-  const { columnHeader, method, onMethodChange, variable } = props;
+  const { columnHeader, method, onMethodChange, onMethodReset, variable } = props;
+
+  const renderMethod = (method) => {
+
+    if (!method) { return ""; }
+
+    const getStyleFor = (m) => {
+      return {
+        display: m === method.selected ? "block" : "none"
+      };
+    };
+
+    return (
+      <div>
+        <div style={getStyleFor("choose")}>
+          <ResolveChooseContainer {...method.choose}/>
+        </div>
+        <div style={getStyleFor("new")}>
+          <ResolveNew {...method.new}/>
+        </div>
+        <div style={getStyleFor("ignore")}>
+          <ResolveIgnore {...method.ignore}/>
+        </div>
+      </div>
+    );
+
+    // switch (method.type) {
+    //   case "choose":
+    //     return (
+    //     );
+    //   case "new":
+    //     return (
+    //     );
+    //   case "ignore":
+    //     return (
+    //     );
+    // }
+  };
 
   const renderResolve = () => {
-
-    const handleChangeClick = (e) => {
-      e.preventDefault();
-      this.setState({ method: "" });
-    };
 
     if (variable){
       return (
         <div className="resolved">
           <span>{variable.name}</span>
-          <a href="#" onClick={handleChangeClick}>change?</a>
+          <a href="#" onClick={onMethodChange}>change?</a>
         </div>
       );
     }
@@ -82,7 +108,9 @@ const ResolverRow = (props) => {
       return (
         <div>
           {method !== "ignore" && renderResolveChoices({ method, onClick: onMethodChange })}
+
           {renderMethod(method)}
+
         </div>
       );
     }
