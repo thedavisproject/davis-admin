@@ -1,15 +1,29 @@
 import React from "react";
 
-import { } from "prop-types";
+import { func, string } from "prop-types";
 
 const propTypes = {
-
+  onSubmit: func.isRequired,
+  name: string.isRequired,
+  onNameChange: func.isRequired
 };
 
-const ResolveNew = () => {
+const ResolveNew = ({ onSubmit, name, onNameChange }) => {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(e.target.name.value);
+  };
+
+  const handleNameChange = (e) => {
+    e.preventDefault();
+    onNameChange(e.target.value);
+  };
 
   return (
-    <div>ResolveNew</div>
+    <form onSubmit={handleSubmit}>
+      Name: <input type="text" name="name" value={name} onChange={handleNameChange}/> <button type="submit">Submit</button>
+    </form>
   );
 };
 

@@ -3,29 +3,31 @@ import classNames from "classnames";
 import ResolveChooseContainer from "./ResolveChooseContainer.js";
 import ResolveNew    from "./ResolveNew.jsx";
 import ResolveIgnore from "./ResolveIgnore.jsx";
+import ResolvedBy    from "./ResolvedBy.jsx";
 
-import { func, number, object, oneOf, shape, string } from "prop-types";
+import { any, func, object, oneOf, shape, string } from "prop-types";
 
 
 const propTypes = {
   columnHeader: string.isRequired,
-  variable: shape({
-    id: number,
-    type: oneOf(["categorical", "number", "text"]),
-    name: string
-  }),
   method: shape({
     selected: oneOf(["", "new", "choose", "ignore"]).isRequired,
     choose: object,
     new: object,
-    ignore: object
+    ignore: object,
+    resolvedBy: shape({
+      type: oneOf(["new", "choose", "ignore"]).isRequired,
+      display: string.isRequired,
+      data: any
+    })
   }).isRequired,
-  onMethodChange: func.isRequired
+  onMethodChange: func.isRequired,
+  onStartOver: func.isRequired
 };
 
 
 
-const renderResolveChoices = ({ method, onClick }) => {
+const renderTabs = ({ method, onClick }) => {
 
   const handleClick = (m) => (e) => {
     const newMethod =  (method !== m) ? m : "";
@@ -55,7 +57,7 @@ const renderResolveChoices = ({ method, onClick }) => {
 
 const ResolverRow = (props) => {
 
-  const { columnHeader, method, onMethodChange, onMethodReset, variable } = props;
+  const { columnHeader, method, onMethodChange, onStartOver } = props;
 
   const renderMethod = (method) => {
 
@@ -70,47 +72,30 @@ const ResolverRow = (props) => {
     return (
       <div>
         <div style={getStyleFor("choose")}>
-          <ResolveChooseContainer {...method.choose}/>
+          <ResolveChooseContainer {...method.choose} />
         </div>
         <div style={getStyleFor("new")}>
-          <ResolveNew {...method.new}/>
+          <ResolveNew {...method.new} />
         </div>
         <div style={getStyleFor("ignore")}>
-          <ResolveIgnore {...method.ignore}/>
+          <ResolveIgnore {...method.ignore} />
         </div>
       </div>
     );
 
-    // switch (method.type) {
-    //   case "choose":
-    //     return (
-    //     );
-    //   case "new":
-    //     return (
-    //     );
-    //   case "ignore":
-    //     return (
-    //     );
-    // }
   };
 
   const renderResolve = () => {
 
-    if (variable){
-      return (
-        <div className="resolved">
-          <span>{variable.name}</span>
-          <a href="#" onClick={onMethodChange}>change?</a>
-        </div>
-      );
+    if (method.resolvedBy){
+      const { type, display } = method.resolvedBy;
+      return <ResolvedBy method={type} display={display} onStartOver={onStartOver} />;
     }
     else {
       return (
         <div>
-          {method !== "ignore" && renderResolveChoices({ method, onClick: onMethodChange })}
-
+          {renderTabs({ method, onClick: onMethodChange })}
           {renderMethod(method)}
-
         </div>
       );
     }
@@ -119,7 +104,7 @@ const ResolverRow = (props) => {
   return (
     <tr className="resolver-row">
       <td className="resolver-row__column-header">{columnHeader}</td>
-      <td className="resolver-row__status"> { variable ? "✔" : "?"} </td>
+      <td className="resolver-row__status">{(method.resolvedBy) ? "✔" : "?"}</td>
       <td className="resolver-row__method">
         {renderResolve(props)}
       </td>

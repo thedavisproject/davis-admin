@@ -18,7 +18,7 @@ const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, varia
     <Downshift inputValue={query} onChange={onSelect} >
       {(downshiftState) => {
 
-        const { getInputProps, getItemProps, getLabelProps, isOpen,
+        const { getInputProps, getItemProps, getLabelProps,
           selectedItem, highlightedIndex, openMenu } = downshiftState;
 
         return (
@@ -46,7 +46,7 @@ const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, varia
                   ))
                 )
                 : (
-                  `No results for "${query}"`
+                  (!loading && `No results for "${query}"`)
                 )}
               </div>
           </div>
