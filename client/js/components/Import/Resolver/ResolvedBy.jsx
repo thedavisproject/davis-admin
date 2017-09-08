@@ -20,7 +20,7 @@ const renderMethod = ({ method, display }) => {
     case "ignore":
       return "Ignore";
   }
-
+  
 };
 
 const ResolvedBy = ({ method, display, onStartOver }) => {

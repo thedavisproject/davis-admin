@@ -1,8 +1,8 @@
 import React from "react";
 import classNames from "classnames";
-import ResolveChooseContainer from "./ResolveChooseContainer.js";
-import ResolveNew    from "./ResolveNew.jsx";
-import ResolveIgnore from "./ResolveIgnore.jsx";
+import ChooseContainer from "./ChooseContainer.js";
+import New    from "./New.jsx";
+import Ignore from "./Ignore.jsx";
 import ResolvedBy    from "./ResolvedBy.jsx";
 
 import { any, func, object, oneOf, shape, string } from "prop-types";
@@ -72,13 +72,13 @@ const ResolverRow = (props) => {
     return (
       <div>
         <div style={getStyleFor("choose")}>
-          <ResolveChooseContainer {...method.choose} />
+          <ChooseContainer {...method.choose} />
         </div>
         <div style={getStyleFor("new")}>
-          <ResolveNew {...method.new} />
+          <New {...method.new} />
         </div>
         <div style={getStyleFor("ignore")}>
-          <ResolveIgnore {...method.ignore} />
+          <Ignore {...method.ignore} />
         </div>
       </div>
     );

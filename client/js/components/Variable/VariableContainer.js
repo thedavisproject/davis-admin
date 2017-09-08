@@ -3,18 +3,20 @@ import { graphql, gql } from "react-apollo";
 import Variable from "./Variable.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
 
-const query = gql`query variableById($id:Int){
-  entities {
-    variable(id: $id) {
-      id
-      name
+const query = gql`
+  query variableById($id: Int!){
+    entities {
+      variable(id: $id) {
+        id
+        name
+      }
     }
   }
-}`;
+`;
 
 const mapResultsToProps = ({ ownProps, data }) => {
   return {
-    variable: R.defaultTo([], R.path(["entities","variable", 0], data)),
+    variable: R.defaultTo([], R.path(["entities","variable"], data)),
     loading: data.loading,
     error: data.error
   };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import ResolveChooseTypeahead from "./ResolveChooseTypeahead.jsx";
+import ChooseTypeahead from "./ChooseTypeahead.jsx";
 
 import { arrayOf, bool, func, shape, string } from "prop-types";
 
@@ -20,7 +20,7 @@ const defaultProps = {
   variables: []
 };
 
-const ResolveChoose = (props) => {
+const Choose = (props) => {
 
   const { query, loadingResults, variables, onQueryUpdate, onVariableSelect } = props;
 
@@ -29,7 +29,7 @@ const ResolveChoose = (props) => {
   };
 
   return (
-    <ResolveChooseTypeahead
+    <ChooseTypeahead
       variables={variables}
       onSelect={onVariableSelect}
       query={query}
@@ -40,7 +40,7 @@ const ResolveChoose = (props) => {
 
 };
 
-ResolveChoose.propTypes = propTypes;
-ResolveChoose.defaultProps = defaultProps;
+Choose.propTypes = propTypes;
+Choose.defaultProps = defaultProps;
 
-export default ResolveChoose;
+export default Choose;

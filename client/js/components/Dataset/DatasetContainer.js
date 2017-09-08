@@ -1,39 +1,98 @@
 import R from "ramda";
-import { connect } from "react-redux";
-
+import { graphql, gql } from "react-apollo";
 import Dataset from "./Dataset.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
+import debounce from "lodash.debounce";
 
-import { DATASET, fetchDataset, updateDatasetField } from "../../redux/dataset/datasetActions.js";
-import { undo, redo } from "../../redux/undoable/undoableActions.js";
-
-
-function mapStateToProps(state, ownProps) {
-  return {
-    dataset: state.dataset.data,
-    errorLoading: !R.isNil(state.dataset.error),
-    errorLoadingMessage: "There was an error loading the dataset!",
-    hasData: !R.isNil(state.dataset.data) && R.keys(state.dataset.data).length > 0,
-    isLoading: state.dataset.isLoading
-  };
-}
-
-function mapDispatchToProps(dispatch, ownProps) {
-  return {
-    fetchAction: () => {
-      dispatch(fetchDataset(ownProps.id));
-    },
-    onFieldChange: (key, value) => {
-      dispatch(updateDatasetField(key, value));
-    },
-    onUndoClick: (key) => {
-      dispatch(undo(DATASET, key));
-    },
-    onRedoClick: (key) => {
-      dispatch(redo(DATASET, key));
+const dataSetByIdQuery = gql`
+  query datasetById($id: Int!){
+    entities {
+      dataSet(id: $id) {
+        id
+        name
+      }
     }
-  };
-}
+  }
+`;
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Fetchable(Dataset));
+const updateDatasetMutation = gql`
+  mutation updateDataset($entity: EntityUpdate) {
+    entities {
+      update(entities: [$entity]) {
+        id
+        name
+      }
+    }
+  }
+`;
+
+
+export default R.compose(
+
+
+  // load the data
+  graphql(dataSetByIdQuery, {
+    options: (props) => ({
+      variables: {
+        id: props.id
+      }
+    }),
+    props: ({ ownProps, data }) => ({
+      dataset: R.defaultTo([], R.path(["entities","dataSet"], data)),
+      loading: data.loading,
+      error: data.error
+    })
+  }),
+
+  // mutation to update the dataset
+  graphql(updateDatasetMutation, {
+    props: ({ ownProps, mutate }) => {
+
+      /**
+       * @param {Object} fields key/values of fields of the dataset to update
+       * @returns {Promise} will mutate the dataset in graphql
+       */
+      const onDatasetUpdate = (fields) => {
+
+        // id and entityType are required to select the correct entity
+        // combine them with the given fields
+        const variables = {
+          entity: R.merge(fields, {
+            id: ownProps.id,
+            entityType: "dataset"
+          })
+        };
+
+        const newDataset = R.merge(ownProps.dataset, fields);
+
+        return mutate({
+          variables,
+          optimisticResponse: {
+            entities: {
+              __typename: "EntityMutation",
+              update: [ newDataset ]
+            }
+          }
+        })
+        .then(({ data }) => {
+          // console.log("   written:", data.entities.update[0].name);
+        })
+        .catch(error => {
+          // eslint-disable-next-line no-console
+          console.log("error", error);
+        });
+
+      };
+
+      return {
+        onDatasetUpdate: debounce(onDatasetUpdate, 0)
+      };
+    }
+  }),
+
+
+  // wrap this component in Fetchable
+  Fetchable
+
+)(Dataset);

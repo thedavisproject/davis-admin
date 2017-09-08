@@ -3,10 +3,10 @@ import { Route, Switch, Redirect } from "react-router-dom";
 
 import Home from "./Home/Home.jsx";
 import Nav from "./Nav/Nav.jsx";
-import DatasetListWithData from "./DatasetList/DatasetListWithData.js";
-import DatasetWithData from "./Dataset/DatasetWithData.js";
-import VariableListWithData from "./VariableList/VariableListWithData.js";
-import VariableWithData from "./Variable/VariableWithData.js";
+import DatasetListContainer from "./DatasetList/DatasetListContainer.js";
+import DatasetContainer from "./Dataset/DatasetContainer.js";
+import VariableListContainer from "./VariableList/VariableListContainer.js";
+import VariableContainer from "./Variable/VariableContainer.js";
 import ImportContainer from "./Import/ImportContainer.js";
 
 import parsePairs from "./parsePairs.js";
@@ -28,25 +28,25 @@ const App = () => {
 
           <Route path="/datasets/:rest*" render={({ match }) => {
             return (
-              <DatasetListWithData {...parsePairs(match.params.rest)} />
+              <DatasetListContainer {...parsePairs(match.params.rest)} />
             );
           }} />
 
           <Route path="/dataset/:id/:rest*" render={({ match }) => {
             return (
-              <DatasetWithData id={match.params.id} {...parsePairs(match.params.rest)} />
+              <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)} />
             );
           }} />
 
           <Route path="/variables/:rest*" render={({ match }) => {
             return (
-              <VariableListWithData {...parsePairs(match.params.rest)} />
+              <VariableListContainer {...parsePairs(match.params.rest)} />
             );
           }} />
 
           <Route path="/variable/:id/:rest*" render={({ match }) => {
             return (
-              <VariableWithData id={match.params.id} {...parsePairs(match.params.rest)} />
+              <VariableContainer id={match.params.id} {...parsePairs(match.params.rest)} />
             );
           }} />
 

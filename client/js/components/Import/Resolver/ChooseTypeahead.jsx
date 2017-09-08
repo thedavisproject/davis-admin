@@ -12,7 +12,7 @@ const propTypes = {
   variables: array.isRequired
 };
 
-const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, variables }) => {
+const ChooseTypeahead = ({ loading, query, onQueryChange, onSelect, variables }) => {
 
   return (
     <Downshift inputValue={query} onChange={onSelect} >
@@ -22,7 +22,7 @@ const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, varia
           selectedItem, highlightedIndex, openMenu } = downshiftState;
 
         return (
-          <div className="resolver-typeahead">
+          <div className="choose-typeahead">
             <label {...getLabelProps()}>Choose a variable</label>
             {/* <pre>{JSON.stringify(downshiftState, null, 2)}</pre>
             <pre>{JSON.stringify(getInputProps(), null, 2)}</pre> */}
@@ -30,13 +30,13 @@ const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, varia
             <input {...getInputProps()} type="text" onChange={onQueryChange} onFocus={() => openMenu()}/>
             <br />
             {loading && "loading..."}
-            <div className="resolver-typeahead__variable-list">
+            <div className="choose-typeahead__variable-list">
               {(variables.length > 0)
                 ? (
                   variables.map((v, i) => (
                     <div key={i}
                       {...getItemProps({ item: v })}
-                      className={classNames("resolver-typeahead__variable", {
+                      className={classNames("choose-typeahead__variable", {
                         "is-highlighted": highlightedIndex === i,
                         "is-selected": selectedItem === v
                       })}
@@ -56,6 +56,6 @@ const ResolveChooseTypeahead = ({ loading, query, onQueryChange, onSelect, varia
   );
 };
 
-ResolveChooseTypeahead.propTypes = propTypes;
+ChooseTypeahead.propTypes = propTypes;
 
-export default ResolveChooseTypeahead;
+export default ChooseTypeahead;

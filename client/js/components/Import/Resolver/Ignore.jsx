@@ -14,7 +14,7 @@ const handleChangeClick = (fn) => {
   };
 };
 
-const ResolveIgnore = ({ onResetClick }) => {
+const Ignore = ({ onResetClick }) => {
 
   return (
     <div>
@@ -23,6 +23,6 @@ const ResolveIgnore = ({ onResetClick }) => {
   );
 };
 
-ResolveIgnore.propTypes = propTypes;
+Ignore.propTypes = propTypes;
 
-export default ResolveIgnore;
+export default Ignore;

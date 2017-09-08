@@ -8,7 +8,7 @@ const propTypes = {
   onNameChange: func.isRequired
 };
 
-const ResolveNew = ({ onSubmit, name, onNameChange }) => {
+const New = ({ onSubmit, name, onNameChange }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,6 +27,6 @@ const ResolveNew = ({ onSubmit, name, onNameChange }) => {
   );
 };
 
-ResolveNew.propTypes = propTypes;
+New.propTypes = propTypes;
 
-export default ResolveNew;
+export default New;

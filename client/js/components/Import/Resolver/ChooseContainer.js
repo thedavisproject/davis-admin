@@ -1,7 +1,7 @@
 import { graphql, gql } from "react-apollo";
 import R from "ramda";
 
-import ResolveChoose from "./ResolveChoose.jsx";
+import Choose from "./Choose.jsx";
 import Fetchable from "../../Fetchable/Fetchable.jsx";
 
 const variableSearch = gql`
@@ -49,4 +49,4 @@ export default R.compose(
   // wrap this component in Fetchable
   Fetchable
 
-)(ResolveChoose);
+)(Choose);

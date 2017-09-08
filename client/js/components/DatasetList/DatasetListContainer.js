@@ -1,28 +1,29 @@
 import R from "ramda";
-import { connect } from "react-redux";
-import { fetchDatasets } from "../../redux/datasets/datasetsActions.js";
-
-import Fetchable from "../Fetchable/Fetchable.jsx";
+import { graphql, gql } from "react-apollo";
 import DatasetList from "./DatasetList.jsx";
+import Fetchable from "../Fetchable/Fetchable.jsx";
 
-
-function mapStateToProps(state, ownProps) {
-
-  return {
-    datasets: state.datasets.data,
-    errorLoading: !R.isNil(state.datasets.error),
-    errorLoadingMessage: "There was an error loading the datasets!",
-    hasData: !R.isNil(state.datasets.data),
-    isLoading: state.datasets.isLoading
-  };
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchAction: () => {
-      dispatch(fetchDatasets());
+const query = gql`{
+  entities {
+    dataSets {
+      id
+      name
     }
+  }
+}`;
+
+
+const mapResultsToProps = ({ ownProps, data }) => {
+  return {
+    datasets: R.defaultTo([], R.path(["entities", "dataSets"], data)),
+    loading: data.loading,
+    error: data.error
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Fetchable(DatasetList));
+export default R.compose(
+  graphql(query, {
+    props: mapResultsToProps
+  }),
+  Fetchable
+)(DatasetList);
