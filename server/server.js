@@ -5,49 +5,7 @@ const quench = require("../gulp/quench.js");
 const app = express();
 
 const root = path.resolve(__dirname, "..", "build");
-
-/* datasets */
-
-app.get("/api/datasets", function(req, res){
-  res.sendFile(path.resolve(root, "fakedata/datasets.json"));
-});
-
-app.get("/api/dataset/:id", function(req, res){
-
-  const id = req.params.id;
-
-  const colorValues = ["red", "green", "blue"];
-
-  const json = {
-    id: id,
-    name: `Dataset ${id}`,
-    info: `what ${id}`,
-    color: colorValues[Math.floor(Math.random() * 3)]
-  };
-
-  res.send(JSON.stringify(json, null, 2));
-});
-
-
-/* variables */
-
-app.get("/api/variables", function(req, res){
-  res.sendFile(path.resolve(root, "fakedata/variables.json"));
-});
-
-app.get("/api/variable/:id", function(req, res){
-
-  const id = req.params.id;
-
-  const json = {
-    id: id,
-    name: `Variable ${id}`,
-    info: `data ${id}`
-  };
-
-  res.send(JSON.stringify(json, null, 2));
-});
-
+const port = process.env.PORT || 3030;
 
 
 /* index */
@@ -74,8 +32,8 @@ app.use(express.static(root));
 
 
 
-app.listen(3030, function () {
-  quench.logYellow("server.js", "Listening on port 3030...");
+app.listen(port, function () {
+  quench.logYellow("server.js", `Listening on port ${port}...`);
 });
 
 module.exports = app;
