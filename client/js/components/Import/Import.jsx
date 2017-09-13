@@ -1,5 +1,5 @@
 import React from "react";
-import { func } from "prop-types";
+import { bool, func, number, string } from "prop-types";
 import R from "ramda";
 
 
@@ -8,84 +8,83 @@ import ResolverContainer from "./Resolver/ResolverContainer.js";
 import TextInput from "../TextInput/TextInput.jsx";
 
 
-export default class Import extends React.Component {
+const propTypes = {
+  fileId: string,
+  fileUploading: bool,
+  datasetId: number,
+  datasetName: string,
+  onDatasetSubmit: func.isRequired,
+  onDatasetSubmitSuccess: func.isRequired,
+  // onDatasetSubmitError: func.isRequired,
+  onUploadStart: func.isRequired,
+  onUploadSuccess: func.isRequired,
+  // onUploadError: func.isRequired,
+};
 
-  static propTypes = {
-    onDatasetSubmit: func.isRequired
-  }
+const Import = (props) => {
 
-  state = {
-    fileId: null,
-    fileUploading: false,
-    datasetId: null,
-    datasetName: null,
-  }
 
-  handleUploadStart = (file) => {
-    this.setState({ fileUploading: true });
-  }
+  const handleUploadStart = (file) => {
+    props.onUploadStart(file);
+  };
 
-  handleUploadSuccess = (response) => {
-    const { id } = response;
+  const handleUploadSuccess = (response) => {
+    const { id } = response; // fileId
 
-    this.setState({
-      fileId: id,
-      fileUploading: false
-    });
-  }
+    props.onUploadSuccess(id);
+  };
 
-  handleUploadError = (error) => {
+  const handleUploadError = (error) => {
     console.error(error);
-  }
+    // props.onUploadError(error);
+  };
 
-  handleDatasetNameChange = (datasetName) => {
-    this.setState({ datasetName });
-  }
+  const handleDatasetNameChange = (datasetName) => {
+    // maybe validation in the future?
+  };
 
-  handleDatasetNameSubmit = (e) => {
+  const handleDatasetNameSubmit = (e) => {
     e.preventDefault();
-    const { onDatasetSubmit } = this.props;
-    const { datasetName } = this.state;
+    const { onDatasetSubmit, onDatasetSubmitSuccess } = props;
+    const datasetName = e.target.name.value;
 
-    if (onDatasetSubmit){
-      onDatasetSubmit(datasetName)
-        .then(response => {
-          const id = R.path(["entities", "create", 0, "id"], response)
-          this.setState({ datasetId: id });
-        });
-        // .catch(error => {
-        //   console.log("roar!", error);
-        // });
-    }
-  }
+    onDatasetSubmit(datasetName)
+      .then(response => {
+        const id = R.path(["entities", "create", 0, "id"], response);
+        onDatasetSubmitSuccess(id);
+      });
+      // .catch(error => {
+      //   console.log("roar!", error);
+      // });
+  };
 
-  getStep = () => {
-    const { fileId, datasetId } = this.state;
+  const getStep = () => {
+    const { fileId, datasetId } = props;
 
-    if (fileId === null){
+    if (R.isNil(fileId)){
       return 1;
     }
 
-    if (datasetId === null){
+    if (R.isNil(datasetId)){
       return 2;
     }
 
     return 3;
-  }
+  };
 
-  renderStep = () => {
+  const renderStep = () => {
 
-    const { fileUploading, datasetId, fileId } = this.state;
+    const { fileUploading, datasetId, fileId } = props;
 
-    switch(this.getStep()){
+    switch(getStep()){
       case 1:
         return (
           <div>
             <h2>Upload a file</h2>
             <FileUpload
-              onUploadStart   = {this.handleUploadStart}
-              onUploadSuccess = {this.handleUploadSuccess}
-              onUploadError   = {this.handleUploadError}
+              onUploadStart   = {handleUploadStart}
+              onUploadSuccess = {handleUploadSuccess}
+              onUploadError   = {handleUploadError}
             />
             {fileUploading && "uploading..."}
           </div>
@@ -94,8 +93,8 @@ export default class Import extends React.Component {
         return (
           <div>
             <h2>Dataset Name</h2>
-            <form onSubmit={this.handleDatasetNameSubmit}>
-              <TextInput onChange={this.handleDatasetNameChange} />
+            <form onSubmit={handleDatasetNameSubmit}>
+              <TextInput name="name" onChange={handleDatasetNameChange} />
               <button type="submit">Submit</button>
             </form>
           </div>
@@ -109,15 +108,18 @@ export default class Import extends React.Component {
           <div>Uhh ohhhhhhh</div>
         );
     }
-  }
+  };
 
 
-  render = () => {
-    return (
-      <div>
-        {this.renderStep()}
-      </div>
-    );
-  }
+  return (
+    <div>
+      {renderStep()}
+    </div>
+  );
 
-}
+};
+
+
+Import.propTypes = propTypes;
+
+export default Import;
