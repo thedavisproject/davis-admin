@@ -22,6 +22,6 @@ module.exports = function copyTask(config, env) {
     return gulp.src(copy.src, { base: config.root })
       .pipe(quench.drano())
       .pipe(gulp.dest(copy.dest))
-      .pipe(debug({title: "copy:"}));
+      .pipe(debug({ title: "copy:" }));
   });
 };

@@ -33,7 +33,7 @@ module.exports = function jsTestTask(config, env) {
     return gulp.src(testConfig.src, { base: "./" })
       .pipe(quench.drano())
 
-      .pipe(debug({title: "test:"}))
+      .pipe(debug({ title: "test:" }))
       .pipe(transpile())
 
       // write the files to disk, because mocha only take files paths, not file streams

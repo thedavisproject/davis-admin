@@ -1,5 +1,4 @@
 import React from "react";
-import R from "ramda";
 
 import { any, bool, shape, string } from "prop-types";
 

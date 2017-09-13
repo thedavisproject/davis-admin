@@ -1,6 +1,4 @@
 const gulp    = require("gulp");
-const quench  = require("../quench.js");
-const debug   = require("gulp-debug");
 const nodemon = require("gulp-nodemon");
 
 module.exports = function serverTask(config, env){

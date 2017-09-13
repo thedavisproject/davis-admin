@@ -70,7 +70,7 @@ export const Accordion = React.createClass({
     });
 
 
-    // extract <Title> and <Content>, ignore any other childrend
+    // extract <Title> and <Content>, ignore any other children
     const { title, content } = React.Children.toArray(children)
       .reduce((obj, child) => {
 

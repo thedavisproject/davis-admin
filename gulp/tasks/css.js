@@ -45,8 +45,8 @@ module.exports = function cssTask(config, env) {
         atrules: true,
         html: true
       }))
-      .pipe(concat(cssConfig.filename, {newLine: ""}))
-      .pipe(rename({suffix: "-generated"}));
+      .pipe(concat(cssConfig.filename, { newLine: "" }))
+      .pipe(rename({ suffix: "-generated" }));
 
     // only add the header text if this css isn't compressed
     if (cssConfig.sass && cssConfig.sass.outputStyle !== "compressed") {
@@ -56,6 +56,6 @@ module.exports = function cssTask(config, env) {
     return gulpCss
       .pipe(sourcemaps.write("./"))
       .pipe(gulp.dest(cssConfig.dest))
-      .pipe(debug({title: "css:"}));
+      .pipe(debug({ title: "css:" }));
   });
 };
