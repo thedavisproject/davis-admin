@@ -5,7 +5,7 @@ import { func, oneOf, string } from "prop-types";
 const propTypes = {
   method: oneOf(["choose", "new", "ignore"]).isRequired,
   display: string,
-  onStartOver: func.isRequired
+  onMethodClear: func.isRequired
 };
 
 const renderMethod = ({ method, display }) => {
@@ -20,14 +20,14 @@ const renderMethod = ({ method, display }) => {
     case "ignore":
       return "Ignore";
   }
-  
+
 };
 
-const ResolvedBy = ({ method, display, onStartOver }) => {
+const ResolvedBy = ({ method, display, onMethodClear }) => {
 
   const handleChangeClick = (e) => {
     e.preventDefault();
-    onStartOver(e);
+    onMethodClear(e);
   };
 
   return (

@@ -1,8 +1,11 @@
 import { graphql, gql } from "react-apollo";
+import { connect } from "react-redux";
 import R from "ramda";
 
 import Choose from "./Choose.jsx";
 import Fetchable from "../../Fetchable/Fetchable.jsx";
+
+import { updateQuery, selectVariable } from "../redux/chooseActions.js";
 
 const variableSearch = gql`
   query search($query: JSON) {
@@ -33,6 +36,7 @@ export default R.compose(
         error: data.error // for Fetchable
       };
     },
+    
     options: (props) => {
       return  {
         variables: {
@@ -45,6 +49,27 @@ export default R.compose(
       };
     }
   }),
+
+  connect(
+    function mapStateToProps(state, ownProps){
+
+      const key = ownProps.columnHeader; // key is a reserved prop
+      const { query } = state.import.resolverState[key].choose;
+
+      return {
+        // query
+      };
+    },
+    function mapDispatchToProps(dispatch, ownProps){
+
+      const key = ownProps.columnHeader; // key is a reserved prop
+
+      return {
+        onQueryUpdate: (query) =>dispatch(updateQuery(key, query)),
+        onVariableSelect: (variable) => dispatch(selectVariable(key, variable))
+      };
+    }
+  ),
 
   // wrap this component in Fetchable
   Fetchable

@@ -5,15 +5,26 @@ import {
   IMPORT_UPLOAD_SUCCESS
 } from "./importActions.js";
 
+import resolverStateReducer from "./resolverStateReducer.js";
+
 const initialState = {
-  datasetId: null, //32, // null, << for testing
+  datasetId: 32, // null, << for testing
   datasetName: null,
-  fileId: null, // "dbc970db37cab33953d63a1da9761bfd", // null, << for testing
-  fileUploading: false
+  fileId: "dbc970db37cab33953d63a1da9761bfd", // null, << for testing
+  fileUploading: false,
+  resolverState: undefined // delegate to resolverStateReducer
 };
 
 
+// combine the reducer below with the resolver reducer
 export default function importReducer(state = initialState, action){
+  return R.merge(basicImportReducer(state, action), {
+    resolverState: resolverStateReducer(state.resolverState, action)
+  });
+}
+
+
+function basicImportReducer(state, action){
 
   switch(action.type){
     case IMPORT_SET_DATASET_ID:

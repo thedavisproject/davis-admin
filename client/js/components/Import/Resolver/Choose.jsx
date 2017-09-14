@@ -6,6 +6,7 @@ import { arrayOf, bool, func, shape, string } from "prop-types";
 
 
 const propTypes = {
+  columnHeader: string.isRequired, // it's the key, but that prop is reserved
   variables: arrayOf(shape({
     name: string,
     key: string

@@ -1,4 +1,4 @@
-import importReducer from "./import/importReducer.js";
+import importReducer from "../components/Import/redux/importReducer.js";
 
 export default function createRootReducer(apolloReducer){
 

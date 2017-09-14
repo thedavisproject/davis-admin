@@ -4,7 +4,7 @@ import R from "ramda";
 
 import {
   setDatasetId, uploadStart, uploadSuccess
-}  from "../../redux/import/importActions.js";
+}  from "./redux/importActions.js";
 
 import Import from "./Import.jsx";
 
@@ -58,6 +58,8 @@ export default R.compose(
     props: ({ ownProps, mutate }) => {
 
       return {
+        // TODO have a loading indicator for this
+        // https://github.com/apollographql/react-apollo/issues/421
         onDatasetSubmit: (name) => {
 
           return mutate({
