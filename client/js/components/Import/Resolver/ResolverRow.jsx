@@ -1,10 +1,10 @@
 import React from "react";
 import classNames from "classnames";
 import ChooseContainer from "./ChooseContainer.js";
-import New    from "./New.jsx";
-import ResolvedBy    from "./ResolvedBy.jsx";
+import NewContainer    from "./NewContainer.js";
+import ResolvedBy      from "./ResolvedBy.jsx";
 
-import { any, func, object, oneOf, shape, string } from "prop-types";
+import { any, func, oneOf, shape, string } from "prop-types";
 
 
 const propTypes = {
@@ -71,7 +71,7 @@ const ResolverRow = (props) => {
           <ChooseContainer {...method.choose} columnHeader={columnHeader} />
         </div>
         <div style={getStyleFor("new")}>
-          {/* <New {...method.new} /> */}
+          <NewContainer {...method.new} columnHeader={columnHeader} />
         </div>
       </div>
     );

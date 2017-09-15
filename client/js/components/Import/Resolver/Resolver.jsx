@@ -67,35 +67,6 @@ export default class Resolver extends React.Component {
     this.props.onMethodClear(key);
   })
 
-  /* new */
-
-  handleNewNameChange = R.memoize((key) => (name) => {
-    const { resolveMethod } = this.state;
-
-    const newNameLens = R.lensPath([key, "new", "name"]);
-
-    this.setState({
-      resolveMethod: R.compose(
-        R.set(newNameLens, name),
-      )(resolveMethod)
-    });
-  })
-
-  handleNewSubmit = R.memoize((key) => (name) => {
-    const { resolveMethod } = this.state;
-
-    const resolvedBy = {
-      type: "new",
-      display: name,
-      data: name
-    };
-
-    this.setState({
-      resolveMethod: this.resolveWith(key, resolvedBy, resolveMethod)
-    });
-  })
-
-
 
   /* render */
 

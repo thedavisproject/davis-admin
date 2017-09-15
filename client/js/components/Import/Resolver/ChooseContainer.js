@@ -20,6 +20,7 @@ const variableSearch = gql`
 
 
 export default R.compose(
+
   graphql(variableSearch, {
 
     // don't load if the query length is short
@@ -36,7 +37,7 @@ export default R.compose(
         error: data.error // for Fetchable
       };
     },
-    
+
     options: (props) => {
       return  {
         variables: {
@@ -52,13 +53,7 @@ export default R.compose(
 
   connect(
     function mapStateToProps(state, ownProps){
-
-      const key = ownProps.columnHeader; // key is a reserved prop
-      const { query } = state.import.resolverState[key].choose;
-
-      return {
-        // query
-      };
+      return {};
     },
     function mapDispatchToProps(dispatch, ownProps){
 

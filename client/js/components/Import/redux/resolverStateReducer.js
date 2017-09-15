@@ -1,6 +1,7 @@
 import {
   initResolver, selectMethod, clearMethod,
-  updateChooseQuery, selectChooseVariable
+  updateChooseQuery, selectChooseVariable,
+  updateNewName, submitNewVariable
 } from "./resolverState.js";
 
 import {
@@ -13,6 +14,11 @@ import {
   RESOLVE_CHOOSE_QUERY_UPDATE,
   RESOLVE_CHOOSE_SELECT_VARIABLE
 } from "./chooseActions.js";
+
+import {
+  RESOLVE_NEW_UPDATE_NAME,
+  RESOLVE_NEW_SUBMIT
+} from "./newActions.js";
 
 // lookup of column header as the key
 const initialState = {};
@@ -46,6 +52,16 @@ export default function resolverReducer(state = initialState, action){
     case RESOLVE_CHOOSE_SELECT_VARIABLE: {
       const { key, variable } = action.payload;
       return selectChooseVariable(key, variable, state);
+    }
+
+    case RESOLVE_NEW_UPDATE_NAME: {
+      const { key, name } = action.payload;
+      return updateNewName(key, name, state);
+    }
+
+    case RESOLVE_NEW_SUBMIT: {
+      const { key } = action.payload;
+      return submitNewVariable(key, state);
     }
 
     default:

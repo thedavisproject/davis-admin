@@ -68,11 +68,11 @@ export const resolveWith = R.curry((key, resolvedBy, resolverState) => {
 
 
 /**
- * [selectMethod description]
- * @param  {String} key      [description]
- * @param  {String} method   [description]
- * @param  {ResolverState} resolverState [description]
- * @return {ResolverState} updated resovler
+ * select (not resolve) to the given method
+ * @param  {String} key    ResolverStateItem to select
+ * @param  {String} method the method to select
+ * @param  {ResolverState} resolverState old state
+ * @return {ResolverState} updated ResolverState
  */
 export const selectMethod = (key, method, resolverState) => {
 
@@ -95,6 +95,12 @@ export const selectMethod = (key, method, resolverState) => {
 };
 
 
+/**
+ * reset resolvedBy
+ * @param  {String} key key
+ * @param  {ResolverState} resolverState old state
+ * @return {ResolverState} updated ResolverState
+ */
 export const clearMethod = (key, resolverState) => {
 
   const resolvedByLens = R.lensPath([key, "resolvedBy"]);
@@ -103,7 +109,15 @@ export const clearMethod = (key, resolverState) => {
 };
 
 
+/* choose */
 
+/**
+ * set the query field for the choose state
+ * @param  {String} key key
+ * @param  {String} query the new query
+ * @param  {ResolverState} resolverState old state
+ * @return {ResolverState} updated ResolverState
+ */
 export const updateChooseQuery = (key, query, resolverState) => {
 
   const queryLens = R.lensPath([key, "choose", "query"]);
@@ -112,6 +126,15 @@ export const updateChooseQuery = (key, query, resolverState) => {
 };
 
 
+/**
+ * resolve with the given variable.  (when the user clicks on a variable in the dropdown)
+ * will also update the query to be the variable.name so if the user cancels and selects
+ * choose again, it will filter to the previously selected variable
+ * @param  {String} key key
+ * @param  {Object} variable the variable to resolve with (must have a .name field)
+ * @param  {ResolverState} resolverState old state
+ * @return {ResolverState} updated ResolverState
+ */
 export const selectChooseVariable = (key, variable, resolverState) => {
 
   const queryLens = R.lensPath([key, "choose", "query"]);
@@ -126,5 +149,31 @@ export const selectChooseVariable = (key, variable, resolverState) => {
     R.set(queryLens, variable.name),
     resolveWith(key, resolvedBy)
   )(resolverState);
+
+};
+
+
+/* new */
+
+
+export const updateNewName = (key, name, resolverState) => {
+
+  const newNameLens = R.lensPath([key, "new", "name"]);
+
+  return R.set(newNameLens, name, resolverState);
+};
+
+
+export const submitNewVariable = (key, resolverState) => {
+
+  const newLens = R.lensPath([key, "new"]);
+
+  const resolvedBy = {
+    type: "new",
+    display: R.view(newLens, resolverState).name,
+    data: R.view(newLens, resolverState)
+  };
+
+  return resolveWith(key, resolvedBy, resolverState);
 
 };
