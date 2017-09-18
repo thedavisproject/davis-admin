@@ -19,3 +19,23 @@
         font-weight: bold;
     }
 }
+
+.choose-typeahead__input {
+    position: relative;
+
+    input {
+        width: 100%;
+    }
+
+    .svg-x {
+        position: absolute;
+        right: 0;
+        top: 3px;
+
+        cursor: pointer;
+
+        &:hover {
+            fill: #555;
+        }
+    }
+}

@@ -25,16 +25,12 @@ const Choose = (props) => {
 
   const { query, loadingResults, variables, onQueryUpdate, onVariableSelect } = props;
 
-  const onQueryChange = (e) => {
-    onQueryUpdate(e.target.value);
-  };
-
   return (
     <ChooseTypeahead
       variables={variables}
       onSelect={onVariableSelect}
       query={query}
-      onQueryChange={onQueryChange}
+      onQueryChange={onQueryUpdate}
       loading={loadingResults}
     />
   );
