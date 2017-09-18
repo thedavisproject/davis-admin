@@ -64,7 +64,11 @@ module.exports = function davisTask(projectRoot) {
 
 
     createBrowserSyncTask("davis-browser-sync", {
-      proxy: "http://localhost:3030"
+      proxy: "http://localhost:3030",
+      files: [
+        `${davisBuild}/**`,
+        "!**/*.map"
+      ]
     });
 
     createNodemonTask("davis-server", {
