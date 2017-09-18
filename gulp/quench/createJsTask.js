@@ -1,5 +1,5 @@
 const gulp        = require("gulp");
-const quench      = require("../quench.js");
+const quench      = require("./quench.js");
 const uglify      = require("gulp-uglify");
 const rename      = require("gulp-rename");
 const cached      = require("gulp-cached");
@@ -11,61 +11,71 @@ const babelify    = require("babelify");
 const through2    = require("through2");
 const vinylSource = require("vinyl-source-stream");
 const vinylBuffer = require("vinyl-buffer");
+const findup      = require("find-up");
 const R           = require("ramda");
 
 
-module.exports = function jsTask(config, env){
+module.exports = function jsTask(taskName, userConfig){
 
-  const jsConfig = {
-    dest: config.dest + "/js",
-    // js uglify options.
+  const env = quench.getEnv();
+
+  const jsConfig = R.merge({
+
     uglify: {},
-    // browserify options
+
     browserify: {
-      // enable sourcemaps for development
-      debug: env.development()
+      debug: env.development() // enable sourcemaps for development
     },
 
-    // Add new entry javascript files here
-    // keys:
-    //   gulpTaskId  : unique name for the gulp task
-    //   entry       : path to this file
-    //   dest        : *optional, directory to write the file, if different from jsConfig.dest
-    //   filename    : name for the generated file (without -generated)
-    //   standalone : *optional, Boolean, whether or not to include npm packages in libraries-generated.js.
-		//                 - don't include files that have "standalone: true"
-    //   watch       : rerun this files's task when these files change (can be an array of globs)
-    files: [
-      {
-        gulpTaskId: "js-polyfill",
-        entry: config.root + "/polyfill/index.js",
-        filename: "polyfill.js",
-        standalone: true,
-        watch: config.root + "/polyfill/**"
-      },
-      {
-        gulpTaskId: "js-index",
-        entry: config.root + "/js/index.js",
-        filename: "index.js",
-        watch: [
-          config.root + "/js/**/*.js",
-          config.root + "/js/**/*.jsx"
-        ]
-      }
-    ]
-  };
+    /**
+     * Add new entry javascript files to the files array
+     * keys:
+     *   gulpTaskId  : unique name for the gulp task
+     *   entry       : path to this file
+     *   dest        : *optional, directory to write the file, if different from jsConfig.dest
+     *   filename    : name for the generated file (-generated will be appended)
+     *   standalone  : *optional, Boolean, whether or not to include npm packages in libraries-generated.js.
+     *                 - don't include files that have "standalone: true"
+     *   watch       : rerun this files's task when these files change (can be an array of globs)
+     **/
+    files: [ ]
 
+  }, userConfig);
+
+  if (!jsConfig.dest){
+    quench.logError(
+      "Js task requires a dest!\n",
+      `Given jsConfig: ${JSON.stringify(jsConfig, null, 2)}`
+    );
+    process.exit();
+    return;
+  }
+
+  const librariesTaskName = `${taskName}-libraries`;
 
   // a function to look in all the files to find what npm packages are being used
-  const getNpmPackages = createNpmPackagesGetter(jsConfig.files);
+  const getNpmPackages = createNpmPackagesGetter(jsConfig.files, librariesTaskName);
+
 
 
   /* 1. Create a gulp task and watcher for each file in the files array */
 
-  jsConfig.files.forEach(({ gulpTaskId, entry, filename, watch, dest }) => {
+  jsConfig.files.forEach(fileConfig => {
+
+    const { gulpTaskId, entry, filename, watch, dest } = fileConfig;
+
+
+    if (!gulpTaskId || !entry || !filename) {
+      quench.logError(
+        "Js task requires that each file has a unique gulpTaskId, an entry, and a filename!\n",
+        `Given fileConfig: ${JSON.stringify(fileConfig, null, 2)}`
+      );
+      process.exit();
+      return;
+    }
 
     // register the watcher for this task
-    quench.registerWatcher(gulpTaskId, watch);
+    quench.maybeWatch(gulpTaskId, watch);
 
     // create a gulp task to compile this file
     gulp.task(gulpTaskId, function(){
@@ -84,7 +94,7 @@ module.exports = function jsTask(config, env){
         }))
         .pipe(sourcemaps.write("./"))
         // prevent unchanged files from passing through, this prevents browserSync from reloading twice
-        .pipe(cached("js"))
+        .pipe(cached(gulpTaskId))
         // write to this file's info dest, or fallback to config.dest
         .pipe(gulp.dest(dest || jsConfig.dest))
         .pipe(debug({ title: `${gulpTaskId}: ` }));
@@ -97,7 +107,7 @@ module.exports = function jsTask(config, env){
   /* 2. Create a special task to compile all the npm packages into js-libraries.js */
 
   // http://stackoverflow.com/questions/30294003/how-to-avoid-code-duplication-using-browserify/30294762#30294762
-  gulp.task("js-libraries", function(){
+  gulp.task(librariesTaskName, function(){
 
     const npmPackages = getNpmPackages();
 
@@ -124,41 +134,42 @@ module.exports = function jsTask(config, env){
       }))
       .pipe(sourcemaps.write("./"))
       .pipe(gulp.dest(jsConfig.dest))
-      .pipe(debug({ title: "js-libraries: " }));
+      .pipe(debug({ title: `${librariesTaskName}: ` }));
   });
 
 
-  /* 3. Create entry "js" gulp task to run them all */
+  /* 3. Create entry "js" function to run them all */
 
   // if package.json changes, re-run all js tasks
-  quench.registerWatcher("js", [ quench.findPackageJson() ]);
+  quench.maybeWatch(taskName, [ findup.sync("package.json") ]);
 
   // a list of all the dynamic tasks we made above + js-libraries
   const allTasks = R.compose(
-    R.prepend("js-libraries"),
+    R.prepend(librariesTaskName),
     R.map(R.prop("gulpTaskId"))
   )(jsConfig.files);
 
-  // the main js task depends on all the individual file tasks
-  gulp.task("js", allTasks);
+  // a function to run all the individual file tasks in parallel
+  gulp.task(taskName, allTasks);
 
 };
 
 
 /**
- * factory function to return "getNpmPackages"
- * eg. const getNpmPackages = createNpmPackagesGetter(jsConfig.files);
- * @param  {Array} files Array of file objects (see jsConfig.files) (object with .entry field)
- * @return {Function} see below
- */
-function createNpmPackagesGetter(files){
+  * factory function to return "getNpmPackages"
+  * eg. const getNpmPackages = createNpmPackagesGetter(jsConfig.tasks);
+  * @param  {Array} files Array of file objects (see jsConfig.files) (object with .entry field)
+  * @param  {String} librariesTaskName name of the gulp task for the libraries bundle
+  * @return {Function} see below
+  */
+function createNpmPackagesGetter(files, librariesTaskName){
 
   // keep track of the result last time this was run
   let lastCommonPackages = [];
 
   /**
    * helper to get an array of all the npm dependencies from all the files
-   *   and run js-libraries if they've changed
+   *   and run the librariesTaskName if they've changed
    * @return {Array} Array of strings
    */
   return function getNpmPackages() {
@@ -176,7 +187,7 @@ function createNpmPackagesGetter(files){
 
     // if the list is different, re-run js-libraries
     if (!R.equals(lastCommonPackages, npmPackages)){
-      gulp.start("js-libraries");
+      gulp.start(librariesTaskName);
       lastCommonPackages = npmPackages;
     }
 
@@ -186,12 +197,12 @@ function createNpmPackagesGetter(files){
 
 
 /**
- * Create a bundle of the files in the stream using browserify
- * http://stackoverflow.com/questions/30294003/how-to-avoid-code-duplication-using-browserify/30294762#30294762
- * @param  {Object} browserifyOptions Options to pass to browserify
- * @param  {Array} npmPackages array of strings of npm package names to be externalized
- * @return {Stream} a gulp stream transform
- */
+  * Create a bundle of the files in the stream using browserify
+  * http://stackoverflow.com/questions/30294003/how-to-avoid-code-duplication-using-browserify/30294762#30294762
+  * @param  {Object} browserifyOptions Options to pass to browserify
+  * @param  {Array} npmPackages array of strings of npm package names to be externalized
+  * @return {Stream} a gulp stream transform
+  */
 function bundleJs(browserifyOptions, npmPackages){
 
   return through2.obj(function (file, enc, callback){

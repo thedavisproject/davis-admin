@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const historyApiFallback = require("connect-history-api-fallback");
-const quench = require("../gulp/quench.js");
+const quench = require("../gulp/quench/quench.js");
 const app = express();
 
 const root = path.resolve(__dirname, "..", "build");
