@@ -26,7 +26,8 @@ export default class Resolver extends React.Component {
           query: string
         }),
         new: shape({
-          name: string
+          name: string,
+          type: string
         })
       })
     ),

@@ -1,7 +1,7 @@
 import {
   initResolver, selectMethod, clearMethod,
   updateChooseQuery, selectChooseVariable,
-  updateNewName, submitNewVariable
+  updateNewName, updateNewType, submitNewVariable
 } from "./resolverState.js";
 
 import {
@@ -17,6 +17,7 @@ import {
 
 import {
   RESOLVE_NEW_UPDATE_NAME,
+  RESOLVE_NEW_UPDATE_TYPE,
   RESOLVE_NEW_SUBMIT
 } from "./newActions.js";
 
@@ -62,6 +63,11 @@ export default function resolverReducer(state = initialState, action){
     case RESOLVE_NEW_SUBMIT: {
       const { key } = action.payload;
       return submitNewVariable(key, state);
+    }
+
+    case RESOLVE_NEW_UPDATE_TYPE: {
+      const { key, type } = action.payload;
+      return updateNewType(key, type, state);
     }
 
     default:

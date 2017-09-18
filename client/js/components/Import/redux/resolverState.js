@@ -27,6 +27,21 @@ export const initResolver = (results) => {
 };
 
 
+export const types = [
+  {
+    label: "Text",
+    value: "text"
+  },
+  {
+    label: "Number",
+    value: "number"
+  },
+  {
+    label: "Categorical",
+    value: "categorical"
+  }
+];
+
 /**
  * creates a ResolverStateItem
  * @param  {String} key column header
@@ -41,7 +56,8 @@ const createResolverStateItem = (key) => {
       query: key
     },
     new: {
-      name: key
+      name: key,
+      type: types[0].value
     }
   };
 };
@@ -162,6 +178,16 @@ export const updateNewName = (key, name, resolverState) => {
 
   return R.set(newNameLens, name, resolverState);
 };
+
+
+export const updateNewType = (key, type, resolverState) => {
+
+  const newTypeLens = R.lensPath([key, "new", "type"]);
+
+  return R.set(newTypeLens, type, resolverState);
+};
+
+
 
 
 export const submitNewVariable = (key, resolverState) => {

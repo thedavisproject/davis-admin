@@ -4,7 +4,7 @@ import R from "ramda";
 import New from "./New.jsx";
 import Fetchable from "../../Fetchable/Fetchable.jsx";
 
-import { updateName, submitNewVariable } from "../redux/newActions.js";
+import { updateName, updateType, submitNewVariable } from "../redux/newActions.js";
 
 
 export default R.compose(
@@ -19,7 +19,8 @@ export default R.compose(
 
       return {
         onNameChange: (name) => dispatch(updateName(key, name)),
-        onSubmit: (name) => dispatch(submitNewVariable(key))
+        onSubmit: (name) => dispatch(submitNewVariable(key)),
+        onTypeChange: (type) => dispatch(updateType(key, type))
       };
     }
   ),
