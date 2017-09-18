@@ -8,9 +8,9 @@ import {
 import resolverStateReducer from "./resolverStateReducer.js";
 
 const initialState = {
-  datasetId: 32, // null, << for testing
+  datasetId: null, // 32, // << for testing
   datasetName: null,
-  fileId: "dbc970db37cab33953d63a1da9761bfd", // null, << for testing
+  fileId: null, // "dbc970db37cab33953d63a1da9761bfd", // << for testing
   fileUploading: false,
   resolverState: undefined // delegate to resolverStateReducer
 };
