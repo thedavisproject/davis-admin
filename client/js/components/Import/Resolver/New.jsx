@@ -32,7 +32,7 @@ const New = ({ onSubmit, name, onNameChange, type, onTypeChange }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        Name: <input type="text" name="name" value={name} onChange={handleNameChange}/> <button type="submit">Submit</button>
+        Name: <input type="text" name="name" value={name} onChange={handleNameChange}/>
       </div>
       <div>
         Type: {types.map(t => (
@@ -47,6 +47,9 @@ const New = ({ onSubmit, name, onNameChange, type, onTypeChange }) => {
             /> { t.label }
           </label>
         ))}
+      </div>
+      <div>
+        <button type="submit">Submit</button>
       </div>
     </form>
   );

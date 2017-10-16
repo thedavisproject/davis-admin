@@ -13,6 +13,7 @@ export default class Resolver extends React.Component {
     initResolverState: func.isRequired,
     onMethodSelect: func.isRequired,
     onMethodClear: func.isRequired,
+    onImport: func.isRequired,
     resolverState: objectOf(
       shape({
         key: string,
@@ -69,6 +70,15 @@ export default class Resolver extends React.Component {
   })
 
 
+  handleImport = (e) => {
+
+    const { resolverState } = this.props;
+
+    this.props.onImport(resolverState);
+
+  }
+
+
   /* render */
 
   render = () => {
@@ -78,6 +88,11 @@ export default class Resolver extends React.Component {
     if (R.isNil(resolverState) || R.isEmpty(resolverState)){
       return null;
     }
+
+    const isResolved = R.compose(
+      R.all(R.compose(R.not, R.isNil, R.prop("resolvedBy"))),
+      R.values
+    )(resolverState);
 
     return (
       <div>
@@ -101,6 +116,15 @@ export default class Resolver extends React.Component {
             })}
           </tbody>
         </table>
+
+        <button
+          type="button"
+          disabled={!isResolved}
+          title={!isResolved ? "Some variables are not resolved" : ""}
+          onClick={this.handleImport}
+        >
+          Import
+        </button>
       </div>
     );
   };

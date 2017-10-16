@@ -34,8 +34,36 @@ const analyzeFileQuery = gql`
   }
 `;
 
+const importMutation = gql`
+  mutation import($entities: [EntityCreate]){
+    entities{
+      create(entities: $entities) {
+        id
+        name
+        entityType
+      }
+    }
+}
+`;
+
 
 export default R.compose(
+
+  graphql(importMutation, {
+    props: ({ ownProps, mutate }) => {
+
+      return {
+        onImport: (resolverState) => {
+          const schema = R.compose(
+            R.map(R.prop("resolvedBy"))
+          )(resolverState);
+
+          console.log(schema);
+        }
+      }
+    }
+  }),
+
   graphql(analyzeFileQuery, {
     props: ({ ownProps, data }) => {
 
