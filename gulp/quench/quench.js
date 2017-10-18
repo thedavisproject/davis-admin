@@ -1,6 +1,17 @@
 /**
  *    Quench: utilities for gulp builds
- *    v4.0.1
+ *    v4.1.2
+ *
+ * Exposed functions: (see function comments for more details)
+ *   setDefaults
+ *   loadLocalJs
+ *   getEnv
+ *   isWatching
+ *   maybeWatch
+ *   drano
+ *   logHelp
+ *   logYellow
+ *   logError
  */
 const gulp         = require("gulp");
 const plumber      = require("gulp-plumber");
@@ -11,26 +22,12 @@ const path         = require("path");
 const color        = require("cli-color");
 const watch        = require("gulp-watch");
 const R            = require("ramda");
-const detective    = require("detective-es6");
 
 const environments = ["development", "production", "local"];
 
 /**
- * Exposed functions: (see function comments for more details)
- *   getEnv
- *   isWatching
- *   maybeWatch
- *   logHelp
- *   drano
- *   logYellow
- *   logError
- *   findAllNpmDependencies
- *   loadLocalJs
- */
-
-
-/**
- * command line flags
+ * yargOptions: command line flags
+ *              (see quench.setDefaults to override)
  *
  *   --watch defaults to true
  *           can do --no-watch to set it to false
@@ -51,15 +48,59 @@ const yargOptions = {
   }
 };
 
-const yargs = require("yargs").options(yargOptions).argv;
+const yargs = require("yargs").options(yargOptions);
 
-
-/* when this file is loaded, init */
-initEnv();
-
-/* load local.js when this file is loaded */
+/**
+ * load local.js when this file is loaded
+ */
 const localJsPath = path.join(__dirname, "..", "local.js");
 const localJs = fileExists(localJsPath) ? require(localJsPath) : {};
+
+/**
+ * initialize gulp-environments with our environments above
+ * https://github.com/gunpowderlabs/gulp-environments
+ */
+environments.forEach(function(environment) {
+  env[environment] = env.make(environment);
+});
+
+
+
+
+/**
+ * set the defaults for yargOptions
+ * @param  {Object} lookup lookup of the yargOptions defaults
+ *    eg. quench.setDefaults({
+ *          "env": "production", // << one of environments
+ *          "watch": false
+ *        });
+ * @return {Nothing} nothing
+ */
+module.exports.setDefaults = function setDefaults(lookup){
+
+  // [watch, env]
+  const validArgs = R.keys(yargOptions);
+
+  // make sure all the given keys are in the yargOptions
+  const valid = R.compose(
+    R.all(R.contains(R.__, validArgs)),
+    R.keys
+  )(lookup);
+
+  if (!valid){
+    logError(
+      `quench.setDefaults can only set the following: ${validArgs.join(", ")}\n`,
+      `given: ${JSON.stringify(lookup, null, 2)}`
+    );
+    process.exit();
+  }
+
+  const newYargOptions = R.map(value => ({ default: value }), lookup);
+
+  // set the new options
+  yargs.options(newYargOptions);
+
+};
 
 
 /**
@@ -71,78 +112,80 @@ module.exports.loadLocalJs = function loadLocalJs(){
 
 
 /**
- * initialize gulp-environments with our environments above
- * https://github.com/gunpowderlabs/gulp-environments
+ * set the environment
+ * @param {String} _env the environment to use
  * @return {Nothing} nothing
  */
-function initEnv(){
+function setEnv(_env){
 
-  // this will be called everytime this file is loaded in a new process
-  // (eg. if nodemon starts server.js that imports quench)
-  // don't init if we've already init'ed
-  if (!R.isNil(process.env.NODE_ENV)){
+  // this might be called multiple times, abort if this _env is already set
+  if (process.env.NODE_ENV === _env){
     return;
   }
 
-  // register the environments with gulp-environments
-  environments.forEach(function(environment) {
-    env[environment] = env.make(environment);
-  });
-
-
   // validate the env
-  if (environments.indexOf(yargs.env) === -1) {
-    logError("Environment '" + yargs.env + "' not found! Check your spelling or add a new environment in quench.js.");
-    logError("Valid environments: " + environments.join(", "));
+  if (environments.indexOf(_env) === -1) {
+    logError(
+      `Environment '${_env}' not found! Check your spelling or add a new environment in quench.js.\n`,
+      `Valid environments: ${environments.join(", ")}`
+    );
     process.exit();
   }
 
   // set NODE_ENV https://facebook.github.io/react/downloads.html#npm
-  process.env.NODE_ENV = yargs.env;
-  // set gulp-environments
-  env.current(env[yargs.env]);
+  process.env.NODE_ENV = _env;
 
-  console.log(color.green("Building for '" + yargs.env + "' environment"));
+  // set gulp-environments
+  env.current(env[_env]);
+
+  console.log(color.green(`Building for '${_env}' environment`));
 }
 
 
 /**
+ * getEnv
+ * https://github.com/gunpowderlabs/gulp-environments
  * @return {Function} an instance of gulp-environments
  */
 module.exports.getEnv = function getEnv(){
+
+  // make sure the environment is set first, setEnv will abort if it's already set
+  setEnv(yargs.argv.env);
+
   return env;
 };
 
 
 /**
- * Returns the value of yargs.watch
+ * Returns the value of yargs.argv.watch
  * the cli can change it by adding options:
  *   --watch     << true
  *   --no-watch  << false
  *               << undefined
+ * it can also be changed in code via quench.setDefaults
  * @return {Boolean} true, false, or undefined
  */
 const isWatching = module.exports.isWatching = function isWatching(){
-  return yargs.watch;
+  return yargs.argv.watch;
 };
 
 
 /**
- * watches the glob if --watch is passed on the command line
+ * watches the glob if yargs.argv.watch is true
  * @param  {String} taskName the name of the task
  * @param  {String} glob files to watch
- * @param  {Function} task task to run
+ * @param  {Function} task *optional - task to run
  * @return {Nothing} nothing
  */
 module.exports.maybeWatch = function maybeWatch(taskName, glob, task){
 
-  // if --watch was provided on the command line
-  if (yargs.watch){
+  // if we're watching
+  if (yargs.argv.watch){
 
     // alert the console that we're watching
     logYellow("watching", taskName + ":", JSON.stringify(glob, null, 2));
 
-    // if there is a taks, watch and run that task
+    // if there is a task, watch and run that task
     if (task){
       return watch(glob, task);
     }
@@ -154,39 +197,6 @@ module.exports.maybeWatch = function maybeWatch(taskName, glob, task){
     }
 
   }
-
-};
-
-
-/**
- * log out a help message, including available gulp tasks and --watch/env details
- * @return {Nothing} will print to the console
- */
-module.exports.logHelp = function logHelp(){
-
-  console.log("");
-  console.log("Available commands: ");
-  console.log("");
-
-  Object.keys(gulp.tasks)
-    .filter(taskName => taskName !== "default")
-    .forEach(taskName => {
-      console.log(`  gulp ${taskName}`);
-    });
-
-  console.log("");
-
-  console.log("By default, all tasks will run with `watch` as true.");
-  console.log("You can pass --no-watch to disable watching.");
-
-  console.log("");
-
-  console.log("By default, the environment is set to `local`.");
-  console.log("You can override this by passing --env [anotherEnv].");
-  const envs = environments.map(env => `"${env}"`).join(", ");
-  console.log(`Valid environments are ${envs}`);
-
-  console.log("");
 
 };
 
@@ -207,13 +217,46 @@ module.exports.drano = function drano() {
       }
       else {
         logError(error.plugin + ": " + error.message);
-        process.exit(1);
+        process.exit();
       }
       this.emit("end");
     }
   });
 };
 
+
+/**
+ * log out a help message, including available gulp tasks and --watch/env details
+ * @return {Nothing} will print to the console
+ */
+module.exports.logHelp = function logHelp(){
+
+  console.log("");
+  console.log("Available commands: ");
+  console.log("");
+
+  Object.keys(gulp.tasks)
+    .filter(taskName => taskName !== "default")
+    .forEach(taskName => {
+      console.log(`  gulp ${taskName}`);
+    });
+
+  console.log("");
+  console.log("");
+
+  console.log("By default, all tasks will run with `watch` as true.");
+  console.log("You can pass --no-watch to disable watching.");
+
+  console.log("");
+
+  console.log("By default, the environment is set to `local`.");
+  console.log("You can override this by passing --env [anotherEnv].");
+  const envs = environments.map(env => `"${env}"`).join(", ");
+  console.log(`Valid environments are ${envs}`);
+
+  console.log("");
+
+};
 
 
 /**
@@ -274,49 +317,3 @@ function fileExists(filepath) {
     return false;
   }
 }
-
-
-/**
- * findAllNpmDependencies: given an entry entryFilePath, recurse through the
- *   imported files and find all npm modules that are imported
- * @param  {String} entryFilePath: eg. "app/js/index.js"
- * @return {Array} an array of package names (strings).
- *                 eg ["react", "react-dom", "classnames"]
- */
-module.exports.findAllNpmDependencies = function findAllNpmDependencies(entryFilePath){
-
-  try {
-    // eg. import "./polyfill", resolve it to "./polyfill.js" or "./polyfill/index.js"
-    const entryFile = require.resolve(entryFilePath);
-
-    // list of all imported modules and files from the entryFilePath
-    // eg. ["react", "../App.jsx"]
-    const imports = detective(fs.readFileSync(entryFile, "utf8"))
-      .map(moduleOrFilePath => {
-        // if this is a relativePath (begins with .), then resolve the path
-        // from the current entryFilePath directory name
-        return (R.test(/^(\.)/, moduleOrFilePath))
-          ? path.resolve(path.dirname(entryFile), moduleOrFilePath)
-          : moduleOrFilePath;
-      });
-
-    // list of all the modules in this entryFilePath
-    const modules = R.reject(fileExists, imports);
-
-    // list of all the modules in imported files
-    const importedFilesModules = R.compose(
-      R.chain(findAllNpmDependencies), // recurse, and flatten
-      R.filter(fileExists)             // only look in files, not modules
-    )(imports);
-
-    // a set of the modules from this file + the modules from imported paths
-    const allModules = R.uniq(R.concat( modules, importedFilesModules ));
-
-    return allModules;
-
-  }
-  catch(e) {
-    logError("findAllNpmDependencies failed :( ", e);
-    return [];
-  }
-};

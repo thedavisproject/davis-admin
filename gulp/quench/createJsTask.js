@@ -12,6 +12,9 @@ const through2    = require("through2");
 const vinylSource = require("vinyl-source-stream");
 const vinylBuffer = require("vinyl-buffer");
 const findup      = require("find-up");
+const detective   = require("detective-es6");
+const path        = require("path");
+const fs          = require("fs");
 const R           = require("ramda");
 
 
@@ -179,7 +182,7 @@ function createNpmPackagesGetter(files, librariesTaskName){
       R.uniq,
       R.flatten,
       R.map(R.compose(
-        quench.findAllNpmDependencies,
+        findAllNpmDependencies,
         R.prop("entry")
       )),
       R.reject(R.propEq("standalone", true))
@@ -234,4 +237,66 @@ function bundleJs(browserifyOptions, npmPackages){
     });
 
   });
+}
+
+
+/**
+ * findAllNpmDependencies: given an entry entryFilePath, recurse through the
+ *   imported files and find all npm modules that are imported
+ * @param  {String} entryFilePath: eg. "app/js/index.js"
+ * @return {Array} an array of package names (strings).
+ *                 eg ["react", "react-dom", "classnames"]
+ */
+function findAllNpmDependencies(entryFilePath){
+
+  try {
+    // eg. import "./polyfill", resolve it to "./polyfill.js" or "./polyfill/index.js"
+    const entryFile = require.resolve(entryFilePath);
+
+    // list of all imported modules and files from the entryFilePath
+    // eg. ["react", "../App.jsx"]
+    const imports = detective(fs.readFileSync(entryFile, "utf8"))
+      .map(moduleOrFilePath => {
+        // if this is a relativePath (begins with .), then resolve the path
+        // from the current entryFilePath directory name
+        // running through require.resolve because eg. "./polyfill" won't exist
+        return (R.test(/^(\.)/, moduleOrFilePath))
+          ? require.resolve(path.resolve(path.dirname(entryFile), moduleOrFilePath))
+          : moduleOrFilePath;
+      });
+
+    // list of all the modules in this entryFilePath
+    const modules = R.reject(fileExists, imports);
+
+    // list of all the modules in imported files
+    const importedFilesModules = R.compose(
+      R.chain(findAllNpmDependencies), // recurse, and flatten
+      R.filter(fileExists)             // only look in files, not modules
+    )(imports);
+
+    // a set of the modules from this file + the modules from imported paths
+    const allModules = R.uniq(R.concat( modules, importedFilesModules ));
+
+    return allModules;
+
+  }
+  catch(e) {
+    quench.logError("findAllNpmDependencies failed :( ", e);
+    return [];
+  }
+}
+
+/**
+ * fileExists
+ * @param  {String} filepath : path to the file
+ * @return {Boolean} true if the filepath exists and is readable
+ */
+function fileExists(filepath) {
+  try {
+    fs.accessSync(filepath, fs.R_OK);
+    return true;
+  }
+  catch(e) {
+    return false;
+  }
 }
