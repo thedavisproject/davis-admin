@@ -1,6 +1,6 @@
 /**
  *    Quench: utilities for gulp builds
- *    v4.1.2
+ *    v4.2.0
  *
  * Exposed functions: (see function comments for more details)
  *   setDefaults
@@ -88,11 +88,10 @@ module.exports.setDefaults = function setDefaults(lookup){
   )(lookup);
 
   if (!valid){
-    logError(
+    throwError(
       `quench.setDefaults can only set the following: ${validArgs.join(", ")}\n`,
       `given: ${JSON.stringify(lookup, null, 2)}`
     );
-    process.exit();
   }
 
   const newYargOptions = R.map(value => ({ default: value }), lookup);
@@ -125,11 +124,10 @@ function setEnv(_env){
 
   // validate the env
   if (environments.indexOf(_env) === -1) {
-    logError(
+    throwError(
       `Environment '${_env}' not found! Check your spelling or add a new environment in quench.js.\n`,
       `Valid environments: ${environments.join(", ")}`
     );
-    process.exit();
   }
 
   // set NODE_ENV https://facebook.github.io/react/downloads.html#npm
@@ -213,12 +211,21 @@ module.exports.drano = function drano() {
 
       // gulp notify is freezing jenkins builds, so we're only going to show this message if we're watching
       if (isWatching()) {
-        notify.onError({ title: "<%= error.plugin %>", message: "<%= error.message %>", sound: "Beep" })(error);
+        notify.onError({
+          title: "<%= error.plugin %>",
+          message: "<%= error.message %>",
+          sound: "Beep"
+        })(error);
       }
       else {
+        // log this error and set the exit code to 1 (failure)
+        // but let gulp continue so it can catch more errors if there are some.
         logError(error.plugin + ": " + error.message);
-        process.exit();
+        process.exitCode = 1;
       }
+
+      // this allows the rest of the pipeline to continue
+      // eg. will flow through gulp-debug
       this.emit("end");
     }
   });
@@ -298,8 +305,22 @@ const logError = module.exports.logError = function logError() {
     }).join("");
 
     console.log("[" + color.red("error") + "]", color.red(argString));
+
   }
 
+};
+
+
+/**
+ * throwError: will log the output in red, and log out the stack trace.
+ * This will also stop the node process.
+ * @return {Nothing} nothing
+ */
+const throwError = module.exports.throwError = function throwError() {
+
+  logError(...arguments);
+
+  throw new Error("quench.throwError stack trace: ");
 };
 
 

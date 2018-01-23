@@ -9,13 +9,11 @@ module.exports = function(taskName, userConfig){
   const localConfig = quench.loadLocalJs();
 
   if (!userConfig.server && !userConfig.proxy && !localConfig.hostname){
-    quench.logError(
+    quench.throwError(
       "Browser-sync requires a `server` path or `proxy` in userConfig, or a `hostname` defined in local.js!\n",
       `Was given userConfig: ${JSON.stringify(userConfig, null, 2)}\n`,
       `and config from local.js: ${JSON.stringify(localConfig)}`
     );
-    process.exit();
-    return;
   }
 
 

@@ -27,7 +27,7 @@ module.exports = function jsTask(taskName, userConfig){
     uglify: {},
 
     browserify: {
-      debug: env.development() // enable sourcemaps for development
+      debug: !env.production() // enable sourcemaps for development/local
     },
 
     /**
@@ -46,12 +46,10 @@ module.exports = function jsTask(taskName, userConfig){
   }, userConfig);
 
   if (!jsConfig.dest){
-    quench.logError(
+    quench.throwError(
       "Js task requires a dest!\n",
       `Given jsConfig: ${JSON.stringify(jsConfig, null, 2)}`
     );
-    process.exit();
-    return;
   }
 
   const librariesTaskName = `${taskName}-libraries`;
@@ -69,12 +67,10 @@ module.exports = function jsTask(taskName, userConfig){
 
 
     if (!gulpTaskId || !entry || !filename) {
-      quench.logError(
+      quench.throwError(
         "Js task requires that each file has a unique gulpTaskId, an entry, and a filename!\n",
         `Given fileConfig: ${JSON.stringify(fileConfig, null, 2)}`
       );
-      process.exit();
-      return;
     }
 
     // register the watcher for this task

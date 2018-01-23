@@ -7,13 +7,18 @@ const gulp   = require("gulp");
 const quench = require("./quench/quench.js");
 const path   = require("path");
 
-const createDavisTask = require("./tasks/davis.js");
+const createBuildTask = require("./tasks/build.js");
 
 const projectRoot = path.resolve(__dirname, "..");
 
 
-/* gulp davis */
-createDavisTask(projectRoot);
+/**
+ * gulp build
+ *
+ * to build for prduction/jenkins:
+ *    gulp build --no-watch --env production
+ */
+gulp.task("build", createBuildTask(projectRoot));
 
 
 /* gulp */
