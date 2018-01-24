@@ -17,11 +17,13 @@ const dataSetByIdQuery = gql`
 
 
 const updateDatasetMutation = gql`
-  mutation updateDataset($entity: EntityUpdate) {
+  mutation updateDataset($dataSet: DataSetUpdate) {
     entities {
-      update(entities: [$entity]) {
-        id
-        name
+      update {
+        dataSets(dataSets: [$dataSet]){
+          id
+          name
+        }
       }
     }
   }
@@ -58,7 +60,7 @@ export default R.compose(
         // id and entityType are required to select the correct entity
         // combine them with the given fields
         const variables = {
-          entity: R.merge(fields, {
+          dataSet: R.merge(fields, {
             id: ownProps.id,
             entityType: "dataset"
           })
@@ -70,8 +72,11 @@ export default R.compose(
           variables,
           optimisticResponse: {
             entities: {
-              __typename: "EntityMutation",
-              update: [ newDataset ]
+              update: {
+                dataSets: [ newDataset ],
+                __typename: "EntityUpdate"
+              },
+              __typename: "EntityMutation"
             }
           }
         })
