@@ -26,7 +26,7 @@ const Dataset = (props) => {
 
       {/* <input type="text" value={dataset.name} onChange={e => handleNameChange(e.target.value)} /> */}
 
-      <UndoableTextInput value={dataset.name} onChange={handleNameChange} label="Name"/>
+      <UndoableTextInput value={dataset.name} onChange={handleNameChange} label="Name" />
 
       <pre>
         {/* {JSON.stringify(props, null, 2)} */}

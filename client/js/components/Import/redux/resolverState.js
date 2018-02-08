@@ -30,15 +30,15 @@ export const initResolver = (results) => {
 export const types = [
   {
     label: "Text",
-    value: "text"
+    value: "TEXT"
   },
   {
     label: "Number",
-    value: "number"
+    value: "NUMERICAL"
   },
   {
     label: "Categorical",
-    value: "categorical"
+    value: "CATEGORICAL"
   }
 ];
 

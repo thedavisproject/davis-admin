@@ -1,5 +1,5 @@
 import React from "react";
-import Undoable from "./Undoable.jsx";
+import Undoable from "./UndoableHOC.jsx";
 
 import { any, array } from "prop-types";
 
@@ -21,4 +21,4 @@ Dropdown.propTypes = {
   value: any.isRequired
 };
 
-export default Undoable((value, props) => <Dropdown value={value} {...props} /> );
+export default Undoable((value, onChange, props) => <Dropdown value={value} {...props} /> );

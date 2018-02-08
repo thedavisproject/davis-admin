@@ -32,13 +32,13 @@ export default class Resolver extends React.Component {
         })
       })
     ),
-    results: arrayOf(shape({
+    results: arrayOf(shape({ // list of variables
       // if categorical...
-      attributes: arrayOf(shape({
-        name: string.isRequired,
+      values: arrayOf(shape({
+        value: string.isRequired,
         match: bool.isRequired,
         atrribute: string.isRequired
-      })),
+      })).isRequired,
       key: string.isRequired,
       match: bool,
       variable: shape({

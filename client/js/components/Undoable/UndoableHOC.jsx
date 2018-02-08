@@ -5,12 +5,12 @@ import { createHistory, update, redo, undo } from "./undoableHelpers.js";
 
 /**
  * Higher order component to create an Undoable version of a field component
- * @param {Func} renderValue (value, props -> component)
+ * @param {Func} renderValue (value, onChange, props -> component)
  * @returns {Func} React component
  */
-const Undoable = (renderValue) => {
+const UndoableHOC = (renderValue) => {
 
-  class UndoableField extends React.Component {
+  return class UndoableField extends React.Component {
 
     static propTypes = {
       label: string.isRequired,
@@ -113,9 +113,7 @@ const Undoable = (renderValue) => {
         </div>
       );
     };
-  }
-
-  return UndoableField;
+  };
 };
 
-export default Undoable;
+export default UndoableHOC;

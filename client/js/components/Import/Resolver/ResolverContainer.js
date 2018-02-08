@@ -14,15 +14,15 @@ import Fetchable from "../../Fetchable/Fetchable.jsx";
 const analyzeFileQuery = gql`
   query analyzeFile($datasetId: Int!, $fileId: String!) {
     data {
-      analyze(dataSet: $datasetId, fileId: $fileId) {
+      analyze(dataSet: $datasetId, fileId: $fileId, valueLimit: 0) {
         key
         match
         variable {
           id
           name
         }
-        attributes {
-          key
+        values {
+          value
           match
           attribute {
             id
@@ -34,35 +34,127 @@ const analyzeFileQuery = gql`
   }
 `;
 
-const importMutation = gql`
-  mutation import($entities: [EntityCreate]){
-    entities{
-      create(entities: $entities) {
-        id
-        name
-        entityType
+const createNewVariablesMutation = gql`
+  mutation createNewVariables($variables: [VariableCreate]){
+    entities {
+      create {
+        variables(variables: $variables) {
+          id, key
+        }
       }
     }
-}
+  }
+`;
+
+const importMutation = gql`
+  mutation import($dataSet: Int!, $fileId: String!, $columnMappings: JSON!) {
+    data {
+      import(dataSet: $dataSet, fileId: $fileId, columnMappings: $columnMappings, createMissingAttributes: true) {
+        id
+        __typename
+      }
+      __typename
+    }
+  }
 `;
 
 
 export default R.compose(
 
+  graphql(createNewVariablesMutation, {
+    props: ({ ownProps, mutate }) => {
+      return {
+        createNewVariables: (variables) => {
+          // the first variables is the graphql syntax, the 2nd is our payload
+          return mutate({ variables: { variables } });
+        }
+      };
+    },
+    alias: "withCreateNewVariables"
+  }),
+
   graphql(importMutation, {
     props: ({ ownProps, mutate }) => {
 
+      const { datasetId, fileId, createNewVariables } = ownProps;
+
+      // run the import mutation with the given columnMappings
+      const runImport = (columnMappings) => {
+        return mutate({
+          variables: {
+            dataSet: datasetId,
+            fileId: fileId,
+            columnMappings: JSON.stringify(columnMappings)
+          }
+        })
+        .then(response => {
+          console.log("import response:", response);
+        });
+      };
+
+      // Array -> Object
+      // eg. [ {id, key}, ... ] -> {key1: id1, ... }
+      const variablesToMap = R.compose(
+        R.fromPairs,
+        R.map(({ id, key }) => [key, id]),
+      );
+
       return {
         onImport: (resolverState) => {
-          const schema = R.compose(
+
+          const resolvedBy = R.compose(
+            R.values,
             R.map(R.prop("resolvedBy"))
           )(resolverState);
 
-          console.log(schema);
+
+          // find all the "new" variables
+          // Array -> Array of { name, type }
+          const newVariables = R.compose(
+            R.map(R.compose(
+              // TODO can remove this when graphql updates to automatically generate the key
+              data => ({ ...data, key: data.name }),
+              R.prop("data") // { name, type }
+            )),
+            R.filter(R.propEq("type", "new"))
+          )(resolvedBy);
+
+          // { key1: id1, ... }, could be empty {}
+          const existingVariableMap = R.compose(
+            variablesToMap,
+            R.map(R.prop("data")),
+            R.filter(R.propEq("type", "choose"))
+          )(resolvedBy);
+
+
+          if (newVariables.length > 0){
+
+            // graphql mutation
+            createNewVariables(newVariables)
+              .then((response) => {
+
+                // { key1: id1, key2: id2, ... }
+                const newVariableMap = R.compose(
+                  variablesToMap,
+                  R.path(["data", "entities", "create", "variables"])
+                )(response);
+
+                runImport({ ...newVariableMap, ...existingVariableMap });
+              });
+          }
+          else if (Object.keys(existingVariableMap).length > 0) {
+            runImport(existingVariableMap);
+          }
+          else {
+            throw new Error("Are you ignoring all the variable?");
+          }
         }
-      }
-    }
+      };
+
+    },
+    alias: "withImport"
   }),
+
 
   graphql(analyzeFileQuery, {
     props: ({ ownProps, data }) => {
@@ -79,7 +171,8 @@ export default R.compose(
         datasetId: props.datasetId,
         fileId: props.fileId
       }
-    })
+    }),
+    alias: "withAnalyzeFile"
   }),
 
   connect(

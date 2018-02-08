@@ -11,6 +11,7 @@ const variableSearch = gql`
   query search($query: JSON) {
     entities {
       variables(query: $query) {
+        id
         key
         name
       }

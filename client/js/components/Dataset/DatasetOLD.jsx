@@ -1,7 +1,7 @@
 import React from "react";
 
 import { func, shape }   from "prop-types";
-import { historyType }   from "../Form/Undoable.jsx";
+import { historyType }   from "../Form/UndoableHOC.jsx";
 import UndoableTextInput from "../Form/UndoableTextInput.jsx";
 import UndoableTextArea  from "../Form/UndoableTextArea.jsx";
 import UndoableDropdown  from "../Form/UndoableDropdown.jsx";
