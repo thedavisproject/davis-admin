@@ -1,5 +1,6 @@
 import R from "ramda";
-import { graphql, gql } from "react-apollo";
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
 import Dataset from "./Dataset.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
 import debounce from "lodash.debounce";

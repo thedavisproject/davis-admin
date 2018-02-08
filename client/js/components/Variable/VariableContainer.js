@@ -1,5 +1,6 @@
 import R from "ramda";
-import { graphql, gql } from "react-apollo";
+import { graphql } from "react-apollo";
+import gql from "graphql-tag";
 import Variable from "./Variable.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
 
