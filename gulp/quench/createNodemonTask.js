@@ -1,35 +1,37 @@
-const gulp        = require("gulp");
-const nodemon     = require("nodemon");
+const R = require("ramda");
+const gulp = require("gulp");
+const nodemon = require("nodemon");
+const quench = require("./quench.js");
 
-module.exports = function(taskName, nodemonConfig){
+module.exports = function(taskName, userConfig){
 
-  /**
-   * nodemonConfig example:
-   * {
-   *   script: path.resolve(serverDir, "server.js"),
-   *   args: ["--layout", layout],
-   *   watch: [ serverDir ]
-   * }
-   */
+  const nodemonConfig = R.merge({
+
+    // use babel to start the server files
+    // https://www.youtube.com/watch?v=Xb_0awoShR8 --inspect for node debugging
+    execMap: {
+      js: "babel-node --inspect",
+      jsx: "babel-node --inspect"
+    }
+    /**
+     * script: path.resolve(serverDir, "server.js"),
+     * ignore: [],
+     * watch: [],  // https://github.com/remy/nodemon/issues/965
+     * args: ["--flag", value],
+     * verbose: true
+     */
+  }, userConfig);
+
 
   gulp.task(taskName, function (cb) {
 
-    let started = false;
-
     return nodemon(nodemonConfig)
-      .on("start", function () {
-        // to avoid nodemon being started multiple times
-        // thanks @matthisk
-        if (!started) {
-          cb();
-          started = true;
-        }
-      })
+      .once("start", cb)
       .on("restart", function () {
-        console.log(`${taskName} - restarted!`);
+        quench.logYellow(taskName, "restarted!");
       })
       .on("crash", function() {
-        console.error(`${taskName} - server.js crashed!`);
+        quench.logYellow(taskName, "server.js crashed!");
         // stream.emit("restart", 10)  // restart the server in 10 seconds
       });
   });

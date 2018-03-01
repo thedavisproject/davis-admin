@@ -1,6 +1,6 @@
 /**
  *    Quench: utilities for gulp builds
- *    v4.2.0
+ *    v4.4.0
  *
  * Exposed functions: (see function comments for more details)
  *   setDefaults
@@ -19,7 +19,7 @@ const notify       = require("gulp-notify");
 const env          = require("gulp-environments");
 const fs           = require("fs");
 const path         = require("path");
-const color        = require("cli-color");
+const chalk        = require("chalk");
 const watch        = require("gulp-watch");
 const R            = require("ramda");
 
@@ -136,7 +136,7 @@ function setEnv(_env){
   // set gulp-environments
   env.current(env[_env]);
 
-  console.log(color.green(`Building for '${_env}' environment`));
+  console.log(chalk.green(`Building for '${_env}' environment`));
 }
 
 
@@ -238,6 +238,9 @@ module.exports.drano = function drano() {
  */
 module.exports.logHelp = function logHelp(){
 
+  const indent = " ";
+  const code = chalk.yellow;
+
   console.log("");
   console.log("Available commands: ");
   console.log("");
@@ -245,24 +248,32 @@ module.exports.logHelp = function logHelp(){
   Object.keys(gulp.tasks)
     .filter(taskName => taskName !== "default")
     .forEach(taskName => {
-      console.log(`  gulp ${taskName}`);
+      console.log(indent, code(`gulp ${taskName}`));
     });
 
   console.log("");
   console.log("");
 
-  console.log("By default, all tasks will run with `watch` as true.");
-  console.log("You can pass --no-watch to disable watching.");
+  console.log(chalk.bold("Watching"));
+  console.log(indent, "By default, all tasks will run with `watch` as true.");
+  console.log(indent, `You can pass ${code("--no-watch")} to disable watching.`);
 
   console.log("");
 
-  console.log("By default, the environment is set to `local`.");
-  console.log("You can override this by passing --env [anotherEnv].");
+  console.log(chalk.bold("Environments"));
+  console.log(indent, "By default, the environment is set to `local`.");
+  console.log(indent, `You can override this by passing ${code("--env")} [anotherEnv].`);
   const envs = environments.map(env => `"${env}"`).join(", ");
-  console.log(`Valid environments are ${envs}`);
+  console.log(indent, `Valid environments are ${envs}`);
 
   console.log("");
 
+  console.log("eg. a common command for building projects for Jenkins, etc:");
+  console.log(indent, code("gulp build --no-watch --env production"));
+
+  console.log("");
+  console.log("");
+  console.log("");
 };
 
 
@@ -284,7 +295,7 @@ const logYellow = module.exports.logYellow = function logYellow() {
         : arg.toString();
     }).join(" ");
 
-    console.log("[" + color.yellow(first) + "]", argString);
+    console.log("[" + chalk.yellow(first) + "]", argString);
   }
 };
 
@@ -304,7 +315,7 @@ const logError = module.exports.logError = function logError() {
       return arg.toString();
     }).join("");
 
-    console.log("[" + color.red("error") + "]", color.red(argString));
+    console.log("[" + chalk.red("error") + "]", chalk.red(argString));
 
   }
 
