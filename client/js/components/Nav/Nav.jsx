@@ -1,6 +1,7 @@
 import React from "react";
 import R from "ramda";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { removeAuthCookie } from "../Authorization/cookie.js";
 
 export const navigationLinks = [
   {
@@ -31,6 +32,10 @@ const propTypes = {
   pageId: string
 };
 
+const handleLogoutClick = e => {
+  removeAuthCookie();
+};
+
 const Nav = () => {
   return (
     <nav className="nav">
@@ -54,6 +59,8 @@ const Nav = () => {
         );
       })}
 
+
+      <Link to="/login" onClick={handleLogoutClick} className="nav__logout">Logout</Link>
 
     </nav>
   );

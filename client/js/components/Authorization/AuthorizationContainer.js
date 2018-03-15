@@ -1,10 +1,9 @@
 import R from "ramda";
 import Authorization from "./Authorization.jsx";
 import Fetchable from "../Fetchable/Fetchable.jsx";
-import Cookie from "js-cookie";
 import { graphql } from "react-apollo";
 import gql from "graphql-tag";
-import { AUTH_COOKIE } from "./cookie.js";
+import { getAuthCookie, removeAuthCookie } from "./cookie.js";
 
 
 
@@ -21,12 +20,12 @@ export default R.compose(
   graphql(authQuery, {
 
     // don't run this query if we don't have a token cookie
-    skip: (props) => R.isNil(Cookie.get(AUTH_COOKIE)),
+    skip: (props) => R.isNil(getAuthCookie()),
 
     options: (props) => {
       return {
         variables: {
-          token: Cookie.get(AUTH_COOKIE)
+          token: getAuthCookie()
         },
       };
     },
@@ -35,7 +34,7 @@ export default R.compose(
 
       // if something gets messed up, remove the cookie
       if (!R.isNil(R.prop("error", data))){
-        Cookie.remove(AUTH_COOKIE);
+        removeAuthCookie();
       }
 
       return {

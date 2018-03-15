@@ -18,57 +18,58 @@ const App = () => {
   return (
     <div className="container">
 
-      <Nav />
+      <AuthorizationContainer>
 
-      <div className="main">
+          <Nav />
 
-        <AuthorizationContainer>
-
-          <Switch>
-
-            <Route exact path="/" render={({ match }) => (
-              <Home />
-            )} />
-
-            <Route path="/datasets/:rest*" render={({ match }) => {
-              return (
-                <DatasetListContainer {...parsePairs(match.params.rest)} />
-              );
-            }} />
-
-            <Route path="/dataset/:id/:rest*" render={({ match }) => {
-              return (
-                <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)} />
-              );
-            }} />
-
-            <Route path="/variables/:rest*" render={({ match }) => {
-              return (
-                <VariableListContainer {...parsePairs(match.params.rest)} />
-              );
-            }} />
-
-            <Route path="/variable/:id/:rest*" render={({ match }) => {
-              return (
-                <VariableContainer id={match.params.id} {...parsePairs(match.params.rest)} />
-              );
-            }} />
+          <div className="main">
 
 
-            <Route path="/import/:rest*" render={({ match }) => {
-              return (
-                <ImportContainer {...parsePairs(match.params.rest)} />
-              );
-            }} />
+            <Switch>
 
-            {/* 404 redirects to homepage */}
-            <Redirect to="/" />
+              <Route exact path="/" render={({ match }) => (
+                <Home />
+              )} />
 
-          </Switch>
+              <Route path="/datasets/:rest*" render={({ match }) => {
+                return (
+                  <DatasetListContainer {...parsePairs(match.params.rest)} />
+                );
+              }} />
 
-        </AuthorizationContainer>
+              <Route path="/dataset/:id/:rest*" render={({ match }) => {
+                return (
+                  <DatasetContainer id={match.params.id} {...parsePairs(match.params.rest)} />
+                );
+              }} />
 
-      </div>
+              <Route path="/variables/:rest*" render={({ match }) => {
+                return (
+                  <VariableListContainer {...parsePairs(match.params.rest)} />
+                );
+              }} />
+
+              <Route path="/variable/:id/:rest*" render={({ match }) => {
+                return (
+                  <VariableContainer id={match.params.id} {...parsePairs(match.params.rest)} />
+                );
+              }} />
+
+
+              <Route path="/import/:rest*" render={({ match }) => {
+                return (
+                  <ImportContainer {...parsePairs(match.params.rest)} />
+                );
+              }} />
+
+              {/* 404 redirects to homepage */}
+              <Redirect to="/" />
+
+            </Switch>
+
+          </div>
+
+      </AuthorizationContainer>
     </div>
   );
 };

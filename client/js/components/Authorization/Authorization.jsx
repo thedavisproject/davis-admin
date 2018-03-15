@@ -43,7 +43,10 @@ const Authorization = (props) => {
             }} />
           )
           : (
-            children
+            // allow multiple children
+            <React.Fragment>
+              {children}
+            </React.Fragment>
           );
       }} />
     </Switch>

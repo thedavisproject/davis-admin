@@ -1,5 +1,6 @@
 .nav {
     display: flex;
+    align-items: center;
     margin: 10px 0;
 }
 
@@ -22,4 +23,9 @@
     &.is-active {
         border-color: #7ea7fa;
     }
+}
+
+
+.nav__logout {
+    margin-left: auto;
 }

@@ -1,8 +1,7 @@
 import React from "react";
 import R from "ramda";
 import { func, string } from "prop-types";
-import Cookie from "js-cookie";
-import { AUTH_COOKIE } from "./cookie.js";
+import { setAuthCookie } from "./cookie.js";
 import { Redirect } from "react-router-dom";
 
 /* see https://reacttraining.com/react-router/web/example/auth-workflow */
@@ -20,6 +19,10 @@ export default class Login extends React.Component {
     redirectToReferrer: false
   }
 
+  componentDidMount = () => {
+    this.email.focus();
+  }
+
   handleSubmit = e => {
     const { loginMutation } = this.props;
 
@@ -35,7 +38,7 @@ export default class Login extends React.Component {
 
         // set the authentication token cookie
         const token = R.path(["data", "authentication", "login"], res);
-        Cookie.set(AUTH_COOKIE, token);
+        setAuthCookie(token);
 
         this.setState({
           loading: false,
@@ -69,10 +72,11 @@ export default class Login extends React.Component {
 
     return (
       <div>
+        <h1>Davis</h1>
         <form onSubmit={this.handleSubmit}>
           <fieldset>
             <label>
-              Email <input name="email" type="text" />
+              Email <input name="email" type="text" ref={el => this.email = el}/>
             </label>
           </fieldset>
 
