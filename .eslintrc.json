@@ -96,7 +96,7 @@
       "double", { "avoidEscape": true }
     ],
     "semi": [
-      "error",
+      "warn",
       "always"
     ],
     "valid-jsdoc": [

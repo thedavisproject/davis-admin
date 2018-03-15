@@ -3,6 +3,8 @@ const path = require("path");
 const historyApiFallback = require("connect-history-api-fallback");
 const quench = require("../gulp/quench/quench.js");
 const app = express();
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const root = path.resolve(__dirname, "..", "build");
 const port = process.env.PORT || 3030;
@@ -10,12 +12,23 @@ const port = process.env.PORT || 3030;
 
 /* index */
 
+app.set("view engine", "ejs"); // set up ejs for templating
+app.set("views", path.resolve(__dirname, "./views")); // set up the views directory
+
+// include cookies in the req
+app.use(cookieParser());
+
+// create application/x-www-form-urlencoded parser
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
 app.get("/api", function(req, res){
   res.send("api goes here!");
 });
 
+
 app.get("/", function(req, res){
-  res.sendFile(path.resolve(root, "index.html"));
+  res.render("index");
 });
 
 
@@ -27,8 +40,6 @@ app.use(historyApiFallback({
 
 // server js and css files, etc
 app.use(express.static(root));
-
-
 
 
 

@@ -1,4 +1,5 @@
 import React from "react";
+import R from "ramda";
 
 import { any, bool, shape, string } from "prop-types";
 
@@ -25,9 +26,9 @@ const apolloError = shape({
 const FetchableHOC = (Component) => {
 
   const propTypes = {
-    error   : apolloError,
+    error: apolloError,
     errorLoadingMessage: string,
-    loading : bool
+    loading: bool
   };
 
 
@@ -35,10 +36,14 @@ const FetchableHOC = (Component) => {
 
     const { loading, error, errorLoadingMessage, ...props } = parentProps;
 
+    const errorMessage = errorLoadingMessage
+      || R.path(["graphQLErrors", 0, "message"], error)
+      || R.prop("message", error);
+
     if (error){
-      console.error("apollo error: ", error);
+      // console.error("apollo error: ", error);
       return (
-        <div className="loading-error">{errorLoadingMessage || error.message}</div>
+        <div className="loading-error">{errorMessage}</div>
       );
     }
 
