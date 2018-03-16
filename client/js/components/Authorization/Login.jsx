@@ -48,9 +48,13 @@ export default class Login extends React.Component {
       .catch((error) => {
 
         // eslint-disable-next-line no-unused-vars
-        const { graphQLErrors, networkError, message, extraInfo } = error;
+        // const { graphQLErrors, networkError, message, extraInfo } = error;
 
-        const errorMessage = R.path(["graphQLErrors", 0, "message"], error) || message;
+        const errorMessage = R.reduce(R.either, R.F, [
+          R.path(["graphQLErrors", 0, "message"]),
+          R.prop("message"),
+          R.always("There was an error logging in")
+        ])(error);
 
         this.setState({
           error: errorMessage,
