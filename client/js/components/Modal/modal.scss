@@ -1,0 +1,91 @@
+@import "../../../scss/_variables.scss";
+
+
+
+.modal-is-open {
+  overflow: hidden;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 50px;
+
+  opacity: 0;
+  overflow: auto;
+  transition: all 500ms;
+  visibility: hidden;
+  z-index: $z-modal;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.modal__overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: rgba(black, 0.7);
+  z-index: 1;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px 12px 12px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  svg {
+    fill: #888;
+  }
+
+  &:hover svg {
+    fill: #333;
+  }
+}
+
+.modal__box {
+  position: relative;
+
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 20px 40px 20px 20px;
+
+  background-color: #eee;
+
+  max-width: #{1070px * 0.9};
+  box-sizing: border-box;
+  transition: all 500ms;
+  transform: translateY(-20px);
+  z-index: 2;
+
+  .modal.is-open & {
+    transform: translateY(0);
+  }
+}
+
+.modal__footer {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 20px 0 0;
+
+  > * {
+    margin: 0 5px;
+  }
+}
